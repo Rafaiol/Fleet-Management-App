@@ -1,0 +1,288 @@
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import {
+  Plus,
+  Search,
+  Filter,
+  MoreVertical,
+  Car,
+  Edit,
+  Trash2,
+  FileText,
+  Loader2,
+} from 'lucide-react';
+
+import { AppDispatch, RootState } from '@/store';
+import {
+  fetchVehicles,
+  deleteVehicle,
+  fetchVehicleMakes,
+} from '@/store/slices/vehicleSlice';
+import { useDebounce, useAuth } from '@/hooks';
+
+const Vehicles = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { vehicles, makes, isLoading, pagination } = useSelector(
+    (state: RootState) => state.vehicles
+  );
+  const { isAdmin } = useAuth();
+
+  const [search, setSearch] = useState('');
+  const [filters, setFilters] = useState({
+    status: '',
+    make: '',
+  });
+  const [page, setPage] = useState(1);
+
+  const debouncedSearch = useDebounce(search, 500);
+
+  useEffect(() => {
+    dispatch(fetchVehicleMakes());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      fetchVehicles({
+        page,
+        limit: 10,
+        search: debouncedSearch,
+        ...filters,
+      })
+    );
+  }, [dispatch, debouncedSearch, filters, page]);
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this vehicle?')) {
+      await dispatch(deleteVehicle(id));
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'maintenance':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400';
+      case 'offline':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400';
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Vehicles
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">
+            Manage your fleet vehicles
+          </p>
+        </div>
+        {isAdmin && (
+          <Link
+            to="/vehicles/new"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Add Vehicle
+          </Link>
+        )}
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search vehicles..."
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+            className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+          >
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="offline">Offline</option>
+            <option value="retired">Retired</option>
+          </select>
+
+          {/* Make Filter */}
+          <select
+            value={filters.make}
+            onChange={(e) => setFilters({ ...filters, make: e.target.value })}
+            className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+          >
+            <option value="">All Makes</option>
+            {makes.map((make) => (
+              <option key={make} value={make}>
+                {make}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Vehicles Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 dark:bg-gray-700/50">
+              <tr>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Vehicle
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Plate Number
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Status
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Mileage
+                </th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Fuel Type
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="py-12 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary-600" />
+                  </td>
+                </tr>
+              ) : vehicles.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-12 text-center text-gray-500">
+                    <Car className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                    <p>No vehicles found</p>
+                  </td>
+                </tr>
+              ) : (
+                vehicles.map((vehicle) => (
+                  <tr
+                    key={vehicle.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                  >
+                    <td className="py-4 px-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                          <Car className="w-5 h-5 text-primary-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {vehicle.make} {vehicle.model}
+                          </p>
+                          <p className="text-sm text-gray-500">{vehicle.year}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-gray-700 dark:text-gray-300 font-mono">
+                      {vehicle.plateNumber}
+                    </td>
+                    <td className="py-4 px-4">
+                      <span
+                        className={`inline-flex px-2.5 py-1 text-xs font-medium rounded-full capitalize ${getStatusColor(
+                          vehicle.status
+                        )}`}
+                      >
+                        {vehicle.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-gray-700 dark:text-gray-300">
+                      {vehicle.currentMileage.toLocaleString()} {vehicle.mileageUnit}
+                    </td>
+                    <td className="py-4 px-4 text-gray-700 dark:text-gray-300 capitalize">
+                      {vehicle.fuelType}
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link
+                          to={`/vehicles/${vehicle.id}`}
+                          className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                          title="View Details"
+                        >
+                          <FileText className="w-4 h-4" />
+                        </Link>
+                        {isAdmin && (
+                          <>
+                            <Link
+                              to={`/vehicles/${vehicle.id}/edit`}
+                              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                              title="Edit"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Link>
+                            <button
+                              onClick={() => handleDelete(vehicle.id)}
+                              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {pagination.pages > 1 && (
+          <div className="flex items-center justify-between px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-500">
+              Showing {(page - 1) * pagination.limit + 1} to{' '}
+              {Math.min(page * pagination.limit, pagination.total)} of{' '}
+              {pagination.total} results
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage(page - 1)}
+                disabled={page === 1}
+                className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                Page {page} of {pagination.pages}
+              </span>
+              <button
+                onClick={() => setPage(page + 1)}
+                disabled={page === pagination.pages}
+                className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Vehicles;

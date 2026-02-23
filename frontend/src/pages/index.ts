@@ -1,0 +1,10 @@
+export { default as Login } from './Login';
+export { default as Dashboard } from './Dashboard';
+export { default as Vehicles } from './Vehicles';
+export { default as VehicleDetail } from './VehicleDetail';
+export { default as Maintenance } from './Maintenance';
+export { default as MaintenanceDetail } from './MaintenanceDetail';
+export { default as Users } from './Users';
+export { default as Reports } from './Reports';
+export { default as Settings } from './Settings';
+export { default as NotFound } from './NotFound';
