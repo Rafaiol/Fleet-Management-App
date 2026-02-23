@@ -222,7 +222,7 @@ const Maintenance = () => {
                       </span>
                     </td>
                     <td className="py-4 px-4 text-gray-700 dark:text-gray-300">
-                      {new Date(record.scheduledDate).toLocaleDateString()}
+                      {new Date(record.scheduledDate).toISOString().split('T')[0]}
                     </td>
                     <td className="py-4 px-4 text-gray-700 dark:text-gray-300">
                       ${record.totalCost?.toFixed(2) || '0.00'}

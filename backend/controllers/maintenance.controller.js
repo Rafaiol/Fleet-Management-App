@@ -6,22 +6,23 @@ const { Maintenance, Vehicle } = require('../models');
 // @access  Private
 exports.getAllMaintenance = async (req, res) => {
   try {
-    const { 
-      page = 1, 
-      limit = 10, 
-      vehicle, 
-      status, 
-      type, 
+    const {
+      page = 1,
+      limit = 10,
+      vehicle,
+      status,
+      type,
       priority,
       startDate,
       endDate,
-      sortBy = 'scheduledDate', 
-      order = 'desc' 
+      search,
+      sortBy = 'scheduledDate',
+      order = 'desc'
     } = req.query;
-    
+
     // Build query
     const query = {};
-    
+
     if (vehicle) query.vehicle = vehicle;
     if (status) query.status = status;
     if (type) query.type = type;
@@ -31,11 +32,38 @@ exports.getAllMaintenance = async (req, res) => {
       if (startDate) query.scheduledDate.$gte = new Date(startDate);
       if (endDate) query.scheduledDate.$lte = new Date(endDate);
     }
-    
+
+    // Handle specific text search
+    if (search) {
+      // First, try to find any vehicles that match the search (by make, model, or plateNumber)
+      const matchingVehicles = await Vehicle.find({
+        $or: [
+          { plateNumber: { $regex: search, $options: 'i' } },
+          { make: { $regex: search, $options: 'i' } },
+          { model: { $regex: search, $options: 'i' } }
+        ]
+      }).select('_id');
+
+      const vehicleIds = matchingVehicles.map(v => v._id);
+
+      // Add $or conditional to maintenance query 
+      // match description OR match a found vehicle
+      query.$or = [
+        { description: { $regex: search, $options: 'i' } },
+        { invoiceNumber: { $regex: search, $options: 'i' } },
+        { $expr: { $regexMatch: { input: { $dateToString: { format: "%Y-%m-%d", date: "$scheduledDate", onNull: "" } }, regex: search, options: "i" } } },
+        { $expr: { $regexMatch: { input: { $dateToString: { format: "%Y-%m-%d", date: "$completionDate", onNull: "" } }, regex: search, options: "i" } } }
+      ];
+
+      if (vehicleIds.length > 0) {
+        query.$or.push({ vehicle: { $in: vehicleIds } });
+      }
+    }
+
     // Build sort
     const sort = {};
     sort[sortBy] = order === 'desc' ? -1 : 1;
-    
+
     // Execute query with pagination
     const maintenance = await Maintenance.find(query)
       .populate('vehicle', 'plateNumber make model year')
@@ -44,9 +72,9 @@ exports.getAllMaintenance = async (req, res) => {
       .sort(sort)
       .limit(limit * 1)
       .skip((page - 1) * limit);
-    
+
     const count = await Maintenance.countDocuments(query);
-    
+
     res.json({
       success: true,
       data: maintenance,
@@ -77,14 +105,14 @@ exports.getMaintenance = async (req, res) => {
       .populate('technician', 'firstName lastName email')
       .populate('createdBy', 'firstName lastName')
       .populate('updatedBy', 'firstName lastName');
-    
+
     if (!maintenance) {
       return res.status(404).json({
         success: false,
         message: 'Maintenance record not found'
       });
     }
-    
+
     res.json({
       success: true,
       data: maintenance
@@ -111,7 +139,7 @@ exports.createMaintenance = async (req, res) => {
         errors: errors.array()
       });
     }
-    
+
     // Check if vehicle exists
     const vehicle = await Vehicle.findById(req.body.vehicle);
     if (!vehicle) {
@@ -120,25 +148,25 @@ exports.createMaintenance = async (req, res) => {
         message: 'Vehicle not found'
       });
     }
-    
-    const maintenanceData = { 
-      ...req.body, 
-      createdBy: req.user._id 
+
+    const maintenanceData = {
+      ...req.body,
+      createdBy: req.user._id
     };
-    
+
     const maintenance = await Maintenance.create(maintenanceData);
-    
+
     // Update vehicle status to maintenance if scheduled or in_progress
     if (['scheduled', 'in_progress'].includes(maintenance.status)) {
       vehicle.status = 'maintenance';
       await vehicle.save();
     }
-    
+
     // Populate and return
     const populatedMaintenance = await Maintenance.findById(maintenance._id)
       .populate('vehicle', 'plateNumber make model year')
       .populate('technician', 'firstName lastName');
-    
+
     res.status(201).json({
       success: true,
       message: 'Maintenance record created successfully',
@@ -166,16 +194,16 @@ exports.updateMaintenance = async (req, res) => {
         errors: errors.array()
       });
     }
-    
+
     const maintenance = await Maintenance.findById(req.params.id);
-    
+
     if (!maintenance) {
       return res.status(404).json({
         success: false,
         message: 'Maintenance record not found'
       });
     }
-    
+
     // Update the record
     const updatedMaintenance = await Maintenance.findByIdAndUpdate(
       req.params.id,
@@ -184,13 +212,13 @@ exports.updateMaintenance = async (req, res) => {
     )
       .populate('vehicle', 'plateNumber make model year')
       .populate('technician', 'firstName lastName');
-    
+
     // Update vehicle status based on maintenance status
     const vehicle = await Vehicle.findById(maintenance.vehicle);
     if (vehicle) {
       if (req.body.status === 'completed') {
         vehicle.status = 'active';
-        
+
         // Update maintenance schedule based on type
         const now = new Date();
         switch (maintenance.type) {
@@ -223,14 +251,14 @@ exports.updateMaintenance = async (req, res) => {
             vehicle.components.coolant.lastChanged = now;
             break;
         }
-        
+
         await vehicle.save();
       } else if (['scheduled', 'in_progress'].includes(req.body.status)) {
         vehicle.status = 'maintenance';
         await vehicle.save();
       }
     }
-    
+
     res.json({
       success: true,
       message: 'Maintenance record updated successfully',
@@ -252,14 +280,14 @@ exports.updateMaintenance = async (req, res) => {
 exports.deleteMaintenance = async (req, res) => {
   try {
     const maintenance = await Maintenance.findById(req.params.id);
-    
+
     if (!maintenance) {
       return res.status(404).json({
         success: false,
         message: 'Maintenance record not found'
       });
     }
-    
+
     // Update vehicle status back to active if maintenance was in progress
     if (maintenance.status === 'in_progress' || maintenance.status === 'scheduled') {
       const vehicle = await Vehicle.findById(maintenance.vehicle);
@@ -268,9 +296,9 @@ exports.deleteMaintenance = async (req, res) => {
         await vehicle.save();
       }
     }
-    
+
     await Maintenance.findByIdAndDelete(req.params.id);
-    
+
     res.json({
       success: true,
       message: 'Maintenance record deleted successfully'
@@ -291,10 +319,10 @@ exports.deleteMaintenance = async (req, res) => {
 exports.getMaintenanceStats = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
-    
+
     const stats = await Maintenance.getStatistics(startDate, endDate);
     const byType = await Maintenance.getByType(startDate, endDate);
-    
+
     // Get upcoming maintenance
     const upcoming = await Maintenance.find({
       scheduledDate: { $gte: new Date() },
@@ -303,7 +331,7 @@ exports.getMaintenanceStats = async (req, res) => {
       .populate('vehicle', 'plateNumber make model')
       .sort({ scheduledDate: 1 })
       .limit(10);
-    
+
     // Get recent completed maintenance
     const recentCompleted = await Maintenance.find({
       status: 'completed'
@@ -311,15 +339,15 @@ exports.getMaintenanceStats = async (req, res) => {
       .populate('vehicle', 'plateNumber make model')
       .sort({ completionDate: -1 })
       .limit(10);
-    
+
     // Get total cost
     const totalCostResult = await Maintenance.aggregate([
       { $match: { status: 'completed' } },
       { $group: { _id: null, total: { $sum: '$totalCost' } } }
     ]);
-    
+
     const totalCost = totalCostResult.length > 0 ? totalCostResult[0].total : 0;
-    
+
     res.json({
       success: true,
       data: {
@@ -354,7 +382,7 @@ exports.getVehicleTimeline = async (req, res) => {
   try {
     const { vehicleId } = req.params;
     const { limit = 50 } = req.query;
-    
+
     // Check if vehicle exists
     const vehicle = await Vehicle.findById(vehicleId);
     if (!vehicle) {
@@ -363,17 +391,17 @@ exports.getVehicleTimeline = async (req, res) => {
         message: 'Vehicle not found'
       });
     }
-    
+
     const maintenance = await Maintenance.find({ vehicle: vehicleId })
       .populate('technician', 'firstName lastName')
       .sort({ scheduledDate: -1 })
       .limit(parseInt(limit));
-    
+
     // Group by year and month for timeline view
     const timeline = maintenance.reduce((acc, record) => {
       const date = new Date(record.scheduledDate);
       const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
+
       if (!acc[key]) {
         acc[key] = {
           month: key,
@@ -381,15 +409,15 @@ exports.getVehicleTimeline = async (req, res) => {
           totalCost: 0
         };
       }
-      
+
       acc[key].records.push(record);
       if (record.status === 'completed') {
         acc[key].totalCost += record.totalCost || 0;
       }
-      
+
       return acc;
     }, {});
-    
+
     res.json({
       success: true,
       data: {
@@ -418,37 +446,37 @@ exports.getVehicleTimeline = async (req, res) => {
 exports.completeMaintenance = async (req, res) => {
   try {
     const { completionDate, workPerformed, mileageAtService, totalCost } = req.body;
-    
+
     const maintenance = await Maintenance.findById(req.params.id);
-    
+
     if (!maintenance) {
       return res.status(404).json({
         success: false,
         message: 'Maintenance record not found'
       });
     }
-    
+
     if (maintenance.status === 'completed') {
       return res.status(400).json({
         success: false,
         message: 'Maintenance is already completed'
       });
     }
-    
+
     maintenance.status = 'completed';
     maintenance.completionDate = completionDate || new Date();
     maintenance.workPerformed = workPerformed;
     maintenance.mileageAtService = mileageAtService;
     if (totalCost) maintenance.totalCost = totalCost;
     maintenance.updatedBy = req.user._id;
-    
+
     await maintenance.save();
-    
+
     // Update vehicle status and maintenance schedule
     const vehicle = await Vehicle.findById(maintenance.vehicle);
     if (vehicle) {
       vehicle.status = 'active';
-      
+
       // Update maintenance schedule
       const now = new Date();
       switch (maintenance.type) {
@@ -466,14 +494,14 @@ exports.completeMaintenance = async (req, res) => {
           vehicle.maintenanceSchedule.lastGeneralInspection = now;
           break;
       }
-      
+
       await vehicle.save();
     }
-    
+
     const populatedMaintenance = await Maintenance.findById(maintenance._id)
       .populate('vehicle', 'plateNumber make model year')
       .populate('technician', 'firstName lastName');
-    
+
     res.json({
       success: true,
       message: 'Maintenance marked as completed',
