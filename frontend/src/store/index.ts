@@ -4,6 +4,7 @@ import vehicleReducer from './slices/vehicleSlice';
 import maintenanceReducer from './slices/maintenanceSlice';
 import dashboardReducer from './slices/dashboardSlice';
 import uiReducer from './slices/uiSlice';
+import userReducer from './slices/userSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     maintenance: maintenanceReducer,
     dashboard: dashboardReducer,
     ui: uiReducer,
+    users: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

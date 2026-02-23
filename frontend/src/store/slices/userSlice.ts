@@ -33,10 +33,9 @@ const initialState: UserState = {
   },
 };
 
-// Async thunks
-export const fetchUsers = createAsyncThunk(
+export const fetchUsers = createAsyncThunk<any, any, { rejectValue: string }>(
   'users/fetchAll',
-  async (params?: any, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
       const response = await userApi.getAll(params);
       return response.data;
@@ -46,9 +45,9 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
-export const fetchUserById = createAsyncThunk(
+export const fetchUserById = createAsyncThunk<User, string, { rejectValue: string }>(
   'users/fetchById',
-  async (id: string, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
       const response = await userApi.getById(id);
       return response.data.data;
@@ -58,9 +57,9 @@ export const fetchUserById = createAsyncThunk(
   }
 );
 
-export const updateUser = createAsyncThunk(
+export const updateUser = createAsyncThunk<User, { id: string; data: Partial<User> }, { rejectValue: string }>(
   'users/update',
-  async ({ id, data }: { id: string; data: Partial<User> }, { rejectWithValue }) => {
+  async ({ id, data }, { rejectWithValue }) => {
     try {
       const response = await userApi.update(id, data);
       toast.success('User updated successfully!');
@@ -73,9 +72,9 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-export const deleteUser = createAsyncThunk(
+export const deleteUser = createAsyncThunk<string, string, { rejectValue: string }>(
   'users/delete',
-  async (id: string, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
       await userApi.delete(id);
       toast.success('User deleted successfully!');
@@ -88,9 +87,9 @@ export const deleteUser = createAsyncThunk(
   }
 );
 
-export const toggleUserStatus = createAsyncThunk(
+export const toggleUserStatus = createAsyncThunk<{ id: string; isActive: boolean }, string, { rejectValue: string }>(
   'users/toggleStatus',
-  async (id: string, { rejectWithValue }) => {
+  async (id, { rejectWithValue }) => {
     try {
       const response = await userApi.toggleStatus(id);
       toast.success(response.data.message);
@@ -103,7 +102,7 @@ export const toggleUserStatus = createAsyncThunk(
   }
 );
 
-export const fetchUserStats = createAsyncThunk(
+export const fetchUserStats = createAsyncThunk<any, void, { rejectValue: string }>(
   'users/fetchStats',
   async (_, { rejectWithValue }) => {
     try {

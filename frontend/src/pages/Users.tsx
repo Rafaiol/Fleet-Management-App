@@ -10,6 +10,7 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 import { AppDispatch, RootState } from '@/store';
 import {
@@ -17,13 +18,14 @@ import {
   deleteUser,
   toggleUserStatus,
 } from '@/store/slices/userSlice';
-import { useDebounce } from '@/hooks';
+import { useDebounce, useAuth } from '@/hooks';
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { users, isLoading, pagination } = useSelector(
     (state: RootState) => state.users
   );
+  const { user: currentUser } = useAuth();
 
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
@@ -35,12 +37,17 @@ const Users = () => {
   const debouncedSearch = useDebounce(search, 500);
 
   useEffect(() => {
+    // Clean up filters to avoid sending empty strings
+    const cleanFilters: Record<string, any> = {};
+    if (filters.role) cleanFilters.role = filters.role;
+    if (filters.isActive) cleanFilters.isActive = filters.isActive;
+
     dispatch(
       fetchUsers({
         page,
         limit: 10,
         search: debouncedSearch,
-        ...filters,
+        ...cleanFilters,
       })
     );
   }, [dispatch, debouncedSearch, filters, page]);
@@ -78,10 +85,13 @@ const Users = () => {
             Manage system users and permissions
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors">
+        <Link
+          to="/users/new"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+        >
           <Plus className="w-5 h-5" />
           Add User
-        </button>
+        </Link>
       </div>
 
       {/* Filters */}
@@ -195,11 +205,10 @@ const Users = () => {
                     <td className="py-4 px-4">
                       <button
                         onClick={() => handleToggleStatus(user.id)}
-                        className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full ${
-                          user.isActive
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                        }`}
+                        className={`inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full ${user.isActive
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                          }`}
                       >
                         {user.isActive ? (
                           <>
@@ -214,15 +223,21 @@ const Users = () => {
                     </td>
                     <td className="py-4 px-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user.id)}
-                          className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                        <Link
+                          to={`/users/${user.id}/edit`}
+                          className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                          <Edit className="w-4 h-4" />
+                        </Link>
+                        {user.role !== 'admin' && user.id !== currentUser?.id && (
+                          <button
+                            onClick={() => handleDelete(user.id)}
+                            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            title="Delete user"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

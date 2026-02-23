@@ -28,12 +28,19 @@ export const login = createAsyncThunk(
     try {
       const response = await authApi.login(email, password);
       const { token, user } = response.data.data;
+
+      if (user && user.isActive === false) {
+        throw new Error('Your account is inactive. Please contact an administrator.');
+      }
+
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       toast.success('Login successful!');
       return { token, user };
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Login failed';
+      const message = error.message === 'Your account is inactive. Please contact an administrator.'
+        ? error.message
+        : error.response?.data?.message || 'Login failed';
       toast.error(message);
       return rejectWithValue(message);
     }

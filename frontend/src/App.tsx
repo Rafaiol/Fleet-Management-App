@@ -19,6 +19,7 @@ import Maintenance from '@/pages/Maintenance';
 import MaintenanceDetail from '@/pages/MaintenanceDetail';
 import MaintenanceForm from '@/pages/MaintenanceForm';
 import Users from '@/pages/Users';
+import UserForm from '@/pages/UserForm';
 import Reports from '@/pages/Reports';
 import Settings from '@/pages/Settings';
 import NotFound from '@/pages/NotFound';
@@ -75,6 +76,8 @@ function App() {
       <Route element={<ProtectedRoute requireAdmin />}>
         <Route element={<Layout />}>
           <Route path="/users" element={<Users />} />
+          <Route path="/users/new" element={<UserForm />} />
+          <Route path="/users/:id/edit" element={<UserForm />} />
         </Route>
       </Route>
 
