@@ -10,45 +10,48 @@ exports.getOverview = async (req, res) => {
     const activeVehicles = await Vehicle.countDocuments({ status: 'active' });
     const maintenanceVehicles = await Vehicle.countDocuments({ status: 'maintenance' });
     const offlineVehicles = await Vehicle.countDocuments({ status: 'offline' });
-    
+
     // Maintenance statistics
     const totalMaintenance = await Maintenance.countDocuments();
     const scheduledMaintenance = await Maintenance.countDocuments({ status: 'scheduled' });
     const inProgressMaintenance = await Maintenance.countDocuments({ status: 'in_progress' });
     const completedMaintenance = await Maintenance.countDocuments({ status: 'completed' });
-    
+
     // User statistics
     const totalUsers = await User.countDocuments();
     const activeUsers = await User.countDocuments({ isActive: true });
-    
+
     // Recent activity
     const recentVehicles = await Vehicle.find()
       .select('plateNumber make model status createdAt')
       .sort({ createdAt: -1 })
       .limit(5);
-    
+
     const recentMaintenance = await Maintenance.find()
       .populate('vehicle', 'plateNumber make model')
       .sort({ createdAt: -1 })
       .limit(5);
-    
+
     // Upcoming maintenance (next 30 days)
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-    
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const upcomingMaintenance = await Maintenance.find({
-      scheduledDate: { $gte: new Date(), $lte: thirtyDaysFromNow },
+      scheduledDate: { $gte: today, $lte: thirtyDaysFromNow },
       status: { $in: ['scheduled', 'in_progress'] }
     })
       .populate('vehicle', 'plateNumber make model')
       .sort({ scheduledDate: 1 })
       .limit(10);
-    
+
     // Maintenance cost this month
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
-    
+
     const monthlyCost = await Maintenance.aggregate([
       {
         $match: {
@@ -63,7 +66,7 @@ exports.getOverview = async (req, res) => {
         }
       }
     ]);
-    
+
     res.json({
       success: true,
       data: {
@@ -105,14 +108,14 @@ exports.getOverview = async (req, res) => {
 exports.getTrends = async (req, res) => {
   try {
     const { months = 6 } = req.query;
-    
+
     // Calculate date range
     const endDate = new Date();
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - parseInt(months) + 1);
     startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
-    
+
     // Get monthly maintenance data
     const monthlyData = await Maintenance.aggregate([
       {
@@ -137,7 +140,7 @@ exports.getTrends = async (req, res) => {
         $sort: { '_id.year': 1, '_id.month': 1 }
       }
     ]);
-    
+
     // Format data for charts
     const formattedData = monthlyData.map(item => ({
       month: `${item._id.year}-${String(item._id.month).padStart(2, '0')}`,
@@ -145,7 +148,7 @@ exports.getTrends = async (req, res) => {
       completed: item.completed,
       cost: item.totalCost
     }));
-    
+
     // Fill in missing months with zeros
     const filledData = [];
     const current = new Date(startDate);
@@ -160,7 +163,7 @@ exports.getTrends = async (req, res) => {
       });
       current.setMonth(current.getMonth() + 1);
     }
-    
+
     res.json({
       success: true,
       data: filledData
@@ -188,12 +191,12 @@ exports.getVehicleStatus = async (req, res) => {
         }
       }
     ]);
-    
+
     const formatted = statusData.map(item => ({
       status: item._id,
       count: item.count
     }));
-    
+
     res.json({
       success: true,
       data: formatted
@@ -224,12 +227,12 @@ exports.getMaintenanceTypes = async (req, res) => {
         $sort: { count: -1 }
       }
     ]);
-    
+
     const formatted = typeData.map(item => ({
       type: item._id,
       count: item.count
     }));
-    
+
     res.json({
       success: true,
       data: formatted
@@ -250,12 +253,12 @@ exports.getMaintenanceTypes = async (req, res) => {
 exports.getCostAnalysis = async (req, res) => {
   try {
     const { months = 6 } = req.query;
-    
+
     const endDate = new Date();
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - parseInt(months) + 1);
     startDate.setDate(1);
-    
+
     // Monthly costs
     const monthlyCosts = await Maintenance.aggregate([
       {
@@ -279,7 +282,7 @@ exports.getCostAnalysis = async (req, res) => {
         $sort: { '_id.year': 1, '_id.month': 1 }
       }
     ]);
-    
+
     // Cost by maintenance type
     const costByType = await Maintenance.aggregate([
       {
@@ -299,7 +302,7 @@ exports.getCostAnalysis = async (req, res) => {
         $sort: { totalCost: -1 }
       }
     ]);
-    
+
     // Cost by vehicle
     const costByVehicle = await Maintenance.aggregate([
       {
@@ -322,13 +325,13 @@ exports.getCostAnalysis = async (req, res) => {
         $limit: 10
       }
     ]);
-    
+
     // Populate vehicle details
     const populatedCostByVehicle = await Vehicle.populate(costByVehicle, {
       path: '_id',
       select: 'plateNumber make model'
     });
-    
+
     res.json({
       success: true,
       data: {
@@ -367,16 +370,16 @@ exports.getAlerts = async (req, res) => {
   try {
     const alerts = [];
     const now = new Date();
-    
+
     // Vehicles needing maintenance (overdue oil change)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-    
+
     const overdueMaintenance = await Vehicle.find({
       'maintenanceSchedule.lastOilChange': { $lt: threeMonthsAgo },
       status: { $ne: 'retired' }
     }).select('plateNumber make model maintenanceSchedule.lastOilChange');
-    
+
     overdueMaintenance.forEach(vehicle => {
       alerts.push({
         type: 'maintenance_overdue',
@@ -387,16 +390,16 @@ exports.getAlerts = async (req, res) => {
         date: vehicle.maintenanceSchedule.lastOilChange
       });
     });
-    
+
     // Upcoming registration expirations
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-    
+
     const expiringRegistrations = await Vehicle.find({
       registrationExpiry: { $lte: thirtyDaysFromNow, $gte: now },
       status: { $ne: 'retired' }
     }).select('plateNumber make model registrationExpiry');
-    
+
     expiringRegistrations.forEach(vehicle => {
       const daysUntil = Math.ceil((vehicle.registrationExpiry - now) / (1000 * 60 * 60 * 24));
       alerts.push({
@@ -408,13 +411,13 @@ exports.getAlerts = async (req, res) => {
         date: vehicle.registrationExpiry
       });
     });
-    
+
     // Upcoming insurance expirations
     const expiringInsurance = await Vehicle.find({
       insuranceExpiry: { $lte: thirtyDaysFromNow, $gte: now },
       status: { $ne: 'retired' }
     }).select('plateNumber make model insuranceExpiry');
-    
+
     expiringInsurance.forEach(vehicle => {
       const daysUntil = Math.ceil((vehicle.insuranceExpiry - now) / (1000 * 60 * 60 * 24));
       alerts.push({
@@ -426,16 +429,16 @@ exports.getAlerts = async (req, res) => {
         date: vehicle.insuranceExpiry
       });
     });
-    
+
     // Scheduled maintenance in next 7 days
     const sevenDaysFromNow = new Date();
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-    
+
     const upcomingMaintenance = await Maintenance.find({
       scheduledDate: { $gte: now, $lte: sevenDaysFromNow },
       status: 'scheduled'
     }).populate('vehicle', 'plateNumber make model');
-    
+
     upcomingMaintenance.forEach(maintenance => {
       alerts.push({
         type: 'maintenance_scheduled',
@@ -447,7 +450,7 @@ exports.getAlerts = async (req, res) => {
         date: maintenance.scheduledDate
       });
     });
-    
+
     // Sort alerts by severity and date
     const severityOrder = { urgent: 0, warning: 1, info: 2 };
     alerts.sort((a, b) => {
@@ -456,7 +459,7 @@ exports.getAlerts = async (req, res) => {
       }
       return a.date - b.date;
     });
-    
+
     res.json({
       success: true,
       count: alerts.length,

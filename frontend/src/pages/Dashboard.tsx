@@ -62,14 +62,14 @@ const Dashboard = () => {
       value: overview?.vehicles.active || 0,
       icon: TrendingUp,
       color: 'bg-green-500',
-      link: '/vehicles',
+      link: '/vehicles?status=active',
     },
     {
       title: 'In Maintenance',
       value: overview?.vehicles.maintenance || 0,
       icon: Wrench,
       color: 'bg-yellow-500',
-      link: '/maintenance',
+      link: '/vehicles?status=maintenance',
     },
     {
       title: 'Monthly Cost',
@@ -207,7 +207,7 @@ const Dashboard = () => {
               Upcoming Maintenance
             </h3>
             <Link
-              to="/maintenance"
+              to="/maintenance?status=scheduled"
               className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 flex items-center gap-1"
             >
               View All
@@ -263,11 +263,10 @@ const Dashboard = () => {
                       </td>
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                            item.status === 'scheduled'
+                          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${item.status === 'scheduled'
                               ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
                               : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
-                          }`}
+                            }`}
                         >
                           {item.status}
                         </span>
@@ -301,22 +300,20 @@ const Dashboard = () => {
               alerts.slice(0, 5).map((alert: any, index: number) => (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg ${
-                    alert.severity === 'urgent'
+                  className={`p-3 rounded-lg ${alert.severity === 'urgent'
                       ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
                       : alert.severity === 'warning'
-                      ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
-                      : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
-                  }`}
+                        ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
+                        : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+                    }`}
                 >
                   <p
-                    className={`text-sm ${
-                      alert.severity === 'urgent'
+                    className={`text-sm ${alert.severity === 'urgent'
                         ? 'text-red-800 dark:text-red-400'
                         : alert.severity === 'warning'
-                        ? 'text-yellow-800 dark:text-yellow-400'
-                        : 'text-blue-800 dark:text-blue-400'
-                    }`}
+                          ? 'text-yellow-800 dark:text-yellow-400'
+                          : 'text-blue-800 dark:text-blue-400'
+                      }`}
                   >
                     {alert.message}
                   </p>

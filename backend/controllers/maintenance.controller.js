@@ -204,10 +204,16 @@ exports.updateMaintenance = async (req, res) => {
       });
     }
 
+    const updateData = { ...req.body, updatedBy: req.user._id };
+
+    if (req.body.status === 'completed' && !req.body.completionDate && maintenance.status !== 'completed') {
+      updateData.completionDate = new Date();
+    }
+
     // Update the record
     const updatedMaintenance = await Maintenance.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, updatedBy: req.user._id },
+      updateData,
       { new: true, runValidators: true }
     )
       .populate('vehicle', 'plateNumber make model year')

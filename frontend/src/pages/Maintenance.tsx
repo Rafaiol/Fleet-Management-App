@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   Plus,
   Search,
@@ -30,9 +30,12 @@ const Maintenance = () => {
   );
   const { isAdmin } = useAuth();
 
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get('status') || '';
+
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
-    status: '',
+    status: initialStatus,
     type: '',
     priority: '',
   });
