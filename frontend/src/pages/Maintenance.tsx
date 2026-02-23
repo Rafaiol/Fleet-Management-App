@@ -11,12 +11,15 @@ import {
   Clock,
   Loader2,
   FileText,
+  Edit,
+  Trash2,
 } from 'lucide-react';
 
 import { AppDispatch, RootState } from '@/store';
 import {
   fetchMaintenance,
   fetchMaintenanceTypes,
+  deleteMaintenance,
 } from '@/store/slices/maintenanceSlice';
 import { useDebounce, useAuth } from '@/hooks';
 
@@ -25,6 +28,7 @@ const Maintenance = () => {
   const { records, types, isLoading, pagination } = useSelector(
     (state: RootState) => state.maintenance
   );
+  const { isAdmin } = useAuth();
 
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
@@ -50,6 +54,12 @@ const Maintenance = () => {
       })
     );
   }, [dispatch, debouncedSearch, filters, page]);
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this maintenance record?')) {
+      await dispatch(deleteMaintenance(id));
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -93,13 +103,15 @@ const Maintenance = () => {
             Manage vehicle maintenance and repairs
           </p>
         </div>
-        <Link
-          to="/maintenance/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          New Record
-        </Link>
+        {isAdmin && (
+          <Link
+            to="/maintenance/new"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            New Record
+          </Link>
+        )}
       </div>
 
       {/* Filters */}
@@ -220,9 +232,28 @@ const Maintenance = () => {
                         <Link
                           to={`/maintenance/${record.id}`}
                           className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                          title="View Details"
                         >
                           <FileText className="w-4 h-4" />
                         </Link>
+                        {isAdmin && (
+                          <>
+                            <Link
+                              to={`/maintenance/${record.id}/edit`}
+                              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                              title="Edit"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Link>
+                            <button
+                              onClick={() => handleDelete(record.id)}
+                              className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

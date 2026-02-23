@@ -14,8 +14,10 @@ import Login from '@/pages/Login';
 import Dashboard from '@/pages/Dashboard';
 import Vehicles from '@/pages/Vehicles';
 import VehicleDetail from '@/pages/VehicleDetail';
+import VehicleForm from '@/pages/VehicleForm';
 import Maintenance from '@/pages/Maintenance';
 import MaintenanceDetail from '@/pages/MaintenanceDetail';
+import MaintenanceForm from '@/pages/MaintenanceForm';
 import Users from '@/pages/Users';
 import Reports from '@/pages/Reports';
 import Settings from '@/pages/Settings';
@@ -57,9 +59,13 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/vehicles" element={<Vehicles />} />
+          <Route path="/vehicles/new" element={<VehicleForm />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
+          <Route path="/vehicles/:id/edit" element={<VehicleForm />} />
           <Route path="/maintenance" element={<Maintenance />} />
+          <Route path="/maintenance/new" element={<MaintenanceForm />} />
           <Route path="/maintenance/:id" element={<MaintenanceDetail />} />
+          <Route path="/maintenance/:id/edit" element={<MaintenanceForm />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
