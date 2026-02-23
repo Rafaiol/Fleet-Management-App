@@ -18,7 +18,8 @@ import {
   deleteUser,
   toggleUserStatus,
 } from '@/store/slices/userSlice';
-import { useDebounce, useAuth } from '@/hooks';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useAuth } from '@/hooks/useAuth';
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();

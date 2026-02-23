@@ -57,7 +57,19 @@ const MaintenanceForm = () => {
   const onSubmit = async (data: Partial<Maintenance>) => {
     try {
       if (isEditMode && id) {
-        await dispatch(updateMaintenance({ id, data })).unwrap();
+        // Only send editable fields to avoid 500 CastErrors from populated objects
+        const payload = {
+          vehicle: data.vehicle,
+          type: data.type,
+          scheduledDate: data.scheduledDate,
+          status: data.status,
+          priority: data.priority,
+          description: data.description,
+          laborCost: data.laborCost,
+          partsCost: data.partsCost,
+          totalCost: data.totalCost,
+        };
+        await dispatch(updateMaintenance({ id, data: payload })).unwrap();
       } else {
         await dispatch(createMaintenance(data)).unwrap();
       }
