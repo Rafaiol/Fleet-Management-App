@@ -16,19 +16,6 @@ interface UIState {
   }[];
   notificationsLoaded: boolean;
 }
-
-const getInitialTheme = (): Theme => {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('theme') as Theme;
-    if (stored) return stored;
-
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-  }
-  return 'light';
-};
-
 const initialState: UIState = {
   theme: 'light',
   sidebarOpen: true,
@@ -120,8 +107,8 @@ const uiSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAlertsAsNotifications.fulfilled, (state, action) => {
-      // Avoid appending duplicate alerts on multiple loads if already loaded
-      if (state.notificationsLoaded) return;
+      // Remove previously loaded API alerts before adding the refreshed ones
+      state.notifications = state.notifications.filter(n => !n.id.startsWith('alert-'));
 
       const newNotifications = action.payload.map((alert: any) => {
         let type: 'info' | 'success' | 'warning' | 'error' = 'info';

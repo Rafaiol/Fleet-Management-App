@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 
 import { AppDispatch, RootState } from '@/store';
 import { fetchVehicleById, createVehicle, updateVehicle } from '@/store/slices/vehicleSlice';
+import { fetchAlertsAsNotifications } from '@/store/slices/uiSlice';
 import { Vehicle } from '@/types';
 
 const VehicleForm = () => {
@@ -35,7 +36,15 @@ const VehicleForm = () => {
 
   useEffect(() => {
     if (isEditMode && currentVehicle) {
-      reset(currentVehicle);
+      // Format dates for html input type="date"
+      const formattedVehicle = {
+        ...currentVehicle,
+        registrationDate: currentVehicle.registrationDate ? currentVehicle.registrationDate.substring(0, 10) : undefined,
+        registrationExpiry: currentVehicle.registrationExpiry ? currentVehicle.registrationExpiry.substring(0, 10) : undefined,
+        insuranceExpiry: currentVehicle.insuranceExpiry ? currentVehicle.insuranceExpiry.substring(0, 10) : undefined,
+        purchaseDate: currentVehicle.purchaseDate ? currentVehicle.purchaseDate.substring(0, 10) : undefined,
+      };
+      reset(formattedVehicle);
     }
   }, [currentVehicle, isEditMode, reset]);
 
@@ -46,6 +55,10 @@ const VehicleForm = () => {
       } else {
         await dispatch(createVehicle(data)).unwrap();
       }
+
+      // Refresh notifications globally so if an expiry changes, the bell indicator updates
+      dispatch(fetchAlertsAsNotifications());
+
       navigate('/vehicles');
     } catch (error) {
       // Error handled by redux toast
@@ -254,6 +267,85 @@ const VehicleForm = () => {
                 {...register('color')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
                 placeholder="e.g. White"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Registration & Insurance</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Registration Date
+              </label>
+              <input
+                type="date"
+                {...register('registrationDate')}
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Registration Expiry
+              </label>
+              <input
+                type="date"
+                {...register('registrationExpiry')}
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Insurance Number
+              </label>
+              <input
+                {...register('insuranceNumber')}
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white uppercase focus:ring-2 focus:ring-primary-500"
+                placeholder="Policy Number"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Insurance Expiry
+              </label>
+              <input
+                type="date"
+                {...register('insuranceExpiry')}
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Financial Information</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Purchase Date
+              </label>
+              <input
+                type="date"
+                {...register('purchaseDate')}
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Purchase Price ($)
+              </label>
+              <input
+                type="number"
+                {...register('purchasePrice', { min: 0 })}
+                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+                placeholder="e.g. 25000"
               />
             </div>
           </div>

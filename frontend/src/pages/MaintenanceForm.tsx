@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { AppDispatch, RootState } from '@/store';
 import { fetchMaintenanceById, createMaintenance, updateMaintenance } from '@/store/slices/maintenanceSlice';
 import { fetchVehicles } from '@/store/slices/vehicleSlice';
+import { fetchAlertsAsNotifications } from '@/store/slices/uiSlice';
 import { Maintenance } from '@/types';
 
 const MaintenanceForm = () => {
@@ -73,6 +74,10 @@ const MaintenanceForm = () => {
       } else {
         await dispatch(createMaintenance(data)).unwrap();
       }
+
+      // Refresh global notifications (e.g., clearing a scheduled maintenance alert)
+      dispatch(fetchAlertsAsNotifications());
+
       navigate('/maintenance');
     } catch (error) {
       // Error handled by redux toast
