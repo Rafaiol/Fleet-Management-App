@@ -3,11 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Car,
   Wrench,
-  Users,
   DollarSign,
   TrendingUp,
   AlertTriangle,
-  Calendar,
   ArrowRight,
 } from 'lucide-react';
 import {
@@ -21,8 +19,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line,
 } from 'recharts';
 
 import { AppDispatch, RootState } from '@/store';
@@ -183,7 +179,7 @@ const Dashboard = () => {
                     dataKey="count"
                     nameKey="status"
                   >
-                    {vehicleStatus.map((entry, index) => (
+                    {vehicleStatus.map((_entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
@@ -264,8 +260,8 @@ const Dashboard = () => {
                       <td className="py-3 px-4">
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${item.status === 'scheduled'
-                              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                            : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
                             }`}
                         >
                           {item.status}
@@ -301,18 +297,18 @@ const Dashboard = () => {
                 <div
                   key={index}
                   className={`p-3 rounded-lg ${alert.severity === 'urgent'
-                      ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
-                      : alert.severity === 'warning'
-                        ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
-                        : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
+                    ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                    : alert.severity === 'warning'
+                      ? 'bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800'
+                      : 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800'
                     }`}
                 >
                   <p
                     className={`text-sm ${alert.severity === 'urgent'
-                        ? 'text-red-800 dark:text-red-400'
-                        : alert.severity === 'warning'
-                          ? 'text-yellow-800 dark:text-yellow-400'
-                          : 'text-blue-800 dark:text-blue-400'
+                      ? 'text-red-800 dark:text-red-400'
+                      : alert.severity === 'warning'
+                        ? 'text-yellow-800 dark:text-yellow-400'
+                        : 'text-blue-800 dark:text-blue-400'
                       }`}
                   >
                     {alert.message}

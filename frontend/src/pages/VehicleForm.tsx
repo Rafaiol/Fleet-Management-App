@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft, Car, Save, Loader2 } from 'lucide-react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { AppDispatch, RootState } from '@/store';
 import { fetchVehicleById, createVehicle, updateVehicle } from '@/store/slices/vehicleSlice';
@@ -16,7 +16,7 @@ const VehicleForm = () => {
   const isEditMode = Boolean(id);
   const { currentVehicle, isLoading, isLoadingDetails } = useSelector((state: RootState) => state.vehicles);
 
-  const { register, handleSubmit, control, reset, formState: { errors } } = useForm<Partial<Vehicle>>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<Partial<Vehicle>>({
     defaultValues: {
       status: 'active',
       bodyType: 'sedan',

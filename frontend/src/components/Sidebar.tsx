@@ -45,19 +45,20 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 z-30 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-          } ${isMobile ? 'w-64' : isCollapsed ? 'w-20' : 'w-64'}`}
+          } ${isMobile ? 'w-64' : isCollapsed ? 'w-24' : 'w-64'}`}
       >
         {/* Logo */}
-        <div className={`flex items-center h-16 border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? 'justify-center px-0' : 'justify-between px-6'}`}>
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 shrink-0 bg-primary-600 rounded-lg flex items-center justify-center">
-              <Car className="w-5 h-5 text-white" />
+        <div className="flex items-center h-16 border-b border-gray-200 dark:border-gray-700 relative overflow-hidden">
+          <div className="flex items-center absolute left-0 w-full px-4">
+            <div className="w-10 h-10 shrink-0 bg-primary-600 rounded-lg flex items-center justify-center">
+              <Car className="w-6 h-6 text-white" />
             </div>
-            {!isCollapsed && (
-              <span className="text-lg font-bold text-gray-900 dark:text-white truncate">
-                Fleet MS
-              </span>
-            )}
+            <span
+              className={`ml-3 text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap transition-all duration-300 ${isCollapsed ? 'opacity-0 translate-x-4' : 'opacity-100 translate-x-0'
+                }`}
+            >
+              Fleet MS
+            </span>
           </div>
           {isMobile && (
             <button
@@ -77,15 +78,22 @@ const Sidebar = () => {
               to={item.path}
               onClick={handleClose}
               className={({ isActive }) =>
-                `flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 text-sm font-medium rounded-lg transition-colors ${isActive
+                `flex items-center h-12 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap overflow-hidden ${isActive
                   ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100'
-                }`
+                } ${isCollapsed ? 'mx-3 px-2 w-[calc(100%-1.5rem)]' : 'mx-4 px-3 gap-3'}`
               }
               title={isCollapsed ? item.label : undefined}
             >
-              <item.icon className="w-5 h-5 shrink-0" />
-              {!isCollapsed && <span className="truncate">{item.label}</span>}
+              <div className={isCollapsed ? 'w-10 flex justify-center' : ''}>
+                <item.icon className="w-6 h-6 shrink-0" />
+              </div>
+              <span
+                className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'
+                  }`}
+              >
+                {item.label}
+              </span>
             </NavLink>
           ))}
 
@@ -104,15 +112,22 @@ const Sidebar = () => {
                     to={item.path}
                     onClick={handleClose}
                     className={({ isActive }) =>
-                      `flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 text-sm font-medium rounded-lg transition-colors ${isActive
+                      `flex items-center h-12 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap overflow-hidden ${isActive
                         ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100'
-                      }`
+                      } ${isCollapsed ? 'mx-3 px-2 w-[calc(100%-1.5rem)]' : 'mx-4 px-3 gap-3'}`
                     }
                     title={isCollapsed ? item.label : undefined}
                   >
-                    <item.icon className="w-5 h-5 shrink-0" />
-                    {!isCollapsed && <span className="truncate">{item.label}</span>}
+                    <div className={isCollapsed ? 'w-10 flex justify-center' : ''}>
+                      <item.icon className="w-6 h-6 shrink-0" />
+                    </div>
+                    <span
+                      className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'
+                        }`}
+                    >
+                      {item.label}
+                    </span>
                   </NavLink>
                 ))}
               </div>
@@ -125,15 +140,22 @@ const Sidebar = () => {
               to="/settings"
               onClick={handleClose}
               className={({ isActive }) =>
-                `flex items-center ${isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'} py-3 text-sm font-medium rounded-lg transition-colors ${isActive
+                `flex items-center h-12 text-sm font-medium rounded-xl transition-all duration-300 whitespace-nowrap overflow-hidden ${isActive
                   ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-100'
-                }`
+                } ${isCollapsed ? 'mx-3 px-2 w-[calc(100%-1.5rem)]' : 'mx-4 px-3 gap-3'}`
               }
               title={isCollapsed ? 'Settings' : undefined}
             >
-              <Settings className="w-5 h-5 shrink-0" />
-              {!isCollapsed && <span className="truncate">Settings</span>}
+              <div className={isCollapsed ? 'w-10 flex justify-center' : ''}>
+                <Settings className="w-6 h-6 shrink-0" />
+              </div>
+              <span
+                className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'
+                  }`}
+              >
+                Settings
+              </span>
             </NavLink>
           </div>
         </nav>
@@ -142,7 +164,7 @@ const Sidebar = () => {
         {!isMobile && (
           <button
             onClick={() => dispatch(toggleSidebar())}
-            className="absolute -right-3 top-20 w-6 h-6 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-shadow"
+            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full flex items-center justify-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors z-50 focus:outline-none focus:ring-1 focus:ring-primary-300"
           >
             {sidebarOpen ? (
               <ChevronLeft className="w-4 h-4 text-gray-500 dark:text-gray-400" />

@@ -4,8 +4,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import {
   Plus,
   Search,
-  Filter,
-  MoreVertical,
   Car,
   Edit,
   Trash2,
