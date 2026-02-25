@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { dashboardApi } from '@/services/api';
 import { Theme } from '@/types';
 
 interface UIState {
@@ -8,16 +9,19 @@ interface UIState {
   notifications: {
     id: string;
     type: 'info' | 'success' | 'warning' | 'error';
+    title: string;
     message: string;
     read: boolean;
+    createdAt: string;
   }[];
+  notificationsLoaded: boolean;
 }
 
 const getInitialTheme = (): Theme => {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem('theme') as Theme;
     if (stored) return stored;
-    
+
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return 'dark';
     }
@@ -30,7 +34,24 @@ const initialState: UIState = {
   sidebarOpen: true,
   isMobile: false,
   notifications: [],
+  notificationsLoaded: false,
 };
+
+// Async Thunks
+export const fetchAlertsAsNotifications = createAsyncThunk(
+  'ui/fetchAlerts',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await dashboardApi.getAlerts();
+      if (response.data.success) {
+        return response.data.data;
+      }
+      return rejectWithValue('Failed to fetch alerts');
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Error fetching alerts');
+    }
+  }
+);
 
 const uiSlice = createSlice({
   name: 'ui',
@@ -40,7 +61,7 @@ const uiSlice = createSlice({
       state.theme = action.payload;
       if (typeof window !== 'undefined') {
         localStorage.setItem('theme', action.payload);
-        
+
         if (action.payload === 'dark') {
           document.documentElement.classList.add('dark');
         } else if (action.payload === 'light') {
@@ -69,12 +90,14 @@ const uiSlice = createSlice({
     },
     addNotification: (state, action: PayloadAction<{
       type: 'info' | 'success' | 'warning' | 'error';
+      title: string;
       message: string;
     }>) => {
       state.notifications.unshift({
         id: Date.now().toString(),
         ...action.payload,
         read: false,
+        createdAt: new Date().toISOString(),
       });
     },
     markNotificationRead: (state, action: PayloadAction<string>) => {
@@ -83,6 +106,11 @@ const uiSlice = createSlice({
         notification.read = true;
       }
     },
+    markAllNotificationsRead: (state) => {
+      state.notifications.forEach(n => {
+        n.read = true;
+      });
+    },
     clearNotifications: (state) => {
       state.notifications = [];
     },
@@ -90,6 +118,43 @@ const uiSlice = createSlice({
       state.notifications = state.notifications.filter(n => n.id !== action.payload);
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(fetchAlertsAsNotifications.fulfilled, (state, action) => {
+      // Avoid appending duplicate alerts on multiple loads if already loaded
+      if (state.notificationsLoaded) return;
+
+      const newNotifications = action.payload.map((alert: any) => {
+        let type: 'info' | 'success' | 'warning' | 'error' = 'info';
+
+        switch (alert.severity) {
+          case 'urgent': type = 'error'; break;
+          case 'warning': type = 'warning'; break;
+          case 'info': type = 'info'; break;
+        }
+
+        let title = 'Alert';
+        switch (alert.type) {
+          case 'maintenance_overdue': title = 'Maintenance Overdue'; break;
+          case 'registration_expiring': title = 'Registration Expiring'; break;
+          case 'insurance_expiring': title = 'Insurance Expiring'; break;
+          case 'maintenance_scheduled': title = 'Upcoming Maintenance'; break;
+        }
+
+        return {
+          id: `alert-${alert.type}-${alert.vehicle}-${new Date(alert.date).getTime()}`,
+          type,
+          title,
+          message: alert.message,
+          read: false,
+          createdAt: new Date(alert.date).toISOString()
+        };
+      });
+
+      // Add to store
+      state.notifications = [...newNotifications, ...state.notifications];
+      state.notificationsLoaded = true;
+    });
+  }
 });
 
 export const {
@@ -99,6 +164,7 @@ export const {
   setIsMobile,
   addNotification,
   markNotificationRead,
+  markAllNotificationsRead,
   clearNotifications,
   removeNotification,
 } = uiSlice.actions;

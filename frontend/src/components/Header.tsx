@@ -13,15 +13,19 @@ import {
 } from 'lucide-react';
 
 import { RootState, AppDispatch } from '@/store';
-import { toggleSidebar } from '@/store/slices/uiSlice';
+import { toggleSidebar, markNotificationRead } from '@/store/slices/uiSlice';
 import { logout } from '@/store/slices/authSlice';
 import { useTheme } from '@/hooks';
+import { formatDistanceToNow } from 'date-fns';
 
 const Header = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { sidebarOpen, isMobile } = useSelector((state: RootState) => state.ui);
+  const { sidebarOpen, isMobile, notifications } = useSelector((state: RootState) => state.ui);
   const { isDark, toggleTheme } = useTheme();
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const recentNotifications = notifications.slice(0, 5);
 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -79,39 +83,59 @@ const Header = () => {
               className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative"
             >
               <Bell className="w-5 h-5" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              )}
             </button>
 
             {/* Notifications Dropdown */}
             {showNotifications && (
               <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
-                <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                     Notifications
                   </h3>
+                  {unreadCount > 0 && (
+                    <span className="text-xs bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 py-0.5 px-2 rounded-full font-medium">
+                      {unreadCount} new
+                    </span>
+                  )}
                 </div>
-                <div className="max-h-64 overflow-y-auto">
-                  <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
-                    <p className="text-sm text-gray-800 dark:text-gray-200">
-                      Vehicle ABC-123 needs maintenance
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      2 hours ago
-                    </p>
-                  </div>
-                  <div className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
-                    <p className="text-sm text-gray-800 dark:text-gray-200">
-                      Maintenance completed for XYZ-789
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      5 hours ago
-                    </p>
-                  </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {recentNotifications.length > 0 ? (
+                    recentNotifications.map(notification => (
+                      <div
+                        key={notification.id}
+                        onClick={() => {
+                          if (!notification.read) {
+                            dispatch(markNotificationRead(notification.id));
+                          }
+                        }}
+                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${!notification.read ? 'bg-primary-50/50 dark:bg-primary-900/10' : ''
+                          }`}
+                      >
+                        <p className={`text-sm ${!notification.read ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-800 dark:text-gray-200'
+                          }`}>
+                          {notification.title}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">
+                          {notification.message}
+                        </p>
+                        <p className="text-[10px] text-gray-400 mt-1">
+                          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                      No notifications to show.
+                    </div>
+                  )}
                 </div>
-                <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+                <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700 text-center">
                   <Link
-                    to="/maintenance"
-                    className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"
+                    to="/notifications"
+                    className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 font-medium"
                     onClick={() => setShowNotifications(false)}
                   >
                     View all notifications

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { RootState, AppDispatch } from '@/store';
 import { getMe } from '@/store/slices/authSlice';
-import { setIsMobile } from '@/store/slices/uiSlice';
+import { setIsMobile, fetchAlertsAsNotifications } from '@/store/slices/uiSlice';
 
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -22,6 +22,7 @@ import Users from '@/pages/Users';
 import UserForm from '@/pages/UserForm';
 import Reports from '@/pages/Reports';
 import Settings from '@/pages/Settings';
+import Notifications from '@/pages/Notifications';
 import NotFound from '@/pages/NotFound';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
     const token = localStorage.getItem('token');
     if (token) {
       dispatch(getMe());
+      dispatch(fetchAlertsAsNotifications());
     }
 
     // Handle responsive layout
@@ -68,6 +70,7 @@ function App() {
           <Route path="/maintenance/:id" element={<MaintenanceDetail />} />
           <Route path="/maintenance/:id/edit" element={<MaintenanceForm />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Route>
