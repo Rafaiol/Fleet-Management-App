@@ -10,6 +10,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ShieldAlert,
 } from 'lucide-react';
 
 import { RootState, AppDispatch } from '@/store';
@@ -24,6 +25,7 @@ const menuItems = [
 
 const adminMenuItems = [
   { path: '/users', icon: Users, label: 'Users' },
+  { path: '/alert-rules', icon: ShieldAlert, label: 'Alert Rules' },
 ];
 
 const Sidebar = () => {

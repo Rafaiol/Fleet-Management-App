@@ -290,4 +290,30 @@ export const reportApi = {
     api.get('/reports/maintenance-activity', { params, responseType: 'blob' }),
 };
 
+// Alert Rule API
+export const alertRuleApi = {
+  getAll: () => api.get('/alert-rules'),
+
+  create: (data: {
+    name: string;
+    description?: string;
+    conditionField: string;
+    operator: string;
+    value: number | string;
+    severity?: string;
+  }) => api.post('/alert-rules', data),
+
+  update: (id: string, data: Partial<{
+    name: string;
+    description: string;
+    conditionField: string;
+    operator: string;
+    value: number | string;
+    severity: string;
+    isActive: boolean;
+  }>) => api.put(`/alert-rules/${id}`, data),
+
+  delete: (id: string) => api.delete(`/alert-rules/${id}`),
+};
+
 export default api;

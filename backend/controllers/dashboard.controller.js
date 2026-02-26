@@ -1,4 +1,5 @@
 const { Vehicle, Maintenance, User } = require('../models');
+const { evaluateAllRules } = require('./alertRule.controller');
 
 // @desc    Get dashboard overview data
 // @route   GET /api/dashboard/overview
@@ -450,6 +451,15 @@ exports.getAlerts = async (req, res) => {
         date: maintenance.scheduledDate
       });
     });
+
+    // ── Custom Alert Rules ──
+    try {
+      const customAlerts = await evaluateAllRules();
+      alerts.push(...customAlerts);
+    } catch (ruleError) {
+      console.error('Error evaluating custom alert rules:', ruleError);
+      // Don't fail the whole endpoint if custom rules have an issue
+    }
 
     // Sort alerts by severity and date
     const severityOrder = { urgent: 0, warning: 1, info: 2 };
