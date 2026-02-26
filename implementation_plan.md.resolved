@@ -1,0 +1,117 @@
+# Custom Alert Rules System
+
+Allow admins to define their own alert rules that the system evaluates automatically. For example: *"Alert me when a vehicle has driven 50km since its last brake change."*
+
+## Architecture Overview
+
+The system is built around a **Rule Engine** pattern:
+
+```mermaid
+flowchart LR
+    A[Admin creates rule] --> B[AlertRule saved to MongoDB]
+    B --> C[GET /api/dashboard/alerts evaluates all rules]
+    C --> D[Matching vehicles generate alerts]
+    D --> E[Alerts shown in Header bell + Notifications page]
+```
+
+### Design Decisions
+
+**Condition Types** — Based on analyzing the Vehicle schema, the admin can monitor these data sources:
+
+| Category | Field | Operators | Example |
+|---|---|---|---|
+| **Mileage Since Service** | `mileage_since_oil_change`, `mileage_since_tire_rotation`, `mileage_since_brake_check` | `>`, `>=` | *"Alert if mileage since brake check > 50 km"* |
+| **Days Since Service** | `days_since_oil_change`, `days_since_tire_rotation`, `days_since_brake_check`, `days_since_general_inspection` | `>`, `>=` | *"Alert if days since oil change > 90"* |
+| **Expiry Countdown** | `registration_expiry_days`, `insurance_expiry_days` | `<`, `<=` | *"Alert if registration expires within 30 days"* |
+| **Vehicle Property** | `current_mileage`, `vehicle_age` | `>`, `>=`, `<`, `<=`, `=` | *"Alert if mileage > 200000"* |
+| **Component Condition** | `battery_condition`, `brake_fluid_condition`, `coolant_condition`, `engine_belt_condition`, `distribution_chain_condition` | `=` | *"Alert if battery condition = poor"* |
+
+> [!IMPORTANT]
+> The existing hardcoded alerts in [dashboard.controller.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/dashboard.controller.js) will remain as **system defaults**. Custom rules are evaluated **in addition** to them.
+
+---
+
+## Proposed Changes
+
+### Backend
+
+---
+
+#### [NEW] [AlertRule.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/models/AlertRule.js)
+
+New Mongoose model:
+
+```js
+{
+  name: String,           // "Brake Check Overdue"
+  description: String,    // "Alert when vehicle exceeds 50km since last brake check"
+  conditionField: String, // "mileage_since_brake_check"
+  operator: String,       // ">"
+  value: Number|String,   // 50
+  severity: String,       // "warning" | "urgent" | "info"
+  isActive: Boolean,      // true
+  createdBy: ObjectId,    // ref: User
+}
+```
+
+#### [MODIFY] [index.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/models/index.js)
+
+Export the new `AlertRule` model.
+
+#### [NEW] [alertRule.controller.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/alertRule.controller.js)
+
+CRUD endpoints + a **rule evaluation engine** function that:
+1. Fetches all active `AlertRule` documents.
+2. For each rule, queries the Vehicle collection to find matches.
+3. Returns generated alert objects.
+
+#### [NEW] [alertRule.routes.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/routes/alertRule.routes.js)
+
+- `GET    /api/alert-rules` — List all rules
+- `POST   /api/alert-rules` — Create rule (admin only)
+- `PUT    /api/alert-rules/:id` — Update rule (admin only)
+- `DELETE /api/alert-rules/:id` — Delete rule (admin only)
+
+#### [MODIFY] [dashboard.controller.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/dashboard.controller.js)
+
+Modify [getAlerts](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/dashboard.controller.js#366-477) to also call the rule evaluation engine and merge custom rule alerts with the existing hardcoded alerts.
+
+#### [MODIFY] [server.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/server.js)
+
+Mount the new alert-rules routes.
+
+---
+
+### Frontend
+
+---
+
+#### [MODIFY] [api.ts](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/services/api.ts)
+
+Add `alertRuleApi` with CRUD methods.
+
+#### [NEW] [AlertRules.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/AlertRules.tsx)
+
+A premium-designed management page with:
+- A grid/list of all existing custom alert rules with toggle switches.
+- A "Create New Rule" modal with a **condition builder** (dropdowns for field, operator, value).
+- Edit and delete options.
+
+#### [MODIFY] [App.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/App.tsx)
+
+Add route `/alert-rules`.
+
+#### [MODIFY] [Sidebar.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Sidebar.tsx)
+
+Add a sidebar link for "Alert Rules" under the admin section.
+
+---
+
+## Verification Plan
+
+### Manual Verification
+1. Navigate to the new Alert Rules page.
+2. Create a rule: *"Alert when mileage since brake check > 50"*.
+3. Verify the alert appears in the Dashboard alerts and the Header notification bell.
+4. Toggle the rule off and verify the alert disappears.
+5. Delete the rule and confirm cleanup.
