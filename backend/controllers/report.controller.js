@@ -13,7 +13,7 @@ if (!fs.existsSync(reportsDir)) {
 const generateVehicleReportHTML = (vehicle, maintenanceHistory) => {
   const formatDate = (date) => date ? new Date(date).toLocaleDateString() : 'N/A';
   const formatCurrency = (amount) => amount ? `$${amount.toFixed(2)}` : '$0.00';
-  
+
   const maintenanceRows = maintenanceHistory.map(m => `
     <tr>
       <td>${formatDate(m.scheduledDate)}</td>
@@ -23,7 +23,7 @@ const generateVehicleReportHTML = (vehicle, maintenanceHistory) => {
       <td>${formatCurrency(m.totalCost)}</td>
     </tr>
   `).join('');
-  
+
   return `
 <!DOCTYPE html>
 <html>
@@ -261,7 +261,7 @@ const generateVehicleReportHTML = (vehicle, maintenanceHistory) => {
 const generateMaintenanceReportHTML = (maintenance) => {
   const formatDate = (date) => date ? new Date(date).toLocaleDateString() : 'N/A';
   const formatCurrency = (amount) => amount ? `$${amount.toFixed(2)}` : '$0.00';
-  
+
   const partsRows = maintenance.partsUsed?.map(p => `
     <tr>
       <td>${p.name}</td>
@@ -271,7 +271,7 @@ const generateMaintenanceReportHTML = (maintenance) => {
       <td>${formatCurrency(p.totalPrice)}</td>
     </tr>
   `).join('') || '<tr><td colspan="5" style="text-align: center;">No parts used</td></tr>';
-  
+
   return `
 <!DOCTYPE html>
 <html>
@@ -558,22 +558,22 @@ exports.generateVehicleReport = async (req, res) => {
     const vehicle = await Vehicle.findById(req.params.id)
       .populate('assignedDriver', 'firstName lastName')
       .populate('createdBy', 'firstName lastName');
-    
+
     if (!vehicle) {
       return res.status(404).json({
         success: false,
         message: 'Vehicle not found'
       });
     }
-    
+
     // Get maintenance history
     const maintenanceHistory = await Maintenance.find({ vehicle: vehicle._id })
       .populate('technician', 'firstName lastName')
       .sort({ scheduledDate: -1 });
-    
+
     // Generate HTML
     const html = generateVehicleReportHTML(vehicle, maintenanceHistory);
-    
+
     // Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
       headless: 'new',
@@ -581,19 +581,19 @@ exports.generateVehicleReport = async (req, res) => {
     });
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-    
+
     const filename = `vehicle-report-${vehicle.plateNumber}-${Date.now()}.pdf`;
     const filepath = path.join(reportsDir, filename);
-    
+
     await page.pdf({
       path: filepath,
       format: 'A4',
       printBackground: true,
       margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' }
     });
-    
+
     await browser.close();
-    
+
     // Send file
     res.download(filepath, `Vehicle-Report-${vehicle.plateNumber}.pdf`, (err) => {
       if (err) {
@@ -625,17 +625,17 @@ exports.generateMaintenanceReport = async (req, res) => {
       .populate('vehicle', 'plateNumber make model year')
       .populate('technician', 'firstName lastName')
       .populate('createdBy', 'firstName lastName');
-    
+
     if (!maintenance) {
       return res.status(404).json({
         success: false,
         message: 'Maintenance record not found'
       });
     }
-    
+
     // Generate HTML
     const html = generateMaintenanceReportHTML(maintenance);
-    
+
     // Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
       headless: 'new',
@@ -643,19 +643,19 @@ exports.generateMaintenanceReport = async (req, res) => {
     });
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-    
+
     const filename = `maintenance-report-${maintenance._id}-${Date.now()}.pdf`;
     const filepath = path.join(reportsDir, filename);
-    
+
     await page.pdf({
       path: filepath,
       format: 'A4',
       printBackground: true,
       margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' }
     });
-    
+
     await browser.close();
-    
+
     // Send file
     res.download(filepath, `Maintenance-Report-${maintenance.vehicle?.plateNumber || 'Unknown'}.pdf`, (err) => {
       if (err) {
@@ -684,7 +684,7 @@ exports.generateMaintenanceReport = async (req, res) => {
 exports.generateFleetSummary = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
-    
+
     // Build date filter
     const dateFilter = {};
     if (startDate || endDate) {
@@ -692,25 +692,38 @@ exports.generateFleetSummary = async (req, res) => {
       if (startDate) dateFilter.scheduledDate.$gte = new Date(startDate);
       if (endDate) dateFilter.scheduledDate.$lte = new Date(endDate);
     }
-    
+
     // Get statistics
     const totalVehicles = await Vehicle.countDocuments();
     const vehiclesByStatus = await Vehicle.aggregate([
       { $group: { _id: '$status', count: { $sum: 1 } } }
     ]);
-    
+
     const totalMaintenance = await Maintenance.countDocuments(dateFilter);
     const maintenanceCost = await Maintenance.aggregate([
       { $match: { ...dateFilter, status: 'completed' } },
       { $group: { _id: null, total: { $sum: '$totalCost' } } }
     ]);
-    
+
     const maintenanceByType = await Maintenance.aggregate([
       { $match: dateFilter },
       { $group: { _id: '$type', count: { $sum: 1 }, cost: { $sum: '$totalCost' } } },
       { $sort: { count: -1 } }
     ]);
-    
+
+    // Top 5 Highest Cost vehicles
+    const topCostVehicles = await Maintenance.aggregate([
+      { $match: { ...dateFilter, status: 'completed' } },
+      { $group: { _id: '$vehicle', totalCost: { $sum: '$totalCost' } } },
+      { $sort: { totalCost: -1 } },
+      { $limit: 5 },
+      { $lookup: { from: 'vehicles', localField: '_id', foreignField: '_id', as: 'vehicleInfo' } },
+      { $unwind: '$vehicleInfo' }
+    ]);
+
+    // Active issues/alerts
+    const outOfServiceVehicles = await Vehicle.find({ status: { $in: ['out_of_service', 'maintenance'] } }).select('plateNumber make model status');
+
     // Generate HTML
     const html = `
 <!DOCTYPE html>
@@ -783,6 +796,7 @@ exports.generateFleetSummary = async (req, res) => {
     }
     .section {
       margin-bottom: 25px;
+      page-break-inside: avoid;
     }
     .section-title {
       background: #2563eb;
@@ -791,6 +805,7 @@ exports.generateFleetSummary = async (req, res) => {
       font-size: 14px;
       font-weight: bold;
       margin-bottom: 15px;
+      border-radius: 4px;
     }
     .footer {
       margin-top: 30px;
@@ -799,6 +814,14 @@ exports.generateFleetSummary = async (req, res) => {
       text-align: center;
       font-size: 10px;
       color: #6b7280;
+      page-break-inside: avoid;
+    }
+    .flex-row {
+      display: flex;
+      gap: 20px;
+    }
+    .flex-col {
+      flex: 1;
     }
   </style>
 </head>
@@ -873,13 +896,57 @@ exports.generateFleetSummary = async (req, res) => {
     </table>
   </div>
 
+  <div class="flex-row">
+    <div class="section flex-col">
+      <div class="section-title">Highest Maintenance Cost Vehicles</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Vehicle</th>
+            <th>Spend</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${topCostVehicles.length > 0 ? topCostVehicles.map(v => `
+            <tr>
+              <td>${v.vehicleInfo.plateNumber} - ${v.vehicleInfo.make} ${v.vehicleInfo.model}</td>
+              <td>$${v.totalCost.toFixed(2)}</td>
+            </tr>
+          `).join('') : '<tr><td colspan="2" style="text-align:center;">No completed maintenance records</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section flex-col">
+      <div class="section-title">Vehicles Requiring Attention</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Plate</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${outOfServiceVehicles.length > 0 ? outOfServiceVehicles.map(v => `
+            <tr>
+              <td>${v.plateNumber}</td>
+              <td style="color: ${v.status === 'out_of_service' ? '#dc2626' : '#d97706'}; font-weight: bold;">
+                ${v.status.replace(/_/g, ' ').toUpperCase()}
+              </td>
+            </tr>
+          `).join('') : '<tr><td colspan="2" style="text-align:center;">All vehicles operational</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="footer">
     <p>Fleet Management System - Confidential Report</p>
   </div>
 </body>
 </html>
     `;
-    
+
     // Generate PDF
     const browser = await puppeteer.launch({
       headless: 'new',
@@ -887,19 +954,19 @@ exports.generateFleetSummary = async (req, res) => {
     });
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
-    
+
     const filename = `fleet-summary-report-${Date.now()}.pdf`;
     const filepath = path.join(reportsDir, filename);
-    
+
     await page.pdf({
       path: filepath,
       format: 'A4',
       printBackground: true,
       margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' }
     });
-    
+
     await browser.close();
-    
+
     // Send file
     res.download(filepath, `Fleet-Summary-Report.pdf`, (err) => {
       if (err) {
@@ -918,5 +985,271 @@ exports.generateFleetSummary = async (req, res) => {
       message: 'Error generating fleet summary report',
       error: error.message
     });
+  }
+};
+
+// @desc    Generate vehicles activity aggregate report
+// @route   GET /api/reports/vehicles-activity
+// @access  Private (Admin only)
+exports.generateVehiclesActivityReport = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    // Build date filter for maintenance records
+    const dateFilter = {};
+    if (startDate || endDate) {
+      dateFilter.scheduledDate = {};
+      if (startDate) dateFilter.scheduledDate.$gte = new Date(startDate);
+      if (endDate) dateFilter.scheduledDate.$lte = new Date(endDate);
+    }
+
+    // Find all vehicles that had maintenance in this period
+    const maintenanceRecords = await Maintenance.find(dateFilter)
+      .populate('vehicle', 'plateNumber make model year currentMileage')
+      .sort({ scheduledDate: -1 });
+
+    // Group records by vehicle
+    const vehicleActivity = {};
+    maintenanceRecords.forEach(record => {
+      if (!record.vehicle) return;
+      const vId = record.vehicle._id.toString();
+      if (!vehicleActivity[vId]) {
+        vehicleActivity[vId] = {
+          vehicle: record.vehicle,
+          records: [],
+          totalCost: 0
+        };
+      }
+      vehicleActivity[vId].records.push(record);
+      if (record.status === 'completed') {
+        vehicleActivity[vId].totalCost += (record.totalCost || 0);
+      }
+    });
+
+    const formatCurrency = (amount) => amount ? `$${amount.toFixed(2)}` : '$0.00';
+    const formatDate = (date) => date ? new Date(date).toLocaleDateString() : 'N/A';
+
+    let htmlRows = '';
+
+    Object.values(vehicleActivity).forEach(({ vehicle, records, totalCost }) => {
+      htmlRows += `
+        <div class="vehicle-block">
+          <div class="vehicle-header">
+            <h3>${vehicle.plateNumber} - ${vehicle.make} ${vehicle.model} (${vehicle.year})</h3>
+            <span>Total Maintenance Spend: <strong>${formatCurrency(totalCost)}</strong></span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${records.map(r => `
+                <tr>
+                  <td>${formatDate(r.scheduledDate)}</td>
+                  <td>${r.type.replace(/_/g, ' ').toUpperCase()}</td>
+                  <td>${r.status}</td>
+                  <td>${r.description.substring(0, 80)}</td>
+                  <td>${formatCurrency(r.totalCost)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    });
+
+    if (!htmlRows) {
+      htmlRows = '<p style="text-align: center; color: #666; padding: 40px;">No vehicle maintenance activity recorded for this period.</p>';
+    }
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vehicle Activity Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 12px; color: #333; padding: 20px; }
+    .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #16a34a; }
+    .header h1 { color: #15803d; font-size: 24px; margin-bottom: 5px; }
+    .date-span { color: #6b7280; margin-bottom: 10px; display: block;}
+    .vehicle-block { margin-bottom: 30px; }
+    .vehicle-header { background: #dcfce7; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #16a34a; }
+    .vehicle-header h3 { color: #166534; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th { background: #f8fafc; color: #475569; padding: 10px; text-align: left; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+    tr:nth-child(even) { background: #f8fafc; }
+    .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 10px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>FLEET MANAGEMENT SYSTEM</h1>
+    <p>Vehicle Activity Report</p>
+    <span class="date-span">Period: ${startDate ? formatDate(startDate) : 'Beginning'} - ${endDate ? formatDate(endDate) : 'Present'}</span>
+    <p>Generated on: ${new Date().toLocaleString()}</p>
+  </div>
+  ${htmlRows}
+  <div class="footer">
+    <p>Fleet Management System - Confidential Report</p>
+  </div>
+</body>
+</html>`;
+
+    // Generate PDF with Puppeteer
+    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const filename = `vehicles-activity-${Date.now()}.pdf`;
+    const filepath = path.join(reportsDir, filename);
+    await page.pdf({ path: filepath, format: 'A4', printBackground: true, margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' } });
+    await browser.close();
+
+    res.download(filepath, `Vehicles-Activity-Report.pdf`, (err) => {
+      if (err) console.error('Download error:', err);
+      setTimeout(() => fs.unlink(filepath, (e) => { if (e) console.error(e); }), 60000);
+    });
+  } catch (error) {
+    console.error('Generate vehicles activity report error:', error);
+    res.status(500).json({ success: false, message: 'Error generating vehicles activity report' });
+  }
+};
+
+// @desc    Generate maintenance activity aggregate report
+// @route   GET /api/reports/maintenance-activity
+// @access  Private (Admin only)
+exports.generateMaintenanceActivityReport = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const dateFilter = {};
+    if (startDate || endDate) {
+      dateFilter.scheduledDate = {};
+      if (startDate) dateFilter.scheduledDate.$gte = new Date(startDate);
+      if (endDate) dateFilter.scheduledDate.$lte = new Date(endDate);
+    }
+
+    const records = await Maintenance.find(dateFilter)
+      .populate('vehicle', 'plateNumber make model')
+      .populate('technician', 'firstName lastName')
+      .sort({ scheduledDate: -1 });
+
+    const formatCurrency = (amount) => amount ? `$${amount.toFixed(2)}` : '$0.00';
+    const formatDate = (date) => date ? new Date(date).toLocaleDateString() : 'N/A';
+
+    let totalLabor = 0;
+    let totalParts = 0;
+    let grandTotal = 0;
+
+    const rows = records.map(r => {
+      if (r.status === 'completed') {
+        totalLabor += (r.laborCost || 0);
+        totalParts += (r.partsCost || 0);
+        grandTotal += (r.totalCost || 0);
+      }
+
+      return `
+        <tr>
+          <td>${formatDate(r.scheduledDate)}</td>
+          <td><strong>${r.vehicle?.plateNumber || 'N/A'}</strong><br><small>${r.vehicle?.make || ''} ${r.vehicle?.model || ''}</small></td>
+          <td>${r.type.replace(/_/g, ' ').toUpperCase()}</td>
+          <td>${r.status}</td>
+          <td>${formatCurrency(r.totalCost)}</td>
+        </tr>
+      `;
+    }).join('');
+
+    const html = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Maintenance Activity Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 12px; color: #333; padding: 20px; }
+    .header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 3px solid #eab308; }
+    .header h1 { color: #ca8a04; font-size: 24px; margin-bottom: 5px; }
+    .date-span { color: #6b7280; margin-bottom: 10px; display: block;}
+    .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+    .summary-card { padding: 15px; background: #fefce8; border: 2px solid #eab308; text-align: center; }
+    .summary-value { font-size: 24px; font-weight: bold; color: #854d0e; }
+    .summary-label { font-size: 11px; color: #a16207; text-transform: uppercase; margin-top: 5px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f8fafc; color: #475569; padding: 10px; text-align: left; font-size: 11px; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+    td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+    tr:nth-child(even) { background: #f8fafc; }
+    .footer { margin-top: 30px; padding-top: 15px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 10px; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>FLEET MANAGEMENT SYSTEM</h1>
+    <p>Maintenance Activity Report</p>
+    <span class="date-span">Period: ${startDate ? formatDate(startDate) : 'Beginning'} - ${endDate ? formatDate(endDate) : 'Present'}</span>
+    <p>Generated on: ${new Date().toLocaleString()}</p>
+  </div>
+  
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-value">${formatCurrency(totalLabor)}</div>
+      <div class="summary-label">Total Labor Costs</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-value">${formatCurrency(totalParts)}</div>
+      <div class="summary-label">Total Parts Costs</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-value">${formatCurrency(grandTotal)}</div>
+      <div class="summary-label">Total Completed Spend</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Vehicle</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Total Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows || '<tr><td colspan="5" style="text-align: center; padding: 20px;">No maintenance records found for this period.</td></tr>'}
+    </tbody>
+  </table>
+
+  <div class="footer">
+    <p>Fleet Management System - Confidential Report</p>
+  </div>
+</body>
+</html>`;
+
+    const browser = await puppeteer.launch({ headless: 'new', args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const filename = `maintenance-activity-${Date.now()}.pdf`;
+    const filepath = path.join(reportsDir, filename);
+    await page.pdf({ path: filepath, format: 'A4', printBackground: true, margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' } });
+    await browser.close();
+
+    res.download(filepath, `Maintenance-Activity-Report.pdf`, (err) => {
+      if (err) console.error('Download error:', err);
+      setTimeout(() => fs.unlink(filepath, (e) => { if (e) console.error(e); }), 60000);
+    });
+  } catch (error) {
+    console.error('Generate maintenance activity report error:', error);
+    res.status(500).json({ success: false, message: 'Error generating maintenance activity report' });
   }
 };

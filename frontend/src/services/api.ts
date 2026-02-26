@@ -29,7 +29,7 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     const message = (error.response?.data as { message?: string })?.message || 'An error occurred';
-    
+
     // Handle specific error codes
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
@@ -45,7 +45,7 @@ api.interceptors.response.use(
     } else {
       toast.error(message);
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -54,7 +54,7 @@ api.interceptors.response.use(
 export const authApi = {
   login: (email: string, password: string) =>
     api.post('/auth/login', { email, password }),
-  
+
   register: (data: {
     firstName: string;
     lastName: string;
@@ -64,14 +64,14 @@ export const authApi = {
     phone?: string;
     department?: string;
   }) => api.post('/auth/register', data),
-  
+
   getMe: () => api.get('/auth/me'),
-  
+
   updatePassword: (currentPassword: string, newPassword: string) =>
     api.put('/auth/update-password', { currentPassword, newPassword }),
-  
+
   logout: () => api.post('/auth/logout'),
-  
+
   refreshToken: () => api.post('/auth/refresh'),
 };
 
@@ -84,9 +84,9 @@ export const userApi = {
     role?: string;
     isActive?: boolean;
   }) => api.get('/users', { params }),
-  
+
   getById: (id: string) => api.get(`/users/${id}`),
-  
+
   update: (id: string, data: Partial<{
     firstName: string;
     lastName: string;
@@ -95,11 +95,11 @@ export const userApi = {
     role: string;
     isActive: boolean;
   }>) => api.put(`/users/${id}`, data),
-  
+
   delete: (id: string) => api.delete(`/users/${id}`),
-  
+
   getStats: () => api.get('/users/stats/overview'),
-  
+
   toggleStatus: (id: string) => api.put(`/users/${id}/toggle-status`),
 };
 
@@ -118,9 +118,9 @@ export const vehicleApi = {
     sortBy?: string;
     order?: 'asc' | 'desc';
   }) => api.get('/vehicles', { params }),
-  
+
   getById: (id: string) => api.get(`/vehicles/${id}`),
-  
+
   create: (data: Partial<{
     plateNumber: string;
     make: string;
@@ -140,7 +140,7 @@ export const vehicleApi = {
     currentMileage: number;
     notes?: string;
   }>) => api.post('/vehicles', data),
-  
+
   update: (id: string, data: Partial<{
     plateNumber?: string;
     make?: string;
@@ -160,16 +160,16 @@ export const vehicleApi = {
     currentMileage?: number;
     notes?: string;
   }>) => api.put(`/vehicles/${id}`, data),
-  
+
   delete: (id: string) => api.delete(`/vehicles/${id}`),
-  
+
   getStats: () => api.get('/vehicles/stats/overview'),
-  
+
   getMakes: () => api.get('/vehicles/filters/makes'),
-  
+
   updateMileage: (id: string, mileage: number) =>
     api.put(`/vehicles/${id}/mileage`, { mileage }),
-  
+
   getNeedingMaintenance: (days?: number) =>
     api.get('/vehicles/maintenance/due', { params: { days } }),
 };
@@ -188,9 +188,9 @@ export const maintenanceApi = {
     sortBy?: string;
     order?: 'asc' | 'desc';
   }) => api.get('/maintenance', { params }),
-  
+
   getById: (id: string) => api.get(`/maintenance/${id}`),
-  
+
   create: (data: {
     vehicle: string;
     type: string;
@@ -215,7 +215,7 @@ export const maintenanceApi = {
     laborRate?: number;
     notes?: string;
   }) => api.post('/maintenance', data),
-  
+
   update: (id: string, data: Partial<{
     type?: string;
     scheduledDate?: string;
@@ -236,17 +236,17 @@ export const maintenanceApi = {
     totalCost?: number;
     notes?: string;
   }>) => api.put(`/maintenance/${id}`, data),
-  
+
   delete: (id: string) => api.delete(`/maintenance/${id}`),
-  
+
   getStats: (params?: { startDate?: string; endDate?: string }) =>
     api.get('/maintenance/stats/overview', { params }),
-  
+
   getTypes: () => api.get('/maintenance/filters/types'),
-  
+
   getTimeline: (vehicleId: string, limit?: number) =>
     api.get(`/maintenance/vehicle/${vehicleId}/timeline`, { params: { limit } }),
-  
+
   complete: (id: string, data: {
     workPerformed: string;
     mileageAtService?: number;
@@ -258,17 +258,17 @@ export const maintenanceApi = {
 // Dashboard API
 export const dashboardApi = {
   getOverview: () => api.get('/dashboard/overview'),
-  
+
   getTrends: (months?: number) =>
     api.get('/dashboard/trends', { params: { months } }),
-  
+
   getVehicleStatus: () => api.get('/dashboard/vehicle-status'),
-  
+
   getMaintenanceTypes: () => api.get('/dashboard/maintenance-types'),
-  
+
   getCostAnalysis: (months?: number) =>
     api.get('/dashboard/cost-analysis', { params: { months } }),
-  
+
   getAlerts: () => api.get('/dashboard/alerts'),
 };
 
@@ -276,12 +276,18 @@ export const dashboardApi = {
 export const reportApi = {
   generateVehicleReport: (vehicleId: string) =>
     api.get(`/reports/vehicle/${vehicleId}`, { responseType: 'blob' }),
-  
+
   generateMaintenanceReport: (maintenanceId: string) =>
     api.get(`/reports/maintenance/${maintenanceId}`, { responseType: 'blob' }),
-  
+
   generateFleetSummary: (params?: { startDate?: string; endDate?: string }) =>
     api.get('/reports/fleet-summary', { params, responseType: 'blob' }),
+
+  generateVehiclesActivityReport: (params?: { startDate?: string; endDate?: string }) =>
+    api.get('/reports/vehicles-activity', { params, responseType: 'blob' }),
+
+  generateMaintenanceActivityReport: (params?: { startDate?: string; endDate?: string }) =>
+    api.get('/reports/maintenance-activity', { params, responseType: 'blob' }),
 };
 
 export default api;

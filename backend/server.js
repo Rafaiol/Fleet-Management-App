@@ -1,4 +1,5 @@
 const express = require('express');
+
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -39,8 +40,8 @@ app.use('/api/reports', reportRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
+  res.json({
+    status: 'OK',
     message: 'Fleet Management API is running',
     timestamp: new Date().toISOString()
   });
