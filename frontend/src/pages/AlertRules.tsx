@@ -1,4 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/store';
+import { fetchAlertsAsNotifications } from '@/store/slices/uiSlice';
 import { toast } from 'react-toastify';
 import {
   ShieldAlert,
@@ -158,6 +161,7 @@ const emptyForm: FormData = {
 // ───────── Component ─────────
 
 const AlertRules = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -265,6 +269,7 @@ const AlertRules = () => {
       }
       closeModal();
       loadRules();
+      dispatch(fetchAlertsAsNotifications());
     } catch {
       toast.error('Failed to save rule');
     } finally {
@@ -278,6 +283,7 @@ const AlertRules = () => {
       await alertRuleApi.update(rule._id, { isActive: !rule.isActive });
       setRules(prev => prev.map(r => r._id === rule._id ? { ...r, isActive: !r.isActive } : r));
       toast.success(`Rule ${rule.isActive ? 'disabled' : 'enabled'}`);
+      dispatch(fetchAlertsAsNotifications());
     } catch {
       toast.error('Failed to toggle rule');
     }
@@ -290,6 +296,7 @@ const AlertRules = () => {
       setRules(prev => prev.filter(r => r._id !== id));
       setDeleteConfirm(null);
       toast.success('Rule deleted');
+      dispatch(fetchAlertsAsNotifications());
     } catch {
       toast.error('Failed to delete rule');
     }
@@ -564,8 +571,8 @@ const AlertRules = () => {
                         type="button"
                         onClick={() => setForm(f => ({ ...f, severity: s }))}
                         className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium border-2 transition-all ${selected
-                            ? `${cfg.bg} ${cfg.color} border-current`
-                            : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-300'
+                          ? `${cfg.bg} ${cfg.color} border-current`
+                          : 'border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:border-gray-300'
                           }`}
                       >
                         {cfg.icon}
