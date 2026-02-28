@@ -165,9 +165,22 @@ exports.updateVehicle = async (req, res) => {
       });
     }
 
+    // Sanitize populated fields
+    const updateData = { ...req.body, updatedBy: req.user._id };
+
+    // Strip immutable fields from the update payload
+    delete updateData.createdBy;
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+
+    if (updateData.assignedDriver && typeof updateData.assignedDriver === 'object' && updateData.assignedDriver._id) {
+      updateData.assignedDriver = updateData.assignedDriver._id;
+    }
+
     const vehicle = await Vehicle.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, updatedBy: req.user._id },
+      { $set: updateData },
       { new: true, runValidators: true }
     );
 

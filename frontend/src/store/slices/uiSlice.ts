@@ -124,6 +124,8 @@ const uiSlice = createSlice({
           case 'maintenance_overdue': title = 'Maintenance Overdue'; break;
           case 'registration_expiring': title = 'Registration Expiring'; break;
           case 'insurance_expiring': title = 'Insurance Expiring'; break;
+          case 'registration_expired': title = 'Registration Expired'; break;
+          case 'insurance_expired': title = 'Insurance Expired'; break;
           case 'maintenance_scheduled': title = 'Upcoming Maintenance'; break;
         }
 

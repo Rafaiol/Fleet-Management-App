@@ -392,43 +392,67 @@ exports.getAlerts = async (req, res) => {
       });
     });
 
-    // Upcoming registration expirations
+    // Upcoming and expired registration expirations
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
     const expiringRegistrations = await Vehicle.find({
-      registrationExpiry: { $lte: thirtyDaysFromNow, $gte: now },
+      registrationExpiry: { $lte: thirtyDaysFromNow },
       status: { $ne: 'retired' }
     }).select('plateNumber make model registrationExpiry');
 
     expiringRegistrations.forEach(vehicle => {
       const daysUntil = Math.ceil((vehicle.registrationExpiry - now) / (1000 * 60 * 60 * 24));
-      alerts.push({
-        type: 'registration_expiring',
-        severity: daysUntil <= 7 ? 'urgent' : 'info',
-        message: `Vehicle ${vehicle.plateNumber} registration expires in ${daysUntil} days`,
-        vehicle: vehicle._id,
-        plateNumber: vehicle.plateNumber,
-        date: vehicle.registrationExpiry
-      });
+
+      if (daysUntil < 0) {
+        alerts.push({
+          type: 'registration_expired',
+          severity: 'urgent',
+          message: `Vehicle ${vehicle.plateNumber} registration expired ${Math.abs(daysUntil)} days ago`,
+          vehicle: vehicle._id,
+          plateNumber: vehicle.plateNumber,
+          date: vehicle.registrationExpiry
+        });
+      } else {
+        alerts.push({
+          type: 'registration_expiring',
+          severity: daysUntil <= 7 ? 'urgent' : 'info',
+          message: `Vehicle ${vehicle.plateNumber} registration expires in ${daysUntil} days`,
+          vehicle: vehicle._id,
+          plateNumber: vehicle.plateNumber,
+          date: vehicle.registrationExpiry
+        });
+      }
     });
 
-    // Upcoming insurance expirations
+    // Upcoming and expired insurance expirations
     const expiringInsurance = await Vehicle.find({
-      insuranceExpiry: { $lte: thirtyDaysFromNow, $gte: now },
+      insuranceExpiry: { $lte: thirtyDaysFromNow },
       status: { $ne: 'retired' }
     }).select('plateNumber make model insuranceExpiry');
 
     expiringInsurance.forEach(vehicle => {
       const daysUntil = Math.ceil((vehicle.insuranceExpiry - now) / (1000 * 60 * 60 * 24));
-      alerts.push({
-        type: 'insurance_expiring',
-        severity: daysUntil <= 7 ? 'urgent' : 'info',
-        message: `Vehicle ${vehicle.plateNumber} insurance expires in ${daysUntil} days`,
-        vehicle: vehicle._id,
-        plateNumber: vehicle.plateNumber,
-        date: vehicle.insuranceExpiry
-      });
+
+      if (daysUntil < 0) {
+        alerts.push({
+          type: 'insurance_expired',
+          severity: 'urgent',
+          message: `Vehicle ${vehicle.plateNumber} insurance expired ${Math.abs(daysUntil)} days ago`,
+          vehicle: vehicle._id,
+          plateNumber: vehicle.plateNumber,
+          date: vehicle.insuranceExpiry
+        });
+      } else {
+        alerts.push({
+          type: 'insurance_expiring',
+          severity: daysUntil <= 7 ? 'urgent' : 'info',
+          message: `Vehicle ${vehicle.plateNumber} insurance expires in ${daysUntil} days`,
+          vehicle: vehicle._id,
+          plateNumber: vehicle.plateNumber,
+          date: vehicle.insuranceExpiry
+        });
+      }
     });
 
     // Scheduled maintenance in next 7 days

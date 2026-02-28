@@ -34,7 +34,7 @@ const vehicleSchema = new mongoose.Schema({
     sparse: true,
     uppercase: true
   },
-  
+
   // Vehicle Details
   color: {
     type: String,
@@ -63,7 +63,7 @@ const vehicleSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
-  
+
   // Registration & Insurance
   registrationDate: {
     type: Date
@@ -78,7 +78,7 @@ const vehicleSchema = new mongoose.Schema({
   insuranceExpiry: {
     type: Date
   },
-  
+
   // Status & Assignment
   status: {
     type: String,
@@ -95,7 +95,7 @@ const vehicleSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  
+
   // Mileage & Usage
   currentMileage: {
     type: Number,
@@ -107,7 +107,7 @@ const vehicleSchema = new mongoose.Schema({
     enum: ['km', 'miles'],
     default: 'km'
   },
-  
+
   // Maintenance Schedule
   maintenanceSchedule: {
     oilChangeInterval: {
@@ -147,7 +147,7 @@ const vehicleSchema = new mongoose.Schema({
       type: Date
     }
   },
-  
+
   // Component Status (from original app)
   components: {
     battery: {
@@ -176,7 +176,7 @@ const vehicleSchema = new mongoose.Schema({
       nextChangeDate: Date
     }
   },
-  
+
   // Purchase Information
   purchaseDate: {
     type: Date
@@ -185,7 +185,7 @@ const vehicleSchema = new mongoose.Schema({
     type: Number,
     min: 0
   },
-  
+
   // Notes & Images
   notes: {
     type: String,
@@ -196,7 +196,7 @@ const vehicleSchema = new mongoose.Schema({
     caption: String,
     uploadedAt: { type: Date, default: Date.now }
   }],
-  
+
   // Metadata
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -214,42 +214,44 @@ const vehicleSchema = new mongoose.Schema({
 });
 
 // Virtual for vehicle age
-vehicleSchema.virtual('age').get(function() {
+vehicleSchema.virtual('age').get(function () {
   return new Date().getFullYear() - this.year;
 });
 
 // Virtual for next scheduled maintenance
-vehicleSchema.virtual('nextScheduledMaintenance').get(function() {
+vehicleSchema.virtual('nextScheduledMaintenance').get(function () {
   const schedules = [];
   const now = new Date();
-  
+
   // Oil change
   if (this.maintenanceSchedule.lastOilChange) {
     const nextOil = new Date(this.maintenanceSchedule.lastOilChange);
     nextOil.setMonth(nextOil.getMonth() + 3); // Approximate 3 months
     schedules.push({ type: 'Oil Change', date: nextOil });
   }
-  
+
   // Registration
   if (this.registrationExpiry && this.registrationExpiry > now) {
     schedules.push({ type: 'Registration Renewal', date: this.registrationExpiry });
   }
-  
+
   // Insurance
   if (this.insuranceExpiry && this.insuranceExpiry > now) {
     schedules.push({ type: 'Insurance Renewal', date: this.insuranceExpiry });
   }
-  
+
   // Component replacements
-  Object.entries(this.components).forEach(([key, component]) => {
-    if (component.nextReplacementDate && component.nextReplacementDate > now) {
-      schedules.push({ 
-        type: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
-        date: component.nextReplacementDate 
-      });
-    }
-  });
-  
+  if (this.components) {
+    Object.entries(this.components).forEach(([key, component]) => {
+      if (component && component.nextReplacementDate && component.nextReplacementDate > now) {
+        schedules.push({
+          type: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+          date: component.nextReplacementDate
+        });
+      }
+    });
+  }
+
   return schedules.sort((a, b) => a.date - b.date);
 });
 
@@ -263,7 +265,7 @@ vehicleSchema.index({ insuranceExpiry: 1 });
 vehicleSchema.index({ createdAt: -1 });
 
 // Pre-save middleware to update timestamps
-vehicleSchema.pre('save', function(next) {
+vehicleSchema.pre('save', function (next) {
   if (this.isModified()) {
     this.updatedAt = Date.now();
   }
