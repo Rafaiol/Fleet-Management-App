@@ -35,12 +35,13 @@ exports.getAllMaintenance = async (req, res) => {
 
     // Handle specific text search
     if (search) {
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       // First, try to find any vehicles that match the search (by make, model, or plateNumber)
       const matchingVehicles = await Vehicle.find({
         $or: [
-          { plateNumber: { $regex: search, $options: 'i' } },
-          { make: { $regex: search, $options: 'i' } },
-          { model: { $regex: search, $options: 'i' } }
+          { plateNumber: { $regex: escapedSearch, $options: 'i' } },
+          { make: { $regex: escapedSearch, $options: 'i' } },
+          { model: { $regex: escapedSearch, $options: 'i' } }
         ]
       }).select('_id');
 
@@ -49,10 +50,10 @@ exports.getAllMaintenance = async (req, res) => {
       // Add $or conditional to maintenance query 
       // match description OR match a found vehicle
       query.$or = [
-        { description: { $regex: search, $options: 'i' } },
-        { invoiceNumber: { $regex: search, $options: 'i' } },
-        { $expr: { $regexMatch: { input: { $dateToString: { format: "%Y-%m-%d", date: "$scheduledDate", onNull: "" } }, regex: search, options: "i" } } },
-        { $expr: { $regexMatch: { input: { $dateToString: { format: "%Y-%m-%d", date: "$completionDate", onNull: "" } }, regex: search, options: "i" } } }
+        { description: { $regex: escapedSearch, $options: 'i' } },
+        { invoiceNumber: { $regex: escapedSearch, $options: 'i' } },
+        { $expr: { $regexMatch: { input: { $dateToString: { format: "%Y-%m-%d", date: "$scheduledDate", onNull: "" } }, regex: escapedSearch, options: "i" } } },
+        { $expr: { $regexMatch: { input: { $dateToString: { format: "%Y-%m-%d", date: "$completionDate", onNull: "" } }, regex: escapedSearch, options: "i" } } }
       ];
 
       if (vehicleIds.length > 0) {

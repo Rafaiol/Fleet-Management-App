@@ -6,34 +6,38 @@ const { Vehicle, Maintenance } = require('../models');
 // @access  Private
 exports.getAllVehicles = async (req, res) => {
   try {
-    const { 
-      page = 1, 
-      limit = 10, 
-      search, 
-      status, 
-      make, 
-      fuelType, 
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      status,
+      make,
+      fuelType,
       bodyType,
       yearFrom,
       yearTo,
-      sortBy = 'createdAt', 
-      order = 'desc' 
+      sortBy = 'createdAt',
+      order = 'desc'
     } = req.query;
-    
+
     // Build query
     const query = {};
-    
+
     if (search) {
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { plateNumber: { $regex: search, $options: 'i' } },
-        { make: { $regex: search, $options: 'i' } },
-        { model: { $regex: search, $options: 'i' } },
-        { vin: { $regex: search, $options: 'i' } }
+        { plateNumber: { $regex: escapedSearch, $options: 'i' } },
+        { make: { $regex: escapedSearch, $options: 'i' } },
+        { model: { $regex: escapedSearch, $options: 'i' } },
+        { vin: { $regex: escapedSearch, $options: 'i' } }
       ];
     }
-    
+
     if (status) query.status = status;
-    if (make) query.make = { $regex: make, $options: 'i' };
+    if (make) {
+      const escapedMake = make.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.make = { $regex: escapedMake, $options: 'i' };
+    }
     if (fuelType) query.fuelType = fuelType;
     if (bodyType) query.bodyType = bodyType;
     if (yearFrom || yearTo) {
@@ -41,11 +45,11 @@ exports.getAllVehicles = async (req, res) => {
       if (yearFrom) query.year.$gte = parseInt(yearFrom);
       if (yearTo) query.year.$lte = parseInt(yearTo);
     }
-    
+
     // Build sort
     const sort = {};
     sort[sortBy] = order === 'desc' ? -1 : 1;
-    
+
     // Execute query with pagination
     const vehicles = await Vehicle.find(query)
       .populate('assignedDriver', 'firstName lastName email')
@@ -53,9 +57,9 @@ exports.getAllVehicles = async (req, res) => {
       .sort(sort)
       .limit(limit * 1)
       .skip((page - 1) * limit);
-    
+
     const count = await Vehicle.countDocuments(query);
-    
+
     res.json({
       success: true,
       data: vehicles,
@@ -85,20 +89,20 @@ exports.getVehicle = async (req, res) => {
       .populate('assignedDriver', 'firstName lastName email phone')
       .populate('createdBy', 'firstName lastName')
       .populate('updatedBy', 'firstName lastName');
-    
+
     if (!vehicle) {
       return res.status(404).json({
         success: false,
         message: 'Vehicle not found'
       });
     }
-    
+
     // Get maintenance history
     const maintenanceHistory = await Maintenance.find({ vehicle: vehicle._id })
       .populate('technician', 'firstName lastName')
       .sort({ scheduledDate: -1 })
       .limit(10);
-    
+
     res.json({
       success: true,
       data: {
@@ -128,11 +132,11 @@ exports.createVehicle = async (req, res) => {
         errors: errors.array()
       });
     }
-    
+
     const vehicleData = { ...req.body, createdBy: req.user._id };
-    
+
     const vehicle = await Vehicle.create(vehicleData);
-    
+
     res.status(201).json({
       success: true,
       message: 'Vehicle created successfully',
@@ -160,20 +164,20 @@ exports.updateVehicle = async (req, res) => {
         errors: errors.array()
       });
     }
-    
+
     const vehicle = await Vehicle.findByIdAndUpdate(
       req.params.id,
       { ...req.body, updatedBy: req.user._id },
       { new: true, runValidators: true }
     );
-    
+
     if (!vehicle) {
       return res.status(404).json({
         success: false,
         message: 'Vehicle not found'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'Vehicle updated successfully',
@@ -195,14 +199,14 @@ exports.updateVehicle = async (req, res) => {
 exports.deleteVehicle = async (req, res) => {
   try {
     const vehicle = await Vehicle.findById(req.params.id);
-    
+
     if (!vehicle) {
       return res.status(404).json({
         success: false,
         message: 'Vehicle not found'
       });
     }
-    
+
     // Check if vehicle has maintenance records
     const maintenanceCount = await Maintenance.countDocuments({ vehicle: vehicle._id });
     if (maintenanceCount > 0) {
@@ -211,9 +215,9 @@ exports.deleteVehicle = async (req, res) => {
         message: `Cannot delete vehicle with ${maintenanceCount} maintenance records. Please delete maintenance records first.`
       });
     }
-    
+
     await Vehicle.findByIdAndDelete(req.params.id);
-    
+
     res.json({
       success: true,
       message: 'Vehicle deleted successfully'
@@ -238,41 +242,41 @@ exports.getVehicleStats = async (req, res) => {
     const maintenanceVehicles = await Vehicle.countDocuments({ status: 'maintenance' });
     const offlineVehicles = await Vehicle.countDocuments({ status: 'offline' });
     const retiredVehicles = await Vehicle.countDocuments({ status: 'retired' });
-    
+
     const vehiclesByMake = await Vehicle.aggregate([
       { $group: { _id: '$make', count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 10 }
     ]);
-    
+
     const vehiclesByStatus = await Vehicle.aggregate([
       { $group: { _id: '$status', count: { $sum: 1 } } }
     ]);
-    
+
     const vehiclesByFuelType = await Vehicle.aggregate([
       { $group: { _id: '$fuelType', count: { $sum: 1 } } }
     ]);
-    
+
     // Get vehicles needing maintenance (oil change due)
     const threeMonthsAgo = new Date();
     threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-    
+
     const vehiclesNeedingMaintenance = await Vehicle.countDocuments({
       'maintenanceSchedule.lastOilChange': { $lt: threeMonthsAgo },
       status: { $ne: 'retired' }
     });
-    
+
     // Get upcoming registration/insurance expirations
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-    
+
     const upcomingExpirations = await Vehicle.find({
       $or: [
         { registrationExpiry: { $lte: thirtyDaysFromNow, $gte: new Date() } },
         { insuranceExpiry: { $lte: thirtyDaysFromNow, $gte: new Date() } }
       ]
     }).select('plateNumber make model registrationExpiry insuranceExpiry');
-    
+
     res.json({
       success: true,
       data: {
@@ -324,34 +328,34 @@ exports.getVehicleMakes = async (req, res) => {
 exports.updateMileage = async (req, res) => {
   try {
     const { mileage } = req.body;
-    
+
     if (!mileage || mileage < 0) {
       return res.status(400).json({
         success: false,
         message: 'Valid mileage is required'
       });
     }
-    
+
     const vehicle = await Vehicle.findById(req.params.id);
-    
+
     if (!vehicle) {
       return res.status(404).json({
         success: false,
         message: 'Vehicle not found'
       });
     }
-    
+
     if (mileage < vehicle.currentMileage) {
       return res.status(400).json({
         success: false,
         message: 'New mileage cannot be less than current mileage'
       });
     }
-    
+
     vehicle.currentMileage = mileage;
     vehicle.updatedBy = req.user._id;
     await vehicle.save();
-    
+
     res.json({
       success: true,
       message: 'Mileage updated successfully',
@@ -373,10 +377,10 @@ exports.updateMileage = async (req, res) => {
 exports.getVehiclesNeedingMaintenance = async (req, res) => {
   try {
     const { days = 30 } = req.query;
-    
+
     const targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + parseInt(days));
-    
+
     // Find vehicles with overdue or upcoming maintenance
     const vehicles = await Vehicle.find({
       $or: [
@@ -391,7 +395,7 @@ exports.getVehiclesNeedingMaintenance = async (req, res) => {
       ],
       status: { $ne: 'retired' }
     }).populate('assignedDriver', 'firstName lastName');
-    
+
     res.json({
       success: true,
       count: vehicles.length,

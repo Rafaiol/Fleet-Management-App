@@ -7,34 +7,35 @@ const { User } = require('../models');
 exports.getAllUsers = async (req, res) => {
   try {
     const { page = 1, limit = 10, search, role, isActive, sortBy = 'createdAt', order = 'desc' } = req.query;
-    
+
     // Build query
     const query = {};
-    
+
     if (search) {
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       query.$or = [
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } }
+        { firstName: { $regex: escapedSearch, $options: 'i' } },
+        { lastName: { $regex: escapedSearch, $options: 'i' } },
+        { email: { $regex: escapedSearch, $options: 'i' } }
       ];
     }
-    
+
     if (role) query.role = role;
     if (isActive !== undefined) query.isActive = isActive === 'true';
-    
+
     // Build sort
     const sort = {};
     sort[sortBy] = order === 'desc' ? -1 : 1;
-    
+
     // Execute query with pagination
     const users = await User.find(query)
       .select('-password')
       .sort(sort)
       .limit(limit * 1)
       .skip((page - 1) * limit);
-    
+
     const count = await User.countDocuments(query);
-    
+
     res.json({
       success: true,
       data: users,
@@ -61,14 +62,14 @@ exports.getAllUsers = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('-password');
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     res.json({
       success: true,
       data: user
@@ -95,9 +96,9 @@ exports.updateUser = async (req, res) => {
         errors: errors.array()
       });
     }
-    
+
     const { firstName, lastName, phone, department, role, isActive } = req.body;
-    
+
     // Build update object
     const updateData = {};
     if (firstName) updateData.firstName = firstName;
@@ -106,22 +107,22 @@ exports.updateUser = async (req, res) => {
     if (department) updateData.department = department;
     if (role && req.user.role === 'admin') updateData.role = role;
     if (isActive !== undefined && req.user.role === 'admin') updateData.isActive = isActive;
-    
+
     updateData.updatedBy = req.user._id;
-    
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true, runValidators: true }
     ).select('-password');
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     res.json({
       success: true,
       message: 'User updated successfully',
@@ -143,14 +144,14 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     // Prevent deleting yourself
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({
@@ -158,9 +159,9 @@ exports.deleteUser = async (req, res) => {
         message: 'Cannot delete your own account'
       });
     }
-    
+
     await User.findByIdAndDelete(req.params.id);
-    
+
     res.json({
       success: true,
       message: 'User deleted successfully'
@@ -183,16 +184,16 @@ exports.getUserStats = async (req, res) => {
     const totalUsers = await User.countDocuments();
     const activeUsers = await User.countDocuments({ isActive: true });
     const inactiveUsers = await User.countDocuments({ isActive: false });
-    
+
     const usersByRole = await User.aggregate([
       { $group: { _id: '$role', count: { $sum: 1 } } }
     ]);
-    
+
     const recentUsers = await User.find()
       .select('-password')
       .sort({ createdAt: -1 })
       .limit(5);
-    
+
     res.json({
       success: true,
       data: {
@@ -219,14 +220,14 @@ exports.getUserStats = async (req, res) => {
 exports.toggleUserStatus = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
       });
     }
-    
+
     // Prevent deactivating yourself
     if (user._id.toString() === req.user._id.toString()) {
       return res.status(400).json({
@@ -234,11 +235,11 @@ exports.toggleUserStatus = async (req, res) => {
         message: 'Cannot change your own status'
       });
     }
-    
+
     user.isActive = !user.isActive;
     user.updatedBy = req.user._id;
     await user.save();
-    
+
     res.json({
       success: true,
       message: `User ${user.isActive ? 'activated' : 'deactivated'} successfully`,
