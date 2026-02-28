@@ -126,12 +126,11 @@ const Notifications = () => {
             </p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-200 dark:divide-gray-700">
-            {notifications.map((notification) => (
+          <div className="flex flex-col">
+            {notifications.map((notification, index) => (
               <div
                 key={notification.id}
-                className={`p-4 sm:p-6 transition-colors ${getBackgroundForType(notification.type, notification.read)} ${!notification.read ? 'border-l-4' : 'border-l-4 border-transparent'
-                  }`}
+                className={`p-4 sm:p-6 transition-colors ${getBackgroundForType(notification.type, notification.read)} ${!notification.read ? 'border-l-4' : 'border-l-4 border-transparent'} ${index !== notifications.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}
               >
                 <div className="flex items-start gap-4">
                   <div className="shrink-0 mt-1">
