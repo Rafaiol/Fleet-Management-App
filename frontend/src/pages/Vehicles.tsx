@@ -28,13 +28,21 @@ const Vehicles = () => {
 
   const [searchParams] = useSearchParams();
   const initialStatus = searchParams.get('status') || '';
+  const initialSearch = searchParams.get('search') || '';
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(initialSearch);
   const [filters, setFilters] = useState({
     status: initialStatus,
     make: '',
   });
   const [page, setPage] = useState(1);
+
+  // Sync the UI search state if the URL changes 
+  // (e.g. typing a new search in the header while already on the vehicles page)
+  useEffect(() => {
+    const urlSearch = searchParams.get('search') || '';
+    setSearch(urlSearch);
+  }, [searchParams]);
 
   const debouncedSearch = useDebounce(search, 500);
 
