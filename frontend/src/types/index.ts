@@ -8,6 +8,7 @@ export interface User {
   phone?: string;
   department?: string;
   isActive: boolean;
+  permissions?: string[];
   lastLogin?: string;
   fullName: string;
   createdAt?: string;
@@ -141,7 +142,7 @@ export interface Maintenance {
   daysUntilScheduled?: number;
 }
 
-export type MaintenanceType = 
+export type MaintenanceType =
   | 'oil_change'
   | 'tire_rotation'
   | 'brake_service'

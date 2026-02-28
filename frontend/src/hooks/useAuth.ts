@@ -35,6 +35,9 @@ export const useAuth = () => {
     dispatch(clearError());
   }, [dispatch]);
 
+  const isAdmin = user?.role === 'admin';
+  const hasPermission = (permission: string) => isAdmin || (user?.permissions || []).includes(permission);
+
   return {
     user,
     token,
@@ -46,7 +49,15 @@ export const useAuth = () => {
     getMe: handleGetMe,
     updatePassword: handleUpdatePassword,
     clearError: handleClearError,
-    isAdmin: user?.role === 'admin',
+    isAdmin,
     isTechnicien: user?.role === 'technicien',
+    canAddVehicles: hasPermission('add_vehicles'),
+    canEditVehicles: hasPermission('edit_vehicles'),
+    canDeleteVehicles: hasPermission('delete_vehicles'),
+    canViewMaintenance: hasPermission('view_maintenance'),
+    canAddMaintenance: hasPermission('add_maintenance'),
+    canEditMaintenance: hasPermission('edit_maintenance'),
+    canDeleteMaintenance: hasPermission('delete_maintenance'),
+    canAddAlerts: hasPermission('add_alerts'),
   };
 };

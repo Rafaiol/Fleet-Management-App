@@ -97,7 +97,7 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    const { firstName, lastName, phone, department, role, isActive } = req.body;
+    const { firstName, lastName, phone, department, role, isActive, permissions } = req.body;
 
     // Build update object
     const updateData = {};
@@ -107,6 +107,7 @@ exports.updateUser = async (req, res) => {
     if (department) updateData.department = department;
     if (role && req.user.role === 'admin') updateData.role = role;
     if (isActive !== undefined && req.user.role === 'admin') updateData.isActive = isActive;
+    if (permissions !== undefined && req.user.role === 'admin') updateData.permissions = permissions;
 
     updateData.updatedBy = req.user._id;
 

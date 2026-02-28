@@ -57,6 +57,7 @@ export const register = createAsyncThunk(
     role?: string;
     phone?: string;
     department?: string;
+    permissions?: string[];
   }, { rejectWithValue }) => {
     try {
       const response = await authApi.register(userData);

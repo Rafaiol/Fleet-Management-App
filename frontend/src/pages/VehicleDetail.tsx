@@ -1,14 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   ArrowLeft,
   Car,
-  Calendar,
   Gauge,
   Fuel,
   Settings,
-  FileText,
   Edit,
   Download,
   Wrench,
@@ -30,7 +28,7 @@ const VehicleDetail = () => {
   const { currentVehicle, maintenanceHistory, isLoadingDetails } = useSelector(
     (state: RootState) => state.vehicles
   );
-  const { isAdmin } = useAuth();
+  const { canEditVehicles } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -120,7 +118,7 @@ const VehicleDetail = () => {
             <Download className="w-4 h-4" />
             Export PDF
           </button>
-          {isAdmin && (
+          {canEditVehicles && (
             <Link
               to={`/vehicles/${id}/edit`}
               className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
@@ -270,13 +268,12 @@ const VehicleDetail = () => {
                     </p>
                   </div>
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      record.status === 'completed'
-                        ? 'bg-green-100 text-green-800'
-                        : record.status === 'in_progress'
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${record.status === 'completed'
+                      ? 'bg-green-100 text-green-800'
+                      : record.status === 'in_progress'
                         ? 'bg-yellow-100 text-yellow-800'
                         : 'bg-blue-100 text-blue-800'
-                    }`}
+                      }`}
                   >
                     {record.status}
                   </span>

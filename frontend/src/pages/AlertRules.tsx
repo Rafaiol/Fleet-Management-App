@@ -18,6 +18,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import { alertRuleApi } from '@/services/api';
+import { useAuth } from '@/hooks';
 
 // ───────── Constants ─────────
 
@@ -162,6 +163,7 @@ const emptyForm: FormData = {
 
 const AlertRules = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { canAddAlerts } = useAuth();
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -319,13 +321,15 @@ const AlertRules = () => {
             Define custom conditions that trigger alerts across your fleet
           </p>
         </div>
-        <button
-          onClick={openCreate}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium text-sm transition-colors shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          New Rule
-        </button>
+        {canAddAlerts && (
+          <button
+            onClick={openCreate}
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium text-sm transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            New Rule
+          </button>
+        )}
       </div>
 
       {/* Search */}
@@ -356,7 +360,7 @@ const AlertRules = () => {
           <p className="text-gray-500 dark:text-gray-400 mt-1 max-w-sm mx-auto">
             {search ? 'Try a different search term.' : 'Create your first custom alert rule to monitor your fleet automatically.'}
           </p>
-          {!search && (
+          {!search && canAddAlerts && (
             <button
               onClick={openCreate}
               className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium text-sm transition-colors"
@@ -381,13 +385,15 @@ const AlertRules = () => {
                     {sev.icon}
                     {rule.severity.charAt(0).toUpperCase() + rule.severity.slice(1)}
                   </span>
-                  <button
-                    onClick={() => handleToggle(rule)}
-                    className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                    title={rule.isActive ? 'Disable rule' : 'Enable rule'}
-                  >
-                    {rule.isActive ? <ToggleRight className="w-7 h-7 text-primary-600 dark:text-primary-400" /> : <ToggleLeft className="w-7 h-7" />}
-                  </button>
+                  {canAddAlerts && (
+                    <button
+                      onClick={() => handleToggle(rule)}
+                      className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                      title={rule.isActive ? 'Disable rule' : 'Enable rule'}
+                    >
+                      {rule.isActive ? <ToggleRight className="w-7 h-7 text-primary-600 dark:text-primary-400" /> : <ToggleLeft className="w-7 h-7" />}
+                    </button>
+                  )}
                 </div>
 
                 {/* Title & description */}
@@ -406,29 +412,31 @@ const AlertRules = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="mt-4 flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
-                  <button
-                    onClick={() => openEdit(rule)}
-                    className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
-                  >
-                    <Pencil className="w-3.5 h-3.5" /> Edit
-                  </button>
-                  <span className="text-gray-300 dark:text-gray-600">|</span>
-                  {deleteConfirm === rule._id ? (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-red-600 dark:text-red-400">Delete?</span>
-                      <button onClick={() => handleDelete(rule._id)} className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400">Yes</button>
-                      <button onClick={() => setDeleteConfirm(null)} className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400">No</button>
-                    </div>
-                  ) : (
+                {canAddAlerts && (
+                  <div className="mt-4 flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
                     <button
-                      onClick={() => setDeleteConfirm(rule._id)}
-                      className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                      onClick={() => openEdit(rule)}
+                      className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
                     >
-                      <Trash2 className="w-3.5 h-3.5" /> Delete
+                      <Pencil className="w-3.5 h-3.5" /> Edit
                     </button>
-                  )}
-                </div>
+                    <span className="text-gray-300 dark:text-gray-600">|</span>
+                    {deleteConfirm === rule._id ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-red-600 dark:text-red-400">Delete?</span>
+                        <button onClick={() => handleDelete(rule._id)} className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400">Yes</button>
+                        <button onClick={() => setDeleteConfirm(null)} className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400">No</button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setDeleteConfirm(rule._id)}
+                        className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}

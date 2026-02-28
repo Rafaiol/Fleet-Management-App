@@ -18,6 +18,7 @@ interface UserFormData {
   role: 'admin' | 'user' | 'technicien';
   department?: string;
   phone?: string;
+  permissions?: string[];
 }
 
 const UserForm = () => {
@@ -30,11 +31,23 @@ const UserForm = () => {
   const { isLoading } = useSelector((state: RootState) => state.auth); // To get loading state for registration
   const isUpdating = useSelector((state: RootState) => state.users.isLoading);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<UserFormData>({
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<UserFormData>({
     defaultValues: {
       role: 'user',
+      permissions: [],
     }
   });
+
+  const selectedRole = watch('role');
+  const selectedPermissions = watch('permissions') || [];
+
+  const handlePermissionChange = (permission: string) => {
+    if (selectedPermissions.includes(permission)) {
+      setValue('permissions', selectedPermissions.filter(p => p !== permission), { shouldDirty: true });
+    } else {
+      setValue('permissions', [...selectedPermissions, permission], { shouldDirty: true });
+    }
+  };
 
   useEffect(() => {
     if (isEditMode && id) {
@@ -51,6 +64,7 @@ const UserForm = () => {
         role: currentUser.role,
         department: currentUser.department || '',
         phone: currentUser.phone || '',
+        permissions: currentUser.permissions || [],
       });
     }
   }, [currentUser, isEditMode, reset]);
@@ -65,6 +79,7 @@ const UserForm = () => {
           phone: data.phone,
           department: data.department,
           role: data.role,
+          permissions: data.permissions,
         });
         toast.success('User updated successfully');
       } else {
@@ -80,6 +95,7 @@ const UserForm = () => {
           role: data.role,
           department: data.department,
           phone: data.phone,
+          permissions: data.permissions,
         })).unwrap();
       }
       navigate('/users');
@@ -214,6 +230,37 @@ const UserForm = () => {
               />
             </div>
           </div>
+
+          {/* Custom Permissions */}
+          {selectedRole !== 'admin' && (
+            <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
+              <h3 className="text-md font-medium text-gray-900 dark:text-white mb-2">Granular Permissions</h3>
+              <p className="text-sm text-gray-500 mb-6">Grant individual privileges that override the base capabilities of the selected role.</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { id: 'add_vehicles', label: 'Create Vehicles' },
+                  { id: 'edit_vehicles', label: 'Edit Vehicles' },
+                  { id: 'delete_vehicles', label: 'Delete Vehicles' },
+                  { id: 'view_maintenance', label: 'View Maintenance Tab' },
+                  { id: 'add_maintenance', label: 'Create Maintenance' },
+                  { id: 'edit_maintenance', label: 'Edit Maintenance' },
+                  { id: 'delete_maintenance', label: 'Delete Maintenance' },
+                  { id: 'add_alerts', label: 'Create Alerts' },
+                ].map((perm) => (
+                  <label key={perm.id} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={selectedPermissions.includes(perm.id)}
+                      onChange={() => handlePermissionChange(perm.id)}
+                      className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500 dark:bg-gray-800 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{perm.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center justify-end gap-4">

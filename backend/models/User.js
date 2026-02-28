@@ -33,6 +33,19 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'user', 'technicien'],
     default: 'user'
   },
+  permissions: [{
+    type: String,
+    enum: [
+      'add_vehicles',
+      'edit_vehicles',
+      'delete_vehicles',
+      'view_maintenance',
+      'add_maintenance',
+      'edit_maintenance',
+      'delete_maintenance',
+      'add_alerts'
+    ]
+  }],
   phone: {
     type: String,
     trim: true,
@@ -61,7 +74,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Virtual for full name
-userSchema.virtual('fullName').get(function() {
+userSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
@@ -71,9 +84,9 @@ userSchema.index({ role: 1 });
 userSchema.index({ isActive: 1 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  
+
   try {
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
@@ -84,12 +97,12 @@ userSchema.pre('save', async function(next) {
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function(candidatePassword) {
+userSchema.methods.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Update last login
-userSchema.methods.updateLastLogin = async function() {
+userSchema.methods.updateLastLogin = async function () {
   this.lastLogin = new Date();
   await this.save({ validateBeforeSave: false });
 };

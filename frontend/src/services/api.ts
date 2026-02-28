@@ -63,6 +63,7 @@ export const authApi = {
     role?: string;
     phone?: string;
     department?: string;
+    permissions?: string[];
   }) => api.post('/auth/register', data),
 
   getMe: () => api.get('/auth/me'),
@@ -94,6 +95,7 @@ export const userApi = {
     department: string;
     role: string;
     isActive: boolean;
+    permissions: string[];
   }>) => api.put(`/users/${id}`, data),
 
   delete: (id: string) => api.delete(`/users/${id}`),

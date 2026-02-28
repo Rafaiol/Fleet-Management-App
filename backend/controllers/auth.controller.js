@@ -23,7 +23,7 @@ exports.register = async (req, res) => {
       });
     }
 
-    const { firstName, lastName, email, password, role, phone, department } = req.body;
+    const { firstName, lastName, email, password, role, phone, department, permissions } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -41,6 +41,7 @@ exports.register = async (req, res) => {
       email,
       password,
       role: role || 'user',
+      permissions: permissions || [],
       phone,
       department,
       createdBy: req.user ? req.user._id : null
@@ -60,6 +61,7 @@ exports.register = async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           role: user.role,
+          permissions: user.permissions,
           fullName: user.fullName
         }
       }
@@ -133,6 +135,7 @@ exports.login = async (req, res) => {
           lastName: user.lastName,
           email: user.email,
           role: user.role,
+          permissions: user.permissions,
           fullName: user.fullName,
           phone: user.phone,
           department: user.department,
@@ -156,7 +159,7 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     res.json({
       success: true,
       data: {
@@ -165,6 +168,7 @@ exports.getMe = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         role: user.role,
+        permissions: user.permissions,
         fullName: user.fullName,
         phone: user.phone,
         department: user.department,
@@ -242,7 +246,7 @@ exports.logout = async (req, res) => {
 exports.refreshToken = async (req, res) => {
   try {
     const token = generateToken(req.user._id);
-    
+
     res.json({
       success: true,
       data: { token }

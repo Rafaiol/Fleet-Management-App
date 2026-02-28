@@ -1,0 +1,11 @@
+﻿src/pages/MaintenanceDetail.tsx(7,3): error TS6133: 'Calendar' is declared but its value is never read.
+src/pages/MaintenanceDetail.tsx(9,3): error TS6133: 'CheckCircle' is declared but its value is never read.
+src/pages/Settings.tsx(2,23): error TS6133: 'useDispatch' is declared but its value is never read.
+src/services/api.ts(6,24): error TS2339: Property 'env' does not exist on type 'ImportMeta'.
+src/services/api.ts(43,16): error TS18048: 'error.response.status' is possibly 'undefined'.
+src/store/slices/dashboardSlice.ts(44,27): error TS1016: A required parameter cannot follow an optional parameter.
+src/store/slices/dashboardSlice.ts(80,27): error TS1016: A required parameter cannot follow an optional parameter.
+src/store/slices/maintenanceSlice.ts(43,24): error TS1016: A required parameter cannot follow an optional parameter.
+src/store/slices/maintenanceSlice.ts(112,24): error TS1016: A required parameter cannot follow an optional parameter.
+src/store/slices/vehicleSlice.ts(3,19): error TS6133: 'ApiResponse' is declared but its value is never read.
+src/store/slices/vehicleSlice.ts(43,24): error TS1016: A required parameter cannot follow an optional parameter.
