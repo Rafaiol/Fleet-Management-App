@@ -13,6 +13,8 @@ interface UIState {
     message: string;
     read: boolean;
     createdAt: string;
+    vehicleId?: string;
+    alertType?: string;
   }[];
   notificationsLoaded: boolean;
 }
@@ -79,6 +81,8 @@ const uiSlice = createSlice({
       type: 'info' | 'success' | 'warning' | 'error';
       title: string;
       message: string;
+      vehicleId?: string;
+      alertType?: string;
     }>) => {
       state.notifications.unshift({
         id: Date.now().toString(),
@@ -135,7 +139,9 @@ const uiSlice = createSlice({
           title,
           message: alert.message,
           read: false,
-          createdAt: new Date(alert.date).toISOString()
+          createdAt: new Date(alert.date).toISOString(),
+          vehicleId: alert.vehicle,
+          alertType: alert.type
         };
       });
 

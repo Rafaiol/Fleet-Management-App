@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
 import {
@@ -15,7 +16,9 @@ import {
   AlertTriangle,
   Info,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Car,
+  Wrench
 } from 'lucide-react';
 
 const getIconForType = (type: string) => {
@@ -46,6 +49,7 @@ const getBackgroundForType = (type: string, read: boolean) => {
 };
 
 const Notifications = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { notifications } = useSelector((state: RootState) => state.ui);
 
@@ -61,6 +65,15 @@ const Notifications = () => {
   const handleClearAll = () => {
     if (window.confirm('Are you sure you want to clear all notifications?')) {
       dispatch(clearNotifications());
+    }
+  };
+
+  const handleActionClick = (notification: any) => {
+    dispatch(markNotificationRead(notification.id));
+    if (notification.alertType === 'registration_expiring' || notification.alertType === 'insurance_expiring' || notification.alertType === 'registration_expired' || notification.alertType === 'insurance_expired') {
+      navigate(`/vehicles/${notification.vehicleId}`);
+    } else {
+      navigate('/maintenance/new', { state: { vehicleId: notification.vehicleId, alertType: notification.alertType } });
     }
   };
 
@@ -128,8 +141,8 @@ const Notifications = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4 mb-1">
                       <h4 className={`text-base font-medium truncate ${notification.read
-                          ? 'text-gray-700 dark:text-gray-300'
-                          : 'text-gray-900 dark:text-white'
+                        ? 'text-gray-700 dark:text-gray-300'
+                        : 'text-gray-900 dark:text-white'
                         }`}>
                         {notification.title}
                       </h4>
@@ -139,24 +152,41 @@ const Notifications = () => {
                     </div>
 
                     <p className={`text-sm ${notification.read
-                        ? 'text-gray-500 dark:text-gray-400'
-                        : 'text-gray-700 dark:text-gray-300'
+                      ? 'text-gray-500 dark:text-gray-400'
+                      : 'text-gray-700 dark:text-gray-300'
                       }`}>
                       {notification.message}
                     </p>
 
-                    <div className="mt-3 flex gap-4">
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      {notification.vehicleId && (
+                        <button
+                          onClick={() => handleActionClick(notification)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 transition-colors"
+                        >
+                          {(notification.alertType === 'registration_expiring' || notification.alertType === 'insurance_expiring' || notification.alertType === 'registration_expired' || notification.alertType === 'insurance_expired') ? (
+                            <>
+                              <Car className="w-3.5 h-3.5" /> Go to Vehicle
+                            </>
+                          ) : (
+                            <>
+                              <Wrench className="w-3.5 h-3.5" /> Go to Maintenance
+                            </>
+                          )}
+                        </button>
+                      )}
+
                       {!notification.read && (
                         <button
                           onClick={() => dispatch(markNotificationRead(notification.id))}
-                          className="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                          className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
                         >
                           Mark as read
                         </button>
                       )}
                       <button
                         onClick={() => dispatch(removeNotification(notification.id))}
-                        className="text-xs font-medium text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                        className="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors ml-auto sm:ml-0"
                       >
                         Remove
                       </button>

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft, Save, Wrench, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -13,6 +13,7 @@ import { Maintenance } from '@/types';
 const MaintenanceForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
 
   const isEditMode = Boolean(id);
@@ -44,8 +45,26 @@ const MaintenanceForm = () => {
         vehicle: vehicleId,
         scheduledDate: currentRecord.scheduledDate ? new Date(currentRecord.scheduledDate).toISOString().split('T')[0] : '',
       } as any);
+    } else if (!isEditMode && location.state) {
+      // Handle "Go to Maintenance" routing from notifications
+      const { vehicleId, alertType } = location.state as { vehicleId: string, alertType: string };
+      if (vehicleId) {
+        let mappedType = 'general_inspection';
+        if (alertType === 'maintenance_overdue' || alertType === 'maintenance_scheduled') {
+          // We could try to map specific maintenance due, but usually it's general
+          mappedType = 'general_inspection';
+        }
+
+        reset({
+          vehicle: vehicleId,
+          type: mappedType,
+          priority: 'high',
+          status: 'scheduled',
+          scheduledDate: new Date().toISOString().split('T')[0]
+        } as any);
+      }
     }
-  }, [currentRecord, isEditMode, reset]);
+  }, [currentRecord, isEditMode, reset, location.state]);
 
   const laborCost = watch('laborCost') || 0;
   const partsCost = watch('partsCost') || 0;
