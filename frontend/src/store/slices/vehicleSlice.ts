@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { vehicleApi } from '@/services/api';
-import { Vehicle, ApiResponse } from '@/types';
+import { Vehicle } from '@/types';
 import { toast } from 'react-toastify';
 
 interface VehicleState {
@@ -40,7 +40,7 @@ const initialState: VehicleState = {
 // Async thunks
 export const fetchVehicles = createAsyncThunk(
   'vehicles/fetchAll',
-  async (params?: any, { rejectWithValue }) => {
+  async (params: any | undefined, { rejectWithValue }) => {
     try {
       const response = await vehicleApi.getAll(params);
       return response.data;

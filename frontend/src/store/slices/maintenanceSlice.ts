@@ -40,7 +40,7 @@ const initialState: MaintenanceState = {
 // Async thunks
 export const fetchMaintenance = createAsyncThunk(
   'maintenance/fetchAll',
-  async (params?: any, { rejectWithValue }) => {
+  async (params: any | undefined, { rejectWithValue }) => {
     try {
       const response = await maintenanceApi.getAll(params);
       return response.data;
@@ -109,7 +109,7 @@ export const deleteMaintenance = createAsyncThunk(
 
 export const fetchMaintenanceStats = createAsyncThunk(
   'maintenance/fetchStats',
-  async (params?: any, { rejectWithValue }) => {
+  async (params: any | undefined, { rejectWithValue }) => {
     try {
       const response = await maintenanceApi.getStats(params);
       return response.data.data;
@@ -145,14 +145,14 @@ export const fetchMaintenanceTimeline = createAsyncThunk(
 
 export const completeMaintenance = createAsyncThunk(
   'maintenance/complete',
-  async ({ id, data }: { 
-    id: string; 
-    data: { 
-      workPerformed: string; 
-      mileageAtService?: number; 
+  async ({ id, data }: {
+    id: string;
+    data: {
+      workPerformed: string;
+      mileageAtService?: number;
       completionDate?: string;
       totalCost?: number;
-    } 
+    }
   }, { rejectWithValue }) => {
     try {
       const response = await maintenanceApi.complete(id, data);

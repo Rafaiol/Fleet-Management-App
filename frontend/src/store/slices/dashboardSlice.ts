@@ -41,7 +41,7 @@ export const fetchDashboardOverview = createAsyncThunk(
 
 export const fetchDashboardTrends = createAsyncThunk(
   'dashboard/fetchTrends',
-  async (months?: number, { rejectWithValue }) => {
+  async (months: number | undefined, { rejectWithValue }) => {
     try {
       const response = await dashboardApi.getTrends(months);
       return response.data.data;
@@ -77,7 +77,7 @@ export const fetchMaintenanceTypes = createAsyncThunk(
 
 export const fetchCostAnalysis = createAsyncThunk(
   'dashboard/fetchCostAnalysis',
-  async (months?: number, { rejectWithValue }) => {
+  async (months: number | undefined, { rejectWithValue }) => {
     try {
       const response = await dashboardApi.getCostAnalysis(months);
       return response.data.data;

@@ -82,6 +82,12 @@ function App() {
           <Route path="/users" element={<Users />} />
           <Route path="/users/new" element={<UserForm />} />
           <Route path="/users/:id/edit" element={<UserForm />} />
+        </Route>
+      </Route>
+
+      {/* Routes Requiring Specific Permissions */}
+      <Route element={<ProtectedRoute requirePermission={['add_alerts', 'edit_alerts', 'delete_alerts']} />}>
+        <Route element={<Layout />}>
           <Route path="/alert-rules" element={<AlertRules />} />
         </Route>
       </Route>

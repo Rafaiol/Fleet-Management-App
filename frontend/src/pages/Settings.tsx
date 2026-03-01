@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   User,
   Lock,
@@ -81,11 +81,10 @@ const Settings = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
-                  activeTab === tab.id
+                className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeTab === tab.id
                     ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400 border-l-4 border-primary-600'
                     : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
-                }`}
+                  }`}
               >
                 <tab.icon className="w-5 h-5" />
                 {tab.label}
@@ -269,14 +268,12 @@ const Settings = () => {
                   </div>
                   <button
                     onClick={toggleTheme}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      theme === 'dark' ? 'bg-primary-600' : 'bg-gray-200'
-                    }`}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${theme === 'dark' ? 'bg-primary-600' : 'bg-gray-200'
+                      }`}
                   >
                     <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
-                      }`}
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${theme === 'dark' ? 'translate-x-6' : 'translate-x-1'
+                        }`}
                     />
                   </button>
                 </div>

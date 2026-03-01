@@ -247,6 +247,8 @@ const UserForm = () => {
                   { id: 'edit_maintenance', label: 'Edit Maintenance' },
                   { id: 'delete_maintenance', label: 'Delete Maintenance' },
                   { id: 'add_alerts', label: 'Create Alerts' },
+                  { id: 'edit_alerts', label: 'Edit Alerts' },
+                  { id: 'delete_alerts', label: 'Delete Alerts' },
                 ].map((perm) => (
                   <label key={perm.id} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <input

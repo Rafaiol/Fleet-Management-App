@@ -15,6 +15,7 @@ import {
 
 import { RootState, AppDispatch } from '@/store';
 import { toggleSidebar, setSidebarOpen } from '@/store/slices/uiSlice';
+import { useAuth } from '@/hooks/useAuth';
 
 const menuItems = [
   { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
@@ -23,18 +24,19 @@ const menuItems = [
   { path: '/reports', icon: FileText, label: 'Reports' },
 ];
 
-const adminMenuItems = [
-  { path: '/users', icon: Users, label: 'Users' },
-  { path: '/alert-rules', icon: ShieldAlert, label: 'Alert Rules' },
-];
-
 const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { sidebarOpen, isMobile } = useSelector((state: RootState) => state.ui);
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { isAdmin, canAddAlerts, canEditAlerts, canDeleteAlerts } = useAuth();
+  const hasAnyAlertPrivilege = isAdmin || canAddAlerts || canEditAlerts || canDeleteAlerts;
 
-  const isAdmin = user?.role === 'admin';
   const isCollapsed = !isMobile && !sidebarOpen;
+
+  const showAdminMenu = isAdmin || hasAnyAlertPrivilege;
+  const adminMenuItems = [
+    ...(isAdmin ? [{ path: '/users', icon: Users, label: 'Users' }] : []),
+    ...(hasAnyAlertPrivilege ? [{ path: '/alert-rules', icon: ShieldAlert, label: 'Alert Rules' }] : []),
+  ];
 
   const handleClose = () => {
     if (isMobile) {
@@ -100,7 +102,7 @@ const Sidebar = () => {
           ))}
 
           {/* Admin Menu */}
-          {isAdmin && (
+          {showAdminMenu && (
             <>
               <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
                 {!isCollapsed && (

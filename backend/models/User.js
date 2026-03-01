@@ -43,7 +43,9 @@ const userSchema = new mongoose.Schema({
       'add_maintenance',
       'edit_maintenance',
       'delete_maintenance',
-      'add_alerts'
+      'add_alerts',
+      'edit_alerts',
+      'delete_alerts'
     ]
   }],
   phone: {

@@ -4,9 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   ArrowLeft,
   Wrench,
-  Calendar,
   DollarSign,
-  CheckCircle,
   Clock,
   Download,
   Loader2,

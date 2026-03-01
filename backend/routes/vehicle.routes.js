@@ -14,7 +14,7 @@ const {
   getVehiclesNeedingMaintenance
 } = require('../controllers/vehicle.controller');
 
-const { authenticate, authorize } = require('../middleware/auth.middleware');
+const { authenticate, authorize, checkPermission } = require('../middleware/auth.middleware');
 
 // Validation middleware
 const createVehicleValidation = [
@@ -69,9 +69,9 @@ router.get('/stats/overview', getVehicleStats);
 router.get('/filters/makes', getVehicleMakes);
 router.get('/maintenance/due', getVehiclesNeedingMaintenance);
 router.get('/:id', getVehicle);
-router.post('/', authorize('admin'), createVehicleValidation, createVehicle);
-router.put('/:id', authorize('admin'), updateVehicleValidation, updateVehicle);
-router.delete('/:id', authorize('admin'), deleteVehicle);
+router.post('/', checkPermission('add_vehicles'), createVehicleValidation, createVehicle);
+router.put('/:id', checkPermission('edit_vehicles'), updateVehicleValidation, updateVehicle);
+router.delete('/:id', checkPermission('delete_vehicles'), deleteVehicle);
 router.put('/:id/mileage', updateMileageValidation, updateMileage);
 
 module.exports = router;

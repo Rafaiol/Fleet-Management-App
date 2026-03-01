@@ -163,7 +163,7 @@ const emptyForm: FormData = {
 
 const AlertRules = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { canAddAlerts } = useAuth();
+  const { canAddAlerts, canEditAlerts, canDeleteAlerts } = useAuth();
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -385,7 +385,7 @@ const AlertRules = () => {
                     {sev.icon}
                     {rule.severity.charAt(0).toUpperCase() + rule.severity.slice(1)}
                   </span>
-                  {canAddAlerts && (
+                  {canEditAlerts && (
                     <button
                       onClick={() => handleToggle(rule)}
                       className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
@@ -412,28 +412,32 @@ const AlertRules = () => {
                 </div>
 
                 {/* Actions */}
-                {canAddAlerts && (
+                {(canEditAlerts || canDeleteAlerts) && (
                   <div className="mt-4 flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
-                    <button
-                      onClick={() => openEdit(rule)}
-                      className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
-                    >
-                      <Pencil className="w-3.5 h-3.5" /> Edit
-                    </button>
-                    <span className="text-gray-300 dark:text-gray-600">|</span>
-                    {deleteConfirm === rule._id ? (
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-red-600 dark:text-red-400">Delete?</span>
-                        <button onClick={() => handleDelete(rule._id)} className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400">Yes</button>
-                        <button onClick={() => setDeleteConfirm(null)} className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400">No</button>
-                      </div>
-                    ) : (
+                    {canEditAlerts && (
                       <button
-                        onClick={() => setDeleteConfirm(rule._id)}
-                        className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                        onClick={() => openEdit(rule)}
+                        className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
                       >
-                        <Trash2 className="w-3.5 h-3.5" /> Delete
+                        <Pencil className="w-3.5 h-3.5" /> Edit
                       </button>
+                    )}
+                    {(canEditAlerts && canDeleteAlerts) && <span className="text-gray-300 dark:text-gray-600">|</span>}
+                    {canDeleteAlerts && (
+                      deleteConfirm === rule._id ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-red-600 dark:text-red-400">Delete?</span>
+                          <button onClick={() => handleDelete(rule._id)} className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400">Yes</button>
+                          <button onClick={() => setDeleteConfirm(null)} className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400">No</button>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => setDeleteConfirm(rule._id)}
+                          className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                      )
                     )}
                   </div>
                 )}

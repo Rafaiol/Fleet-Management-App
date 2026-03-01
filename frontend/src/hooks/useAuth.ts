@@ -59,5 +59,7 @@ export const useAuth = () => {
     canEditMaintenance: hasPermission('edit_maintenance'),
     canDeleteMaintenance: hasPermission('delete_maintenance'),
     canAddAlerts: hasPermission('add_alerts'),
+    canEditAlerts: hasPermission('edit_alerts'),
+    canDeleteAlerts: hasPermission('delete_alerts'),
   };
 };
