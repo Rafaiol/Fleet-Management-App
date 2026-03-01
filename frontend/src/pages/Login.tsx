@@ -58,26 +58,26 @@ const Login = () => {
         <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-blue-500/10 to-transparent pointer-events-none"></div>
       </div>
 
-      <main className="relative z-20 w-full max-w-[24rem] px-4">
-        <div className="glass-morphism rounded-2xl p-6 md:p-8 flex flex-col items-center shadow-2xl">
-          <div className="flex flex-col items-center mb-6">
-            <div className="bg-blue-500/20 p-2.5 rounded-full mb-3 neon-glow">
-              <Car className="text-blue-500 w-6 h-6" />
+      <main className="relative z-20 w-full max-w-[26rem] px-4 mt-6 sm:mt-8">
+        <div className="glass-morphism rounded-2xl p-5 md:p-6 flex flex-col items-center shadow-2xl">
+          <div className="flex flex-col items-center mb-4">
+            <div className="bg-blue-500/20 p-2 rounded-full mb-2 neon-glow">
+              <Car className="text-blue-500 w-5 h-5" />
             </div>
-            <h1 className="text-white text-2xl font-bold tracking-tight">Fleet MS</h1>
-            <div className="h-1 w-12 bg-blue-500 mt-2 rounded-full"></div>
+            <h1 className="text-white text-xl font-bold tracking-tight">Fleet MS</h1>
+            <div className="h-1 w-10 bg-blue-500 mt-1.5 rounded-full"></div>
           </div>
 
-          <div className="w-full mb-6 text-center">
-            <h2 className="text-white text-xl font-bold mb-1">Welcome back</h2>
-            <p className="text-gray-300 text-xs text-balance">Please enter your credentials to access the fleet dashboard</p>
+          <div className="w-full mb-4 text-center">
+            <h2 className="text-white text-lg font-bold mb-0.5">Welcome back</h2>
+            <p className="text-gray-300 text-[11px] text-balance">Please enter your credentials to access the fleet dashboard</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="w-full space-y-4">
-            <div className="space-y-1.5">
+          <form onSubmit={handleSubmit} className="w-full space-y-3">
+            <div className="space-y-1">
               <label className="text-gray-200 text-[10px] font-semibold uppercase tracking-wider ml-1">Email Address</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors" />
                 </div>
                 <input
@@ -85,16 +85,16 @@ const Login = () => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  className="block w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                  className="block w-full pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
                   placeholder="admin@fleet.com"
                 />
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="text-gray-200 text-[10px] font-semibold uppercase tracking-wider ml-1">Password</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors" />
                 </div>
                 <input
@@ -102,13 +102,13 @@ const Login = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
-                  className="block w-full pl-11 pr-11 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                  className="block w-full pl-9 pr-10 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-white transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -131,7 +131,7 @@ const Login = () => {
             </div>
 
             {error && (
-              <div className="p-2.5 bg-red-900/40 border border-red-500/50 rounded-lg">
+              <div className="p-2 bg-red-900/40 border border-red-500/50 rounded-lg">
                 <p className="text-xs text-red-400 text-center">{error}</p>
               </div>
             )}
@@ -139,7 +139,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 rounded-lg neon-glow transition-all transform active:scale-[0.98] shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg neon-glow transition-all transform active:scale-[0.98] shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-2"
             >
               {isLoading ? (
                 <>
