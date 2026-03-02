@@ -169,13 +169,26 @@ const Sidebar = () => {
         {!isMobile && (
           <button
             onClick={() => dispatch(toggleSidebar())}
-            className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full flex items-center justify-center hover:bg-primary-50 dark:hover:bg-slate-700 hover:border-primary-300 transition-all z-50 focus:outline-none shadow-sm"
+            className="group absolute -right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 z-50 focus:outline-none shadow-sm hover:shadow-md"
           >
+            {/* Glassmorphic Background */}
+            <div className="absolute inset-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-full"></div>
+
+            {/* Aurora Gradient Border (Idle & Hover) */}
+            <div className="absolute inset-0 rounded-full p-[1px] bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:from-cyan-400 group-hover:via-indigo-500 group-hover:to-violet-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)", WebkitMaskComposite: "xor", maskComposite: "exclude" }}></div>
+
+            {/* Default Subtle Border */}
+            <div className="absolute inset-0 rounded-full border border-slate-200/50 dark:border-slate-700/50 group-hover:border-transparent transition-colors duration-300"></div>
+
+            {/* Icon */}
             {sidebarOpen ? (
-              <ChevronLeft className="w-3.5 h-3.5 text-primary-600" />
+              <ChevronLeft className="relative z-10 w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
             ) : (
-              <ChevronRight className="w-3.5 h-3.5 text-primary-600" />
+              <ChevronRight className="relative z-10 w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors" />
             )}
+
+            {/* Subtle Aurora Glow on Hover */}
+            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-400/0 via-indigo-500/0 to-violet-500/0 group-hover:from-cyan-400/10 group-hover:via-indigo-500/10 group-hover:to-violet-500/10 blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
           </button>
         )}
       </aside>
