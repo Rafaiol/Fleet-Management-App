@@ -35,111 +35,107 @@ const Login = () => {
   };
 
   return (
-    <div className="font-sans min-h-screen flex items-center justify-center overflow-hidden bg-gray-900">
-      <style>
-        {`
-          .glass-morphism {
-              background: rgba(255, 255, 255, 0.05);
-              backdrop-filter: blur(16px);
-              -webkit-backdrop-filter: blur(16px);
-              border: 1px solid rgba(255, 255, 255, 0.1);
-          }
-          .neon-glow {
-              box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-          }
-        `}
-      </style>
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-transparent to-gray-900/60 z-10"></div>
-        <div
-          className="w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCGVDmHipRteGYMSi1-PHu3O0A3rcNHr4K25DhIKztrldH_Qj4XAssD8ipA7gW4OQz3svQoDbXC56TmHFWZFmRT4C7gdH1Qw3D5Q6IscuZ6lrBOz5cViK6cPl1qi8Gfzy9CHUcrtahuRmrNLncSeNiRQYi9_hm0U9aUdW4zR3Zh5VMPGR98LINCU1yd4pstRlYucPPUNyxnzvr3L6CRHhuwYXg1IrKV8fP2of1ewxOGZ1h2PAzsfft_NsyU4AX8beAKKQhlckmHccY')" }}
-        ></div>
-        <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-blue-500/10 to-transparent pointer-events-none"></div>
+    <div className="font-sans min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-slate-950 relative selection:bg-indigo-500/30">
+
+      {/* Animated Aurora Background Blobs */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {/* Pastel Indigo Blob */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] opacity-40 animate-blob bg-indigo-300 dark:bg-indigo-900/50" style={{ animation: "auroraFloat1 20s infinite alternate ease-in-out" }}></div>
+        {/* Light Violet Blob */}
+        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[120px] opacity-40 animate-blob bg-violet-300 dark:bg-violet-900/50" style={{ animation: "auroraFloat2 25s infinite alternate-reverse ease-in-out" }}></div>
+        {/* Subtle Cyan Accent */}
+        <div className="absolute top-[40%] left-[60%] w-[400px] h-[400px] rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[90px] opacity-30 animate-blob bg-cyan-200 dark:bg-cyan-900/40" style={{ animation: "auroraFloat3 22s infinite alternate ease-in-out" }}></div>
       </div>
 
-      <main className="relative z-20 w-full max-w-[26rem] px-4 mt-6 sm:mt-8">
-        <div className="glass-morphism rounded-2xl p-5 md:p-6 flex flex-col items-center shadow-2xl">
-          <div className="flex flex-col items-center mb-4">
-            <div className="bg-blue-500/20 p-2 rounded-full mb-2 neon-glow">
-              <Car className="text-blue-500 w-5 h-5" />
+      <main className="relative z-20 w-full max-w-[28rem] px-4 mt-16 sm:mt-5">
+        {/* The card-aurora class handles the subtle glowing border and glass backdrop */}
+        <div className="card-aurora p-8 flex flex-col items-center backdrop-blur-2xl bg-white/60 dark:bg-slate-900/80 shadow-2xl">
+
+          {/* Logo Section */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-4 group hover:shadow-md transition-shadow">
+              <Car className="text-indigo-600 dark:text-indigo-400 w-8 h-8 transform group-hover:scale-110 transition-transform duration-300" />
             </div>
-            <h1 className="text-white text-xl font-bold tracking-tight">Fleet MS</h1>
-            <div className="h-1 w-10 bg-blue-500 mt-1.5 rounded-full"></div>
+            <h1 className="text-slate-900 dark:text-white text-2xl font-bold tracking-tight mb-2">Welcome Back</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm text-center px-4">
+              Sign in to your account to access the fleet dashboard
+            </p>
           </div>
 
-          <div className="w-full mb-4 text-center">
-            <h2 className="text-white text-lg font-bold mb-0.5">Welcome back</h2>
-            <p className="text-gray-300 text-[11px] text-balance">Please enter your credentials to access the fleet dashboard</p>
-          </div>
+          <form onSubmit={handleSubmit} className="w-full space-y-4">
 
-          <form onSubmit={handleSubmit} className="w-full space-y-3">
-            <div className="space-y-1">
-              <label className="text-gray-200 text-[10px] font-semibold uppercase tracking-wider ml-1">Email Address</label>
+            {/* Email Input */}
+            <div className="space-y-1.5">
+              <label className="text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider ml-1">Email Address</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors" />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Mail className="text-slate-400 dark:text-slate-500 w-4 h-4 group-focus-within:text-indigo-500 transition-colors" />
                 </div>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
-                  className="block w-full pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                  className="block w-full pl-10 pr-4 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm backdrop-blur-sm"
                   placeholder="admin@fleet.com"
                 />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-gray-200 text-[10px] font-semibold uppercase tracking-wider ml-1">Password</label>
+            {/* Password Input */}
+            <div className="space-y-1.5">
+              <label className="text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider ml-1">Password</label>
               <div className="relative group">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors" />
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <Lock className="text-slate-400 dark:text-slate-500 w-4 h-4 group-focus-within:text-indigo-500 transition-colors" />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
-                  className="block w-full pl-9 pr-10 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-sm"
+                  className="block w-full pl-10 pr-10 py-2.5 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm backdrop-blur-sm"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between py-1">
+            {/* Options Row */}
+            <div className="flex items-center justify-between py-2">
               <label className="flex items-center cursor-pointer group">
                 <div className="relative flex items-center justify-center">
                   <input type="checkbox" className="peer sr-only" />
-                  <div className="w-4 h-4 rounded-sm border border-blue-500/50 bg-gray-900/50 peer-checked:bg-blue-500 peer-checked:neon-glow flex items-center justify-center transition-all">
+                  <div className="w-4 h-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 peer-checked:bg-indigo-600 peer-checked:border-indigo-600 flex items-center justify-center transition-all shadow-sm">
                     <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                   </div>
                 </div>
-                <span className="ml-2 text-xs text-gray-300 group-hover:text-blue-400 transition-colors">Remember me</span>
+                <span className="ml-2.5 text-xs text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors font-medium">Remember me</span>
               </label>
-              <a href="#" className="text-xs text-gray-400 hover:text-blue-500 transition-colors">Forgot password?</a>
+              <a href="#" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">Forgot password?</a>
             </div>
 
+            {/* Error Message */}
             {error && (
-              <div className="p-2 bg-red-900/40 border border-red-500/50 rounded-lg">
-                <p className="text-xs text-red-400 text-center">{error}</p>
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 rounded-xl flex items-start gap-2 animate-in fade-in zoom-in-95 duration-200">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 mt-1.5 shrink-0" />
+                <p className="text-xs text-red-600 dark:text-red-400 font-medium leading-relaxed">{error}</p>
               </div>
             )}
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg neon-glow transition-all transform active:scale-[0.98] shadow-lg shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm mt-2"
+              className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition-all transform active:scale-[0.98] shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/40 disabled:opacity-70 disabled:cursor-not-allowed text-sm mt-4"
             >
               {isLoading ? (
                 <>
@@ -153,34 +149,34 @@ const Login = () => {
           </form>
 
           {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-white/5 border border-white/10 rounded-lg w-full">
-            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2 text-center">
+          <div className="mt-8 p-4 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 rounded-xl w-full">
+            <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 text-center">
               Demo Access
             </p>
-            <div className="space-y-1 text-xs text-gray-400 flex flex-col items-center">
-              <p>Admin: <span className="text-white">admin@fleet.com</span> / <span className="text-white">admin123</span></p>
-              <p>User: <span className="text-white">john.smith@fleet.com</span> / <span className="text-white">user123</span></p>
+            <div className="space-y-2 text-xs text-slate-500 dark:text-slate-400 flex flex-col items-center">
+              <p>Admin: <span className="font-semibold text-slate-700 dark:text-slate-200 bg-white/50 dark:bg-slate-900/50 px-1.5 py-0.5 rounded">admin@fleet.com</span> / <span className="font-semibold text-slate-700 dark:text-slate-200">admin123</span></p>
+              <p>User: <span className="font-semibold text-slate-700 dark:text-slate-200 bg-white/50 dark:bg-slate-900/50 px-1.5 py-0.5 rounded">john.smith@fleet.com</span> / <span className="font-semibold text-slate-700 dark:text-slate-200">user123</span></p>
             </div>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-white/10 w-full text-center">
-            <p className="text-gray-400 text-sm">
-              Need access? <a href="#" className="text-blue-500 font-medium hover:underline">Contact Administrator</a>
+          <div className="mt-8 text-center w-full">
+            <p className="text-slate-500 dark:text-slate-400 text-sm">
+              Don't have an account? <a href="#" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Contact Administrator</a>
             </p>
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center space-x-6 text-gray-500 text-xs uppercase tracking-widest font-medium opacity-60">
-          <a href="#" className="hover:text-white transition-colors">Privacy</a>
-          <a href="#" className="hover:text-white transition-colors">Terms</a>
-          <a href="#" className="hover:text-white transition-colors">Support</a>
+        <div className="mt-8 flex justify-center space-x-6 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-semibold opacity-80">
+          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Privacy</a>
+          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Terms</a>
+          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Support</a>
         </div>
       </main>
 
-      <div className="fixed top-8 right-8 flex gap-3 z-30">
-        <div className="glass-morphism px-4 py-2 rounded-full flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[10px] text-white font-bold uppercase tracking-tighter">System Online</span>
+      <div className="fixed top-6 right-6 flex gap-3 z-30">
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/50 dark:border-slate-700/50 shadow-sm flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"></span>
+          <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider">System Online</span>
         </div>
       </div>
     </div>
