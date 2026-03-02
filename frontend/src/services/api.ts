@@ -7,7 +7,7 @@ const api: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000,
+  timeout: 60000, // Increased to 60s for PDF report generation
 });
 
 // Request interceptor - add auth token
