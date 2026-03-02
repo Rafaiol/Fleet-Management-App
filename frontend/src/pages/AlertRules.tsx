@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store';
 import { fetchAlertsAsNotifications } from '@/store/slices/uiSlice';
@@ -448,23 +449,27 @@ const AlertRules = () => {
       )}
 
       {/* ─── Create / Edit Modal ─── */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {modalOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
           {/* Overlay */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeModal} />
 
           {/* Panel */}
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto card-aurora animate-in zoom-in-95 fade-in duration-200">
-            <div className="flex items-center justify-between p-6 pb-0">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+          <form
+            onSubmit={handleSubmit}
+            className="relative w-full max-w-lg overflow-hidden bg-white dark:bg-slate-900 rounded-2xl shadow-2xl flex flex-col border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 fade-in duration-200"
+            style={{ maxHeight: 'calc(100vh - 4rem)' }}
+          >
+            <div className="flex-none flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingRule ? 'Edit Rule' : 'Create New Rule'}
               </h2>
-              <button onClick={closeModal} className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+              <button type="button" onClick={closeModal} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            <div className="flex-1 overflow-y-auto min-h-0 p-6 space-y-5">
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
@@ -595,27 +600,27 @@ const AlertRules = () => {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-60 flex items-center gap-2"
-                >
-                  {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {editingRule ? 'Save Changes' : 'Create Rule'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            </div>
+            <div className="flex-none flex items-center justify-end gap-3 p-6 border-t border-slate-100 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-60 flex items-center gap-2"
+              >
+                {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+                {editingRule ? 'Save Changes' : 'Create Rule'}
+              </button>
+            </div>
+          </form>
+        </div>,
+        document.body
       )}
     </div>
   );
