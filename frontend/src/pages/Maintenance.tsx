@@ -18,6 +18,7 @@ import {
   deleteMaintenance,
 } from '@/store/slices/maintenanceSlice';
 import { useDebounce, useAuth } from '@/hooks';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const Maintenance = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,6 +37,8 @@ const Maintenance = () => {
     priority: '',
   });
   const [page, setPage] = useState(1);
+  const [recordToDelete, setRecordToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
 
@@ -54,9 +57,18 @@ const Maintenance = () => {
     );
   }, [dispatch, debouncedSearch, filters, page]);
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this maintenance record?')) {
-      await dispatch(deleteMaintenance(id));
+  const handleDelete = (id: string) => {
+    setRecordToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!recordToDelete) return;
+    setIsDeleting(true);
+    try {
+      await dispatch(deleteMaintenance(recordToDelete));
+    } finally {
+      setIsDeleting(false);
+      setRecordToDelete(null);
     }
   };
 
@@ -279,6 +291,18 @@ const Maintenance = () => {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={!!recordToDelete}
+        onClose={() => setRecordToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete Record"
+        message="Are you sure you want to delete this maintenance record? This action cannot be undone."
+        confirmText="Delete Record"
+        cancelText="Cancel"
+        isDestructive={true}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

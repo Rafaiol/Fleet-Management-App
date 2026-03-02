@@ -20,6 +20,7 @@ import {
 } from '@/store/slices/userSlice';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAuth } from '@/hooks/useAuth';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,6 +35,8 @@ const Users = () => {
     isActive: '',
   });
   const [page, setPage] = useState(1);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
 
@@ -53,9 +56,18 @@ const Users = () => {
     );
   }, [dispatch, debouncedSearch, filters, page]);
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      await dispatch(deleteUser(id));
+  const handleDelete = (id: string) => {
+    setUserToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+    setIsDeleting(true);
+    try {
+      await dispatch(deleteUser(userToDelete));
+    } finally {
+      setIsDeleting(false);
+      setUserToDelete(null);
     }
   };
 
@@ -278,6 +290,18 @@ const Users = () => {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={!!userToDelete}
+        onClose={() => setUserToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete User"
+        message="Are you sure you want to delete this user? This action cannot be undone."
+        confirmText="Delete User"
+        cancelText="Cancel"
+        isDestructive={true}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

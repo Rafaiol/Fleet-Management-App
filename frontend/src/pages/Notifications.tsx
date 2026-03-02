@@ -9,6 +9,8 @@ import {
   removeNotification,
 } from '@/store/slices/uiSlice';
 import { formatDistanceToNow } from 'date-fns';
+import { useState } from 'react';
+import ConfirmModal from '@/components/ConfirmModal';
 import {
   Bell,
   Check,
@@ -58,14 +60,19 @@ const Notifications = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+
   const handleMarkAllRead = () => {
     dispatch(markAllNotificationsRead());
   };
 
   const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all notifications?')) {
-      dispatch(clearNotifications());
-    }
+    setIsClearModalOpen(true);
+  };
+
+  const confirmClearAll = () => {
+    dispatch(clearNotifications());
+    setIsClearModalOpen(false);
   };
 
   const handleActionClick = (notification: any) => {
@@ -197,6 +204,17 @@ const Notifications = () => {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={isClearModalOpen}
+        onClose={() => setIsClearModalOpen(false)}
+        onConfirm={confirmClearAll}
+        title="Clear Notifications"
+        message="Are you sure you want to clear all notifications? This action cannot be undone."
+        confirmText="Clear All"
+        cancelText="Cancel"
+        isDestructive={true}
+      />
     </div>
   );
 };

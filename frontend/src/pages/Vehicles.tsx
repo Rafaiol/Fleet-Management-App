@@ -18,6 +18,7 @@ import {
   fetchVehicleMakes,
 } from '@/store/slices/vehicleSlice';
 import { useDebounce, useAuth } from '@/hooks';
+import ConfirmModal from '@/components/ConfirmModal';
 
 const Vehicles = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,6 +37,8 @@ const Vehicles = () => {
     make: '',
   });
   const [page, setPage] = useState(1);
+  const [vehicleToDelete, setVehicleToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Sync the UI search state if the URL changes 
   // (e.g. typing a new search in the header while already on the vehicles page)
@@ -61,9 +64,18 @@ const Vehicles = () => {
     );
   }, [dispatch, debouncedSearch, filters, page]);
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this vehicle?')) {
-      await dispatch(deleteVehicle(id));
+  const handleDelete = (id: string) => {
+    setVehicleToDelete(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!vehicleToDelete) return;
+    setIsDeleting(true);
+    try {
+      await dispatch(deleteVehicle(vehicleToDelete));
+    } finally {
+      setIsDeleting(false);
+      setVehicleToDelete(null);
     }
   };
 
@@ -290,6 +302,18 @@ const Vehicles = () => {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={!!vehicleToDelete}
+        onClose={() => setVehicleToDelete(null)}
+        onConfirm={confirmDelete}
+        title="Delete Vehicle"
+        message="Are you sure you want to delete this vehicle? This action cannot be undone and will remove all associated maintenance records and assignments."
+        confirmText="Delete Vehicle"
+        cancelText="Cancel"
+        isDestructive={true}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };
