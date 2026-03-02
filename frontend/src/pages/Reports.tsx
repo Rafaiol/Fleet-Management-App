@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   FileText,
   Download,
@@ -296,8 +297,8 @@ const Reports = () => {
         </div>
       </div>
       {/* Selection Modals */}
-      {modalOpen === 'vehicle' && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {modalOpen === 'vehicle' && createPortal(
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="card-aurora w-full max-w-lg max-h-[90vh] flex flex-col page-fade-in">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700/50">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
@@ -363,11 +364,12 @@ const Reports = () => {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {modalOpen === 'maintenance' && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      {modalOpen === 'maintenance' && createPortal(
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="card-aurora w-full max-w-lg max-h-[90vh] flex flex-col page-fade-in">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700/50">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
@@ -447,7 +449,8 @@ const Reports = () => {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
