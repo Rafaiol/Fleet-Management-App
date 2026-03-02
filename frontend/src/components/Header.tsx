@@ -45,75 +45,71 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 right-0 left-0 z-20 h-16 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
-      <div className={`h-full flex items-center justify-between px-4 lg:px-8 transition-all duration-300 ${isMobile ? '' : sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
-        }`}>
+    <header className="fixed top-0 right-0 left-0 z-20 h-16 bg-white/90 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-300">
+      <div
+        className={`h-full flex items-center justify-between px-4 lg:px-8 transition-all duration-300 ${isMobile ? '' : sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
+          }`}
+      >
         {/* Left Side */}
         <div className="flex items-center gap-4">
           {/* Mobile Menu Button */}
           <button
             onClick={() => dispatch(toggleSidebar())}
-            className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 lg:hidden"
+            className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors lg:hidden"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           </button>
 
           {/* Search */}
           <div className="hidden md:flex items-center">
             <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 w-64 bg-gray-100 dark:bg-gray-700 border-0 rounded-lg text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 focus:ring-2 focus:ring-primary-500"
+                placeholder="Search vehicles..."
+                className="pl-10 pr-4 py-2 w-64 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100"
               />
             </form>
           </div>
         </div>
 
         {/* Right Side */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
-            className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
             title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {isDark ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
 
           {/* Notifications */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative"
+              className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors relative"
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white" />
               )}
             </button>
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
-                <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                    Notifications
-                  </h3>
+              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50 animate-fade-in">
+                <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Notifications</h3>
                   {unreadCount > 0 && (
-                    <span className="text-xs bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 py-0.5 px-2 rounded-full font-medium">
+                    <span className="text-xs bg-rose-50 text-rose-600 py-0.5 px-2.5 rounded-full font-medium border border-rose-100">
                       {unreadCount} new
                     </span>
                   )}
                 </div>
-                <div className="max-h-80 overflow-y-auto">
+                <div className="max-h-80 overflow-y-auto scrollbar-thin">
                   {recentNotifications.length > 0 ? (
                     recentNotifications.map(notification => (
                       <div
@@ -123,34 +119,33 @@ const Header = () => {
                             dispatch(markNotificationRead(notification.id));
                           }
                         }}
-                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${!notification.read ? 'bg-primary-50/50 dark:bg-primary-900/10' : ''
+                        className={`px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors ${!notification.read ? 'bg-primary-50/60 dark:bg-primary-900/10 border-l-2 border-primary-400 pl-3' : ''
                           }`}
                       >
-                        <p className={`text-sm ${!notification.read ? 'text-gray-900 dark:text-white font-medium' : 'text-gray-800 dark:text-gray-200'
-                          }`}>
+                        <p className={`text-sm ${!notification.read ? 'text-slate-900 dark:text-white font-medium' : 'text-slate-700 dark:text-gray-200'}`}>
                           {notification.title}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-1">
+                        <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5 line-clamp-1">
                           {notification.message}
                         </p>
-                        <p className="text-[10px] text-gray-400 mt-1">
+                        <p className="text-[10px] text-slate-400 mt-1">
                           {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
                         </p>
                       </div>
                     ))
                   ) : (
-                    <div className="px-4 py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                    <div className="px-4 py-8 text-center text-sm text-slate-400">
                       No notifications to show.
                     </div>
                   )}
                 </div>
-                <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700 text-center">
+                <div className="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 text-center">
                   <Link
                     to="/notifications"
-                    className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 font-medium"
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium dark:text-primary-400"
                     onClick={() => setShowNotifications(false)}
                   >
-                    View all notifications
+                    View all notifications →
                   </Link>
                 </div>
               </div>
@@ -161,45 +156,42 @@ const Header = () => {
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2 p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-2 py-1.5 text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
             >
-              <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
+              {/* Aurora gradient avatar */}
+              <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-primary-500 to-violet-600 shadow-sm shadow-primary-200 ring-2 ring-primary-100">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <span className="hidden md:block text-sm font-medium">
+              <span className="hidden md:block text-sm font-medium text-slate-700">
                 {user?.fullName || 'User'}
               </span>
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
             {/* User Dropdown */}
             {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
-                <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {user?.fullName}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {user?.email}
-                  </p>
-                  <span className="inline-block mt-1 px-2 py-0.5 text-xs font-medium bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 rounded-full capitalize">
+              <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50 animate-fade-in">
+                <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{user?.fullName}</p>
+                  <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">{user?.email}</p>
+                  <span className="inline-block mt-1.5 px-2.5 py-0.5 text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 rounded-full capitalize border border-primary-100">
                     {user?.role}
                   </span>
                 </div>
                 <Link
                   to="/settings"
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                   onClick={() => setShowUserMenu(false)}
                 >
-                  <User className="w-4 h-4" />
-                  Profile
+                  <User className="w-4 h-4 text-slate-400" />
+                  Profile & Settings
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  Logout
+                  Sign out
                 </button>
               </div>
             )}

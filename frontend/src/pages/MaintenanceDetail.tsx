@@ -135,7 +135,7 @@ const MaintenanceDetail = () => {
 
       {/* Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-1">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <Wrench className="w-5 h-5 text-blue-600" />
@@ -151,7 +151,7 @@ const MaintenanceDetail = () => {
           </span>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-2">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
               <Clock className="w-5 h-5 text-yellow-600" />
@@ -167,7 +167,7 @@ const MaintenanceDetail = () => {
           </span>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-3">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <DollarSign className="w-5 h-5 text-green-600" />
@@ -181,9 +181,9 @@ const MaintenanceDetail = () => {
       </div>
 
       {/* Details Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 page-fade-in stagger-4">
         {/* Maintenance Info */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Maintenance Information
           </h3>
@@ -228,7 +228,7 @@ const MaintenanceDetail = () => {
         </div>
 
         {/* Cost Breakdown */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Cost Breakdown
           </h3>

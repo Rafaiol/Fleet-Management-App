@@ -104,7 +104,7 @@ const Vehicles = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div className="card-aurora p-4 page-fade-in stagger-1">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Search */}
           <div className="relative flex-1">
@@ -148,27 +148,27 @@ const Vehicles = () => {
       </div>
 
       {/* Vehicles Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      <div className="card-aurora overflow-hidden page-fade-in stagger-2">
+        <div className="overflow-x-auto min-h-[400px]">
+          <table className="w-full table-fixed">
             <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <th className="w-[30%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Vehicle
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Plate Number
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Status
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Mileage
                 </th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <th className="w-[10%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Fuel Type
                 </th>
-                <th className="text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
+                <th className="w-[15%] text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
                   Actions
                 </th>
               </tr>
@@ -191,7 +191,7 @@ const Vehicles = () => {
                 vehicles.map((vehicle) => (
                   <tr
                     key={vehicle.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">

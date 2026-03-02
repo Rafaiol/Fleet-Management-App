@@ -37,14 +37,14 @@ const getIconForType = (type: string) => {
 };
 
 const getBackgroundForType = (type: string, read: boolean) => {
-  if (read) return 'bg-white dark:bg-gray-800';
+  if (read) return 'hover:bg-gray-50 dark:hover:bg-gray-800/50';
 
   switch (type) {
-    case 'info': return 'bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500';
-    case 'success': return 'bg-green-50 dark:bg-green-900/10 border-l-4 border-green-500';
-    case 'warning': return 'bg-yellow-50 dark:bg-yellow-900/10 border-l-4 border-yellow-500';
-    case 'error': return 'bg-red-50 dark:bg-red-900/10 border-l-4 border-red-500';
-    default: return 'bg-gray-50 dark:bg-gray-800 border-l-4 border-gray-500';
+    case 'info': return 'bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500';
+    case 'success': return 'bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500';
+    case 'warning': return 'bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-500';
+    case 'error': return 'bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500';
+    default: return 'bg-gray-50 dark:bg-gray-800/50 border-l-4 border-gray-500';
   }
 };
 
@@ -114,7 +114,7 @@ const Notifications = () => {
       </div>
 
       {/* Notifications List */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+      <div className="card-aurora overflow-hidden page-fade-in stagger-1">
         {notifications.length === 0 ? (
           <div className="p-12 text-center">
             <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -130,7 +130,7 @@ const Notifications = () => {
             {notifications.map((notification, index) => (
               <div
                 key={notification.id}
-                className={`p-4 sm:p-6 transition-colors ${getBackgroundForType(notification.type, notification.read)} ${!notification.read ? 'border-l-4' : 'border-l-4 border-transparent'} ${index !== notifications.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}
+                className={`p-4 sm:p-6 transition-colors page-fade-in stagger-${(index % 5) + 1} ${getBackgroundForType(notification.type, notification.read)} ${!notification.read ? 'border-l-4' : 'border-l-4 border-transparent'} ${index !== notifications.length - 1 ? 'border-b border-gray-200 dark:border-gray-700' : ''}`}
               >
                 <div className="flex items-start gap-4">
                   <div className="shrink-0 mt-1">

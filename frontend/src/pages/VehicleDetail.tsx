@@ -132,7 +132,7 @@ const VehicleDetail = () => {
 
       {/* Vehicle Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-1">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <Car className="w-5 h-5 text-blue-600" />
@@ -148,7 +148,7 @@ const VehicleDetail = () => {
           </span>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-2">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <Gauge className="w-5 h-5 text-green-600" />
@@ -160,7 +160,7 @@ const VehicleDetail = () => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-3">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
               <Fuel className="w-5 h-5 text-yellow-600" />
@@ -172,7 +172,7 @@ const VehicleDetail = () => {
           </p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-4">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <Settings className="w-5 h-5 text-purple-600" />
@@ -186,9 +186,9 @@ const VehicleDetail = () => {
       </div>
 
       {/* Details Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 page-fade-in stagger-5">
         {/* Vehicle Details */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Vehicle Details
           </h3>
@@ -237,7 +237,7 @@ const VehicleDetail = () => {
         </div>
 
         {/* Maintenance History */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Recent Maintenance
@@ -269,10 +269,10 @@ const VehicleDetail = () => {
                   </div>
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${record.status === 'completed'
-                      ? 'bg-green-100 text-green-800'
+                      ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400'
                       : record.status === 'in_progress'
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-blue-100 text-blue-800'
+                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400'
+                        : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
                       }`}
                   >
                     {record.status}

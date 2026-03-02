@@ -309,7 +309,7 @@ const AlertRules = () => {
   const isComponentField = COMPONENT_FIELDS.includes(form.conditionField);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-6 page-fade-in stagger-1">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -346,11 +346,11 @@ const AlertRules = () => {
 
       {/* Rules Grid */}
       {loading ? (
-        <div className="flex items-center justify-center py-20">
+        <div className="flex items-center justify-center py-20 page-fade-in stagger-2">
           <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-12 text-center shadow-sm">
+        <div className="card-aurora p-12 text-center page-fade-in stagger-2">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
             <ShieldAlert className="w-8 h-8 text-gray-400" />
           </div>
@@ -370,13 +370,13 @@ const AlertRules = () => {
           )}
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 page-fade-in stagger-2">
           {filtered.map(rule => {
             const sev = severityConfig[rule.severity] || severityConfig.info;
             return (
               <div
                 key={rule._id}
-                className={`relative bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm transition-all hover:shadow-md ${!rule.isActive ? 'opacity-60' : ''
+                className={`relative card-aurora p-5 transition-all hover:-translate-y-1 ${!rule.isActive ? 'opacity-60' : ''
                   }`}
               >
                 {/* Severity badge */}
@@ -454,7 +454,7 @@ const AlertRules = () => {
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeModal} />
 
           {/* Panel */}
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 animate-in zoom-in-95 fade-in duration-200">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto card-aurora animate-in zoom-in-95 fade-in duration-200">
             <div className="flex items-center justify-between p-6 pb-0">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                 {editingRule ? 'Edit Rule' : 'Create New Rule'}

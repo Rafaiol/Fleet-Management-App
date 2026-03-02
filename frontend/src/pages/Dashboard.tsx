@@ -92,11 +92,11 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statCards.map((card) => (
+        {statCards.map((card, index) => (
           <Link
             key={card.title}
             to={card.link}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
+            className={`card-aurora p-6 page-fade-in stagger-${index + 1}`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -118,11 +118,11 @@ const Dashboard = () => {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Maintenance Trends */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Maintenance Trends
           </h3>
-          <div className="h-72">
+          <div className="h-72 animate-chart-grow">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -156,11 +156,11 @@ const Dashboard = () => {
         </div>
 
         {/* Vehicle Status */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-5">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
             Vehicle Status Distribution
           </h3>
-          <div className="h-72">
+          <div className="h-72 animate-chart-grow">
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
@@ -197,7 +197,7 @@ const Dashboard = () => {
       {/* Bottom Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Upcoming Maintenance */}
-        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="lg:col-span-2 card-aurora p-6 page-fade-in stagger-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Upcoming Maintenance
@@ -282,7 +282,7 @@ const Dashboard = () => {
         </div>
 
         {/* Alerts */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6 page-fade-in stagger-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Alerts

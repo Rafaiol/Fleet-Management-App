@@ -35,7 +35,6 @@ function App() {
     const token = localStorage.getItem('token');
     if (token) {
       dispatch(getMe());
-      dispatch(fetchAlertsAsNotifications());
     }
 
     // Handle responsive layout
@@ -48,6 +47,12 @@ function App() {
 
     return () => window.removeEventListener('resize', handleResize);
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchAlertsAsNotifications());
+    }
+  }, [dispatch, isAuthenticated]);
 
   return (
     <Routes>

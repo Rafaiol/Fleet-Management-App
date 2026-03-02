@@ -131,8 +131,8 @@ const UserForm = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 page-fade-in stagger-1">
+        <div className="card-aurora p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
             <UserIcon className="w-5 h-5 text-primary-600" />
             Basic Profile Info
@@ -191,7 +191,7 @@ const UserForm = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="card-aurora p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Access & Assignment</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
