@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ArrowLeft, Save, Wrench, Loader2 } from 'lucide-react';
+import { Save, Wrench, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
+import BackButton from '@/components/BackButton';
 import { AppDispatch, RootState } from '@/store';
 import { fetchMaintenanceById, createMaintenance, updateMaintenance } from '@/store/slices/maintenanceSlice';
 import { fetchVehicles } from '@/store/slices/vehicleSlice';
@@ -114,12 +115,7 @@ const MaintenanceForm = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="flex items-center gap-4">
-        <button
-          onClick={() => navigate('/maintenance')}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
+        <BackButton to="/maintenance" />
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isEditMode ? 'Edit Maintenance Record' : 'New Maintenance Record'}

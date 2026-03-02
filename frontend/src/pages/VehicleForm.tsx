@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { ArrowLeft, Car, Save, Loader2 } from 'lucide-react';
+import { Car, Save, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
+import BackButton from '@/components/BackButton';
 import { AppDispatch, RootState } from '@/store';
 import { fetchVehicleById, createVehicle, updateVehicle } from '@/store/slices/vehicleSlice';
 import { fetchAlertsAsNotifications } from '@/store/slices/uiSlice';
@@ -77,12 +78,7 @@ const VehicleForm = () => {
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <button
-          onClick={() => navigate('/vehicles')}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
+        <BackButton to="/vehicles" />
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
             {isEditMode ? 'Edit Vehicle' : 'Add New Vehicle'}
