@@ -330,6 +330,14 @@ export const logApi = {
   }) => api.get('/logs', { params }),
 
   undo: (id: string) => api.post(`/logs/${id}/undo`),
+
+  exportLogs: (params?: {
+    action?: string;
+    resourceType?: string;
+    search?: string;
+  }) => api.get('/logs/export', { params, responseType: 'blob' }),
+
+  deleteAll: () => api.delete('/logs'),
 };
 
 export default api;

@@ -1,5 +1,156 @@
 const ActivityLog = require('../models/ActivityLog');
 const mongoose = require('mongoose');
+const puppeteer = require('puppeteer');
+const path = require('path');
+const fs = require('fs');
+
+// Ensure reports directory exists for temporary PDF artifacts if needed, though here we stream buffer directly
+const reportsDir = path.join(__dirname, '..', 'reports');
+if (!fs.existsSync(reportsDir)) {
+  fs.mkdirSync(reportsDir, { recursive: true });
+}
+
+// HTML Generator for PDF export
+const generateLogsReportHTML = (logs) => {
+  const formatDate = (date) => date ? new Date(date).toLocaleString() : 'N/A';
+
+  const logRows = logs.map(log => {
+    const user = log.user ? `${log.user.firstName} ${log.user.lastName}` : 'System';
+    let status = 'Normal';
+    let statusClass = 'status-normal';
+
+    if (log.undone) {
+      status = 'Reverted';
+      statusClass = 'status-reverted';
+    }
+    if (log.description && log.description.startsWith('UNDID')) {
+      status = 'Audit Record';
+      statusClass = 'status-audit';
+    }
+
+    return `
+    <tr>
+      <td>${formatDate(log.createdAt)}</td>
+      <td>${user}</td>
+      <td><span class="action-badge action-${log.action.toLowerCase()}">${log.action}</span></td>
+      <td>${log.resourceType}</td>
+      <td>${log.description}</td>
+      <td><span class="status-badge ${statusClass}">${status}</span></td>
+    </tr>
+    `;
+  }).join('');
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Activity Logs Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 11px;
+      line-height: 1.5;
+      color: #333;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid #2563eb;
+    }
+    .header h1 {
+      color: #1e40af;
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    .header p {
+      color: #6b7280;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th {
+      background: #2563eb;
+      color: white;
+      padding: 10px;
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-normal { background: #f3f4f6; color: #4b5563; }
+    .status-reverted { background: #fee2e2; color: #991b1b; }
+    .status-audit { background: #dcfce7; color: #166534; }
+    
+    .action-badge {
+      font-weight: bold;
+      font-size: 11px;
+    }
+    .action-create { color: #059669; }
+    .action-update { color: #2563eb; }
+    .action-delete { color: #e11d48; }
+    .action-export { color: #7c3aed; }
+    
+    .footer {
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      font-size: 10px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>FLEET MANAGEMENT SYSTEM</h1>
+    <p>Activity Logs Full History Report</p>
+    <p>Generated on: ${new Date().toLocaleString()}</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date & Time</th>
+        <th>User</th>
+        <th>Action</th>
+        <th>Resource</th>
+        <th>Description</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${logRows || '<tr><td colspan="6" style="text-align: center;">No activity logs found</td></tr>'}
+    </tbody>
+  </table>
+  
+  <div class="footer">
+    <p>Fleet Management System - Confidential Report</p>
+    <p>Page 1 of 1</p>
+  </div>
+</body>
+</html>
+  `;
+};
 
 // Helper generic way to reconstruct models dynamically based on resourceType for Undos
 const modelMap = {
@@ -160,7 +311,90 @@ const undoAction = async (req, res) => {
   }
 };
 
+// @desc    Delete all activity logs
+// @route   DELETE /api/logs
+// @access  Private/Admin
+const deleteAllLogs = async (req, res) => {
+  try {
+    await ActivityLog.deleteMany({});
+
+    // Create an audit trail entry for this mass deletion itself
+    // We do this so there's a record that the logs were cleared
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'DELETE',
+      resourceType: 'Report',
+      description: 'CLEARED ALL ACTIVITY LOGS',
+    });
+
+    res.json({ message: 'All activity logs have been deleted successfully.' });
+  } catch (error) {
+    console.error('Error deleting all logs:', error);
+    res.status(500).json({ message: 'Server error deleting activity logs' });
+  }
+};
+
+// @desc    Export all activity logs to PDF
+// @route   GET /api/logs/export
+// @access  Private/Admin
+const exportLogs = async (req, res) => {
+  let browser;
+  try {
+    // Determine filters if any are passed
+    const query = {};
+    if (req.query.action) query.action = req.query.action;
+    if (req.query.resourceType) query.resourceType = req.query.resourceType;
+    if (req.query.search) {
+      query.description = { $regex: req.query.search, $options: 'i' };
+    }
+
+    const logs = await ActivityLog.find(query)
+      .sort({ createdAt: -1 })
+      .populate('user', 'firstName lastName email');
+
+    if (logs.length === 0) {
+      return res.status(404).json({ message: 'No logs found to export' });
+    }
+
+    const html = generateLogsReportHTML(logs);
+
+    browser = await puppeteer.launch({
+      headless: 'new', // Use the new headless mode
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' }
+    });
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="activity-logs.pdf"');
+
+    // Log the export action
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'EXPORT',
+      resourceType: 'Report',
+      description: 'Exported activity logs to PDF',
+    });
+
+    res.status(200).send(pdfBuffer);
+  } catch (error) {
+    console.error('Error exporting logs:', error);
+    res.status(500).json({ message: 'Server error exporting activity logs' });
+  } finally {
+    if (browser) await browser.close();
+  }
+};
+
 module.exports = {
   getLogs,
   undoAction,
+  deleteAllLogs,
+  exportLogs,
 };

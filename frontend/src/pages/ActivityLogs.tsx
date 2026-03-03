@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/store';
-import { fetchLogs, undoAction } from '@/store/slices/logSlice';
+import { fetchLogs, undoAction, deleteAllLogs } from '@/store/slices/logSlice';
+import { logApi } from '@/services/api';
 import { format } from 'date-fns';
+import { toast } from 'react-toastify';
 import {
   History,
   PlusCircle,
@@ -18,7 +20,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 
 const ActivityLogs = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { logs, isLoading, isUndoing, pagination } = useSelector((state: RootState) => state.logs);
+  const { logs, isLoading, isUndoing, isDeletingAll, pagination } = useSelector((state: RootState) => state.logs);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -27,6 +29,9 @@ const ActivityLogs = () => {
 
   const [isUndoModalOpen, setIsUndoModalOpen] = useState(false);
   const [selectedLogForUndo, setSelectedLogForUndo] = useState<any>(null);
+
+  const [isDeleteAllModalOpen, setIsDeleteAllModalOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchTerm), 500);
@@ -101,6 +106,41 @@ const ActivityLogs = () => {
     }
   };
 
+  const confirmDeleteAll = async () => {
+    await dispatch(deleteAllLogs());
+    setIsDeleteAllModalOpen(false);
+  };
+
+  const handleExport = async () => {
+    if (logs.length === 0) {
+      toast.info('No logs to export');
+      return;
+    }
+
+    try {
+      setIsExporting(true);
+      const response = await logApi.exportLogs({
+        search: debouncedSearch,
+        action: actionFilter,
+        resourceType: resourceFilter,
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'activity-logs.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success('Logs exported successfully');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export logs');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
@@ -113,6 +153,26 @@ const ActivityLogs = () => {
           <p className="text-gray-500 dark:text-gray-400 mt-1">
             Track and reverse system changes across the fleet management platform.
           </p>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={handleExport}
+            disabled={isExporting || logs.length === 0}
+            className={`btn btn-secondary flex items-center gap-2 ${isExporting ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            Export PDF
+          </button>
+
+          <button
+            onClick={() => setIsDeleteAllModalOpen(true)}
+            disabled={isDeletingAll || logs.length === 0}
+            className={`btn bg-rose-600 hover:bg-rose-700 text-white flex items-center gap-2 ${isDeletingAll || logs.length === 0 ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            {isDeletingAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+            Clear All Logs
+          </button>
         </div>
       </div>
 
@@ -283,6 +343,16 @@ const ActivityLogs = () => {
         title="Undo Action"
         message={`Are you sure you want to undo this action?\n\n"${selectedLogForUndo?.description}"`}
         confirmText={isUndoing ? "Undoing..." : "Yes, Undo Action"}
+        cancelText="Cancel"
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteAllModalOpen}
+        onClose={() => setIsDeleteAllModalOpen(false)}
+        onConfirm={confirmDeleteAll}
+        title="Clear All Logs"
+        message="Are you absolutely sure you want to delete ALL activity logs? This action cannot be undone and you will lose the entire history of actions on the platform."
+        confirmText={isDeletingAll ? "Clearing..." : "Yes, Clear All Logs"}
         cancelText="Cancel"
       />
     </div>

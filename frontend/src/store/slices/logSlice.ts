@@ -27,6 +27,7 @@ interface LogState {
   logs: ActivityLog[];
   isLoading: boolean;
   isUndoing: boolean;
+  isDeletingAll: boolean;
   error: string | null;
   pagination: {
     total: number;
@@ -45,6 +46,7 @@ const initialState: LogState = {
   logs: [],
   isLoading: false,
   isUndoing: false,
+  isDeletingAll: false,
   error: null,
   pagination: {
     total: 0,
@@ -104,6 +106,21 @@ export const undoAction = createAsyncThunk<any, string, { rejectValue: string; s
   }
 );
 
+export const deleteAllLogs = createAsyncThunk<any, void, { rejectValue: string }>(
+  'logs/deleteAll',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await logApi.deleteAll();
+      toast.success('All activity logs cleared successfully');
+      return response.data;
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to clear activity logs';
+      toast.error(message);
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const logSlice = createSlice({
   name: 'logs',
   initialState,
@@ -139,6 +156,21 @@ const logSlice = createSlice({
       })
       .addCase(undoAction.rejected, (state, action) => {
         state.isUndoing = false;
+        state.error = action.payload as string;
+      })
+      // Delete All Logs
+      .addCase(deleteAllLogs.pending, (state) => {
+        state.isDeletingAll = true;
+      })
+      .addCase(deleteAllLogs.fulfilled, (state) => {
+        state.isDeletingAll = false;
+        state.logs = [];
+        state.pagination.page = 1;
+        state.pagination.total = 0;
+        state.pagination.pages = 0;
+      })
+      .addCase(deleteAllLogs.rejected, (state, action) => {
+        state.isDeletingAll = false;
         state.error = action.payload as string;
       });
   },
