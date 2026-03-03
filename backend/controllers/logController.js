@@ -112,7 +112,9 @@ const undoAction = async (req, res) => {
       });
 
       // Mark original log as undone so its Undo button disappears
-      await ActivityLog.findByIdAndUpdate(logId, { undone: true });
+      log.undone = true;
+      await log.save();
+      console.log(`Log ${logId} marked as undone (DELETE case)`);
 
     } else if (log.action === 'UPDATE') {
       // Revert the document to the previous state
@@ -146,7 +148,9 @@ const undoAction = async (req, res) => {
       });
 
       // Mark original log as undone so its Undo button disappears
-      await ActivityLog.findByIdAndUpdate(logId, { undone: true });
+      log.undone = true;
+      await log.save();
+      console.log(`Log ${logId} marked as undone (UPDATE case)`);
     }
 
     res.json({ message: 'Undo successful' });

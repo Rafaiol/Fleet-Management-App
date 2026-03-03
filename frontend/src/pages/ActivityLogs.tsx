@@ -182,6 +182,12 @@ const ActivityLogs = () => {
           <div className="relative border-l-2 border-slate-200 dark:border-slate-800 ml-3 md:ml-6 space-y-8">
             {logs.map((log) => {
               const config = getActionConfig(log.action);
+              // isReverted: the ORIGINAL action (DELETE/UPDATE) that an admin already undid
+              const isReverted = (log.action === 'UPDATE' || log.action === 'DELETE')
+                && log.undone === true
+                && !log.description?.startsWith('UNDID');
+
+              // canUndo: original action not yet undone, and not an UNDID audit entry itself
               const canUndo = (log.action === 'UPDATE' || log.action === 'DELETE')
                 && !log.undone
                 && !log.description?.startsWith('UNDID');
@@ -218,6 +224,15 @@ const ActivityLogs = () => {
                           {format(new Date(log.createdAt), 'MMM d, yyyy h:mm a')}
                         </span>
 
+                        {/* Show Reverted badge if the action was undone */}
+                        {isReverted && (
+                          <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+                            <RotateCcw className="w-3.5 h-3.5" />
+                            Reverted
+                          </span>
+                        )}
+
+                        {/* Show Undo button only if action can still be undone */}
                         {canUndo && (
                           <button
                             onClick={() => handleUndoClick(log)}

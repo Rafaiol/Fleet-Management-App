@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { logApi } from '@/services/api';
 import { toast } from 'react-toastify';
+import type { RootState } from '../index';
 
 export interface ActivityLog {
   _id: string;
@@ -33,6 +34,11 @@ interface LogState {
     pages: number;
     limit: number;
   };
+  filters: {
+    search: string;
+    action: string;
+    resourceType: string;
+  };
 }
 
 const initialState: LogState = {
@@ -46,6 +52,11 @@ const initialState: LogState = {
     pages: 0,
     limit: 20,
   },
+  filters: {
+    search: '',
+    action: '',
+    resourceType: '',
+  },
 };
 
 export const fetchLogs = createAsyncThunk<any, any, { rejectValue: string }>(
@@ -53,21 +64,37 @@ export const fetchLogs = createAsyncThunk<any, any, { rejectValue: string }>(
   async (params, { rejectWithValue }) => {
     try {
       const response = await logApi.getAll(params);
-      return response.data;
+      return {
+        data: response.data,
+        filters: {
+          search: params.search || '',
+          action: params.action || '',
+          resourceType: params.resourceType || '',
+        }
+      };
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch activity logs');
     }
   }
 );
 
-export const undoAction = createAsyncThunk<any, string, { rejectValue: string }>(
+export const undoAction = createAsyncThunk<any, string, { rejectValue: string; state: RootState }>(
   'logs/undo',
-  async (id, { rejectWithValue, dispatch }) => {
+  async (id, { rejectWithValue, dispatch, getState }) => {
     try {
       const response = await logApi.undo(id);
       toast.success('Action undone successfully');
-      // Refresh logs after un-doing
-      dispatch(fetchLogs({ page: 1, limit: 20 }));
+
+      // Refresh logs using current filter/search state
+      const { logs } = getState();
+      await dispatch(fetchLogs({
+        page: logs.pagination.page,
+        limit: logs.pagination.limit,
+        search: logs.filters.search,
+        action: logs.filters.action,
+        resourceType: logs.filters.resourceType,
+      })).unwrap();
+
       return response.data;
     } catch (error: any) {
       const message = error.response?.data?.message || 'Failed to undo action';
@@ -90,13 +117,14 @@ const logSlice = createSlice({
       })
       .addCase(fetchLogs.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.logs = action.payload.logs;
+        state.logs = action.payload.data.logs;
         state.pagination = {
-          page: action.payload.page,
-          pages: action.payload.pages,
-          total: action.payload.total,
+          page: action.payload.data.page,
+          pages: action.payload.data.pages,
+          total: action.payload.data.total,
           limit: state.pagination.limit,
         };
+        state.filters = action.payload.filters;
       })
       .addCase(fetchLogs.rejected, (state, action) => {
         state.isLoading = false;
