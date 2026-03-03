@@ -251,13 +251,23 @@ const undoAction = async (req, res) => {
         restoredDoc = await Model.create(restoreData);
       }
 
+      let detailStr = log.resourceType;
+      if (log.resourceType === 'Vehicle') {
+        detailStr = `Vehicle ${restoredDoc.make || ''} ${restoredDoc.model || ''} (${restoredDoc.plateNumber || ''})`.trim();
+      } else if (log.resourceType === 'Maintenance') {
+        const VehicleModel = require('../models/Vehicle');
+        const v = await VehicleModel.findById(restoredDoc.vehicle);
+        const vStr = v ? `${v.make} ${v.model} (${v.plateNumber})` : 'Unknown Vehicle';
+        detailStr = `${restoredDoc.type ? restoredDoc.type.replace(/_/g, ' ') : ''} maintenance for ${vStr}`.trim();
+      }
+
       // Log the undo — mark as undone:true so no Undo button appears on this entry
       await ActivityLog.create({
         user: req.user._id,
         action: 'CREATE',
         resourceType: log.resourceType,
         resourceId: restoredDoc._id,
-        description: `UNDID DELETION: Restored ${log.resourceType}`,
+        description: `UNDID DELETION: Restored ${detailStr}`,
         newState: restoredDoc.toObject(),
         undone: true,
       });
@@ -286,13 +296,23 @@ const undoAction = async (req, res) => {
         return res.status(404).json({ message: 'Original document was not found. It may have been deleted.' });
       }
 
+      let detailStr = log.resourceType;
+      if (log.resourceType === 'Vehicle') {
+        detailStr = `Vehicle ${updatedDoc.make || ''} ${updatedDoc.model || ''} (${updatedDoc.plateNumber || ''})`.trim();
+      } else if (log.resourceType === 'Maintenance') {
+        const VehicleModel = require('../models/Vehicle');
+        const v = await VehicleModel.findById(updatedDoc.vehicle);
+        const vStr = v ? `${v.make} ${v.model} (${v.plateNumber})` : 'Unknown Vehicle';
+        detailStr = `${updatedDoc.type ? updatedDoc.type.replace(/_/g, ' ') : ''} maintenance for ${vStr}`.trim();
+      }
+
       // Log the undo — mark as undone:true so no Undo button appears on this entry
       await ActivityLog.create({
         user: req.user._id,
         action: 'UPDATE',
         resourceType: log.resourceType,
         resourceId: updatedDoc._id,
-        description: `UNDID UPDATE: Reverted ${log.resourceType} to previous state`,
+        description: `UNDID UPDATE: Reverted ${detailStr} to previous state`,
         previousState: log.newState,
         newState: updatedDoc.toObject(),
         undone: true,

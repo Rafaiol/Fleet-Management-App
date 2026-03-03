@@ -163,7 +163,7 @@ exports.createMaintenance = async (req, res) => {
       action: 'CREATE',
       resourceType: 'Maintenance',
       resourceId: maintenance._id,
-      description: `Created maintenance record for vehicle ${vehicle.plateNumber}`,
+      description: `Created ${maintenance.type.replace(/_/g, ' ')} maintenance record for ${vehicle.make} ${vehicle.model} (${vehicle.plateNumber})`,
       newState: maintenance.toObject(),
     });
 
@@ -238,7 +238,7 @@ exports.updateMaintenance = async (req, res) => {
       action: 'UPDATE',
       resourceType: 'Maintenance',
       resourceId: updatedMaintenance._id,
-      description: `Updated maintenance record for vehicle ${updatedMaintenance.vehicle?.plateNumber || 'Unknown'}`,
+      description: `Updated ${updatedMaintenance.type.replace(/_/g, ' ')} maintenance record for ${updatedMaintenance.vehicle?.make || 'Unknown'} ${updatedMaintenance.vehicle?.model || ''} (${updatedMaintenance.vehicle?.plateNumber || 'Unknown'})`.trim(),
       previousState: oldMaintenance,
       newState: updatedMaintenance.toObject(),
     });
@@ -330,12 +330,13 @@ exports.deleteMaintenance = async (req, res) => {
     await Maintenance.findByIdAndDelete(req.params.id);
 
     // Track activity
+    const vehicleForLog = await Vehicle.findById(maintenance.vehicle);
     await ActivityLog.create({
       user: req.user._id,
       action: 'DELETE',
       resourceType: 'Maintenance',
       resourceId: maintenance._id,
-      description: `Deleted maintenance record`,
+      description: `Deleted ${maintenance.type.replace(/_/g, ' ')} maintenance record for ${vehicleForLog?.make || 'Unknown'} ${vehicleForLog?.model || ''} (${vehicleForLog?.plateNumber || 'Unknown'})`.trim(),
       previousState: maintenance.toObject(),
     });
 
@@ -515,12 +516,13 @@ exports.completeMaintenance = async (req, res) => {
     await maintenance.save();
 
     // Track activity
+    const vehicleForLog = await Vehicle.findById(maintenance.vehicle);
     await ActivityLog.create({
       user: req.user._id,
       action: 'UPDATE',
       resourceType: 'Maintenance',
       resourceId: maintenance._id,
-      description: `Completed maintenance record for vehicle`,
+      description: `Completed ${maintenance.type.replace(/_/g, ' ')} maintenance record for ${vehicleForLog?.make || 'Unknown'} ${vehicleForLog?.model || ''} (${vehicleForLog?.plateNumber || 'Unknown'})`.trim(),
       previousState: oldMaintenance,
       newState: maintenance.toObject(),
     });

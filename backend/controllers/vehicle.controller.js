@@ -143,7 +143,7 @@ exports.createVehicle = async (req, res) => {
       action: 'CREATE',
       resourceType: 'Vehicle',
       resourceId: vehicle._id,
-      description: `Created vehicle ${vehicle.plateNumber}`,
+      description: `Created vehicle ${vehicle.make} ${vehicle.model} (${vehicle.plateNumber})`,
       newState: vehicle.toObject(),
     });
 
@@ -208,7 +208,7 @@ exports.updateVehicle = async (req, res) => {
       action: 'UPDATE',
       resourceType: 'Vehicle',
       resourceId: vehicle._id,
-      description: `Updated vehicle ${vehicle.plateNumber}`,
+      description: `Updated vehicle ${vehicle.make} ${vehicle.model} (${vehicle.plateNumber})`,
       previousState: oldVehicle.toObject(),
       newState: vehicle.toObject(),
     });
@@ -259,7 +259,7 @@ exports.deleteVehicle = async (req, res) => {
       action: 'DELETE',
       resourceType: 'Vehicle',
       resourceId: vehicle._id,
-      description: `Deleted vehicle ${vehicle.plateNumber}`,
+      description: `Deleted vehicle ${vehicle.make} ${vehicle.model} (${vehicle.plateNumber})`,
       previousState: vehicle.toObject(),
     });
 
