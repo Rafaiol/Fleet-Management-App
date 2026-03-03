@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { User } = require('../models');
+const { User, ActivityLog } = require('../models');
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -111,18 +111,30 @@ exports.updateUser = async (req, res) => {
 
     updateData.updatedBy = req.user._id;
 
+    const oldUser = await User.findById(req.params.id).select('-password');
+    if (!oldUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
     const user = await User.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true, runValidators: true }
     ).select('-password');
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'UPDATE',
+      resourceType: 'User',
+      resourceId: user._id,
+      description: `Updated user profile for ${user.firstName} ${user.lastName}`,
+      previousState: oldUser.toObject(),
+      newState: user.toObject(),
+    });
 
     res.json({
       success: true,
@@ -162,6 +174,16 @@ exports.deleteUser = async (req, res) => {
     }
 
     await User.findByIdAndDelete(req.params.id);
+
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'DELETE',
+      resourceType: 'User',
+      resourceId: user._id,
+      description: `Deleted user ${user.firstName} ${user.lastName}`,
+      previousState: user.toObject(),
+    });
 
     res.json({
       success: true,
@@ -237,9 +259,22 @@ exports.toggleUserStatus = async (req, res) => {
       });
     }
 
+    const oldUser = user.toObject();
+
     user.isActive = !user.isActive;
     user.updatedBy = req.user._id;
     await user.save();
+
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'UPDATE',
+      resourceType: 'User',
+      resourceId: user._id,
+      description: `${user.isActive ? 'Activated' : 'Deactivated'} user ${user.firstName} ${user.lastName}`,
+      previousState: oldUser,
+      newState: user.toObject(),
+    });
 
     res.json({
       success: true,

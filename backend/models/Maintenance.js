@@ -29,7 +29,7 @@ const partsUsedSchema = new mongoose.Schema({
 }, { _id: true });
 
 // Calculate total price before saving
-partsUsedSchema.pre('save', function(next) {
+partsUsedSchema.pre('save', function (next) {
   this.totalPrice = this.quantity * this.unitPrice;
   next();
 });
@@ -42,7 +42,7 @@ const maintenanceSchema = new mongoose.Schema({
     required: [true, 'Vehicle is required'],
     index: true
   },
-  
+
   // Maintenance Details
   type: {
     type: String,
@@ -64,7 +64,7 @@ const maintenanceSchema = new mongoose.Schema({
       'other'
     ]
   },
-  
+
   // Status Tracking
   status: {
     type: String,
@@ -72,7 +72,7 @@ const maintenanceSchema = new mongoose.Schema({
     default: 'scheduled',
     index: true
   },
-  
+
   // Dates
   scheduledDate: {
     type: Date,
@@ -85,7 +85,7 @@ const maintenanceSchema = new mongoose.Schema({
   completionDate: {
     type: Date
   },
-  
+
   // Mileage Information
   mileageAtService: {
     type: Number,
@@ -98,7 +98,7 @@ const maintenanceSchema = new mongoose.Schema({
   nextServiceDate: {
     type: Date
   },
-  
+
   // Service Details
   description: {
     type: String,
@@ -109,7 +109,7 @@ const maintenanceSchema = new mongoose.Schema({
     type: String,
     maxlength: [3000, 'Work performed cannot exceed 3000 characters']
   },
-  
+
   // Parts & Labor
   partsUsed: [partsUsedSchema],
   laborHours: {
@@ -137,7 +137,7 @@ const maintenanceSchema = new mongoose.Schema({
     min: 0,
     default: 0
   },
-  
+
   // Service Provider
   serviceProvider: {
     name: {
@@ -157,7 +157,7 @@ const maintenanceSchema = new mongoose.Schema({
       trim: true
     }
   },
-  
+
   // Technician Information
   technician: {
     type: mongoose.Schema.Types.ObjectId,
@@ -167,14 +167,14 @@ const maintenanceSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  
+
   // Priority & Urgency
   priority: {
     type: String,
     enum: ['low', 'medium', 'high', 'urgent'],
     default: 'medium'
   },
-  
+
   // Warranty Information
   warranty: {
     hasWarranty: {
@@ -190,7 +190,7 @@ const maintenanceSchema = new mongoose.Schema({
       type: Date
     }
   },
-  
+
   // Documents & Images
   documents: [{
     name: String,
@@ -203,7 +203,7 @@ const maintenanceSchema = new mongoose.Schema({
     caption: String,
     uploadedAt: { type: Date, default: Date.now }
   }],
-  
+
   // Invoice Information
   invoiceNumber: {
     type: String,
@@ -212,13 +212,13 @@ const maintenanceSchema = new mongoose.Schema({
   invoiceDate: {
     type: Date
   },
-  
+
   // Notes
   notes: {
     type: String,
     maxlength: [1000, 'Notes cannot exceed 1000 characters']
   },
-  
+
   // Metadata
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -236,7 +236,7 @@ const maintenanceSchema = new mongoose.Schema({
 });
 
 // Virtual for maintenance duration
-maintenanceSchema.virtual('duration').get(function() {
+maintenanceSchema.virtual('duration').get(function () {
   if (this.startDate && this.completionDate) {
     return Math.ceil((this.completionDate - this.startDate) / (1000 * 60 * 60)); // Hours
   }
@@ -244,7 +244,7 @@ maintenanceSchema.virtual('duration').get(function() {
 });
 
 // Virtual for days until scheduled
-maintenanceSchema.virtual('daysUntilScheduled').get(function() {
+maintenanceSchema.virtual('daysUntilScheduled').get(function () {
   if (this.scheduledDate) {
     const diff = this.scheduledDate - new Date();
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
@@ -253,46 +253,44 @@ maintenanceSchema.virtual('daysUntilScheduled').get(function() {
 });
 
 // Pre-save middleware to calculate costs
-maintenanceSchema.pre('save', function(next) {
+maintenanceSchema.pre('save', function (next) {
   // Calculate parts cost
   if (this.partsUsed && this.partsUsed.length > 0) {
     this.partsCost = this.partsUsed.reduce((sum, part) => sum + (part.totalPrice || 0), 0);
   }
-  
+
   // Calculate labor cost
   this.laborCost = (this.laborHours || 0) * (this.laborRate || 0);
-  
+
   // Calculate total cost
   this.totalCost = this.partsCost + this.laborCost;
-  
+
   // Set warranty expiry if applicable
   if (this.warranty && this.warranty.hasWarranty && this.completionDate && this.warranty.warrantyMonths) {
     const expiry = new Date(this.completionDate);
     expiry.setMonth(expiry.getMonth() + this.warranty.warrantyMonths);
     this.warranty.warrantyExpiry = expiry;
   }
-  
+
   next();
 });
 
 // Indexes for performance
 maintenanceSchema.index({ vehicle: 1, scheduledDate: -1 });
-maintenanceSchema.index({ status: 1 });
-maintenanceSchema.index({ scheduledDate: 1 });
 maintenanceSchema.index({ type: 1 });
 maintenanceSchema.index({ priority: 1 });
 maintenanceSchema.index({ createdAt: -1 });
 maintenanceSchema.index({ 'serviceProvider.name': 1 });
 
 // Static method to get maintenance statistics
-maintenanceSchema.statics.getStatistics = async function(startDate, endDate) {
+maintenanceSchema.statics.getStatistics = async function (startDate, endDate) {
   const matchStage = {};
   if (startDate || endDate) {
     matchStage.scheduledDate = {};
     if (startDate) matchStage.scheduledDate.$gte = new Date(startDate);
     if (endDate) matchStage.scheduledDate.$lte = new Date(endDate);
   }
-  
+
   return this.aggregate([
     { $match: matchStage },
     {
@@ -316,14 +314,14 @@ maintenanceSchema.statics.getStatistics = async function(startDate, endDate) {
 };
 
 // Static method to get maintenance by type
-maintenanceSchema.statics.getByType = async function(startDate, endDate) {
+maintenanceSchema.statics.getByType = async function (startDate, endDate) {
   const matchStage = {};
   if (startDate || endDate) {
     matchStage.scheduledDate = {};
     if (startDate) matchStage.scheduledDate.$gte = new Date(startDate);
     if (endDate) matchStage.scheduledDate.$lte = new Date(endDate);
   }
-  
+
   return this.aggregate([
     { $match: matchStage },
     {

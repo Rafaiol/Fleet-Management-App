@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { Maintenance, Vehicle } = require('../models');
+const { Maintenance, Vehicle, ActivityLog } = require('../models');
 
 // @desc    Get all maintenance records
 // @route   GET /api/maintenance
@@ -157,6 +157,16 @@ exports.createMaintenance = async (req, res) => {
 
     const maintenance = await Maintenance.create(maintenanceData);
 
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'CREATE',
+      resourceType: 'Maintenance',
+      resourceId: maintenance._id,
+      description: `Created maintenance record for vehicle ${vehicle.plateNumber}`,
+      newState: maintenance.toObject(),
+    });
+
     // Update vehicle status to maintenance if scheduled or in_progress
     if (['scheduled', 'in_progress'].includes(maintenance.status)) {
       vehicle.status = 'maintenance';
@@ -205,6 +215,8 @@ exports.updateMaintenance = async (req, res) => {
       });
     }
 
+    const oldMaintenance = maintenance.toObject();
+
     const updateData = { ...req.body, updatedBy: req.user._id };
 
     if (req.body.status === 'completed' && !req.body.completionDate && maintenance.status !== 'completed') {
@@ -219,6 +231,17 @@ exports.updateMaintenance = async (req, res) => {
     )
       .populate('vehicle', 'plateNumber make model year')
       .populate('technician', 'firstName lastName');
+
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'UPDATE',
+      resourceType: 'Maintenance',
+      resourceId: updatedMaintenance._id,
+      description: `Updated maintenance record for vehicle ${updatedMaintenance.vehicle?.plateNumber || 'Unknown'}`,
+      previousState: oldMaintenance,
+      newState: updatedMaintenance.toObject(),
+    });
 
     // Update vehicle status based on maintenance status
     const vehicle = await Vehicle.findById(maintenance.vehicle);
@@ -305,6 +328,16 @@ exports.deleteMaintenance = async (req, res) => {
     }
 
     await Maintenance.findByIdAndDelete(req.params.id);
+
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'DELETE',
+      resourceType: 'Maintenance',
+      resourceId: maintenance._id,
+      description: `Deleted maintenance record`,
+      previousState: maintenance.toObject(),
+    });
 
     res.json({
       success: true,
@@ -470,6 +503,8 @@ exports.completeMaintenance = async (req, res) => {
       });
     }
 
+    const oldMaintenance = maintenance.toObject();
+
     maintenance.status = 'completed';
     maintenance.completionDate = completionDate || new Date();
     maintenance.workPerformed = workPerformed;
@@ -478,6 +513,17 @@ exports.completeMaintenance = async (req, res) => {
     maintenance.updatedBy = req.user._id;
 
     await maintenance.save();
+
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'UPDATE',
+      resourceType: 'Maintenance',
+      resourceId: maintenance._id,
+      description: `Completed maintenance record for vehicle`,
+      previousState: oldMaintenance,
+      newState: maintenance.toObject(),
+    });
 
     // Update vehicle status and maintenance schedule
     const vehicle = await Vehicle.findById(maintenance.vehicle);

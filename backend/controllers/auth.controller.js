@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
-const { User } = require('../models');
+const { User, ActivityLog } = require('../models');
 
 // Generate JWT token
 const generateToken = (id) => {
@@ -45,6 +45,16 @@ exports.register = async (req, res) => {
       phone,
       department,
       createdBy: req.user ? req.user._id : null
+    });
+
+    // Track activity
+    await ActivityLog.create({
+      user: req.user ? req.user._id : user._id, // if public signup, user creates themselves
+      action: 'CREATE',
+      resourceType: 'User',
+      resourceId: user._id,
+      description: `Registered user ${user.firstName} ${user.lastName}`,
+      newState: user.toObject(),
     });
 
     // Generate token

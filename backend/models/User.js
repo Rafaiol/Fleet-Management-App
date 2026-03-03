@@ -81,7 +81,6 @@ userSchema.virtual('fullName').get(function () {
 });
 
 // Index for frequently queried fields
-userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ isActive: 1 });
 

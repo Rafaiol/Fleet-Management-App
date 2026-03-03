@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ShieldAlert,
+  History,
 } from 'lucide-react';
 
 import { RootState, AppDispatch } from '@/store';
@@ -36,6 +37,7 @@ const Sidebar = () => {
   const adminMenuItems = [
     ...(isAdmin ? [{ path: '/users', icon: Users, label: 'Users', color: 'text-amber-500' }] : []),
     ...(hasAnyAlertPrivilege ? [{ path: '/alert-rules', icon: ShieldAlert, label: 'Alert Rules', color: 'text-rose-500' }] : []),
+    ...(isAdmin ? [{ path: '/logs', icon: History, label: 'Activity Logs', color: 'text-cyan-500' }] : []),
   ];
 
   const handleClose = () => {

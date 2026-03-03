@@ -1,5 +1,6 @@
 const AlertRule = require('../models/AlertRule');
 const { Vehicle } = require('../models');
+const ActivityLog = require('../models/ActivityLog');
 
 // ────────────────────────────────────────────
 // Helper:  Compute the derived value for a
@@ -178,6 +179,15 @@ exports.createRule = async (req, res) => {
 
     const populated = await rule.populate('createdBy', 'firstName lastName email');
 
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'CREATE',
+      resourceType: 'AlertRule',
+      resourceId: rule._id,
+      description: `Created new alert rule: ${rule.name}`,
+      newState: rule.toObject()
+    });
+
     res.status(201).json({
       success: true,
       data: populated
@@ -198,6 +208,15 @@ exports.updateRule = async (req, res) => {
   try {
     const { name, description, conditionField, operator, value, severity, isActive } = req.body;
 
+    const existingRule = await AlertRule.findById(req.params.id);
+    if (!existingRule) {
+      return res.status(404).json({
+        success: false,
+        message: 'Alert rule not found'
+      });
+    }
+    const previousState = existingRule.toObject();
+
     const rule = await AlertRule.findByIdAndUpdate(
       req.params.id,
       { name, description, conditionField, operator, value, severity, isActive },
@@ -210,6 +229,16 @@ exports.updateRule = async (req, res) => {
         message: 'Alert rule not found'
       });
     }
+
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'UPDATE',
+      resourceType: 'AlertRule',
+      resourceId: rule._id,
+      description: `Updated alert rule: ${rule.name}`,
+      previousState,
+      newState: rule.toObject()
+    });
 
     res.json({
       success: true,
@@ -229,14 +258,25 @@ exports.updateRule = async (req, res) => {
 // @access  Admin only
 exports.deleteRule = async (req, res) => {
   try {
-    const rule = await AlertRule.findByIdAndDelete(req.params.id);
-
-    if (!rule) {
+    const existingRule = await AlertRule.findById(req.params.id);
+    if (!existingRule) {
       return res.status(404).json({
         success: false,
         message: 'Alert rule not found'
       });
     }
+    const previousState = existingRule.toObject();
+
+    const rule = await AlertRule.findByIdAndDelete(req.params.id);
+
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'DELETE',
+      resourceType: 'AlertRule',
+      resourceId: existingRule._id,
+      description: `Deleted alert rule: ${existingRule.name}`,
+      previousState
+    });
 
     res.json({
       success: true,

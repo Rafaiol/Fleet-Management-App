@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator');
-const { Vehicle, Maintenance } = require('../models');
+const { Vehicle, Maintenance, ActivityLog } = require('../models');
 
 // @desc    Get all vehicles
 // @route   GET /api/vehicles
@@ -137,6 +137,16 @@ exports.createVehicle = async (req, res) => {
 
     const vehicle = await Vehicle.create(vehicleData);
 
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'CREATE',
+      resourceType: 'Vehicle',
+      resourceId: vehicle._id,
+      description: `Created vehicle ${vehicle.plateNumber}`,
+      newState: vehicle.toObject(),
+    });
+
     res.status(201).json({
       success: true,
       message: 'Vehicle created successfully',
@@ -178,18 +188,30 @@ exports.updateVehicle = async (req, res) => {
       updateData.assignedDriver = updateData.assignedDriver._id;
     }
 
+    const oldVehicle = await Vehicle.findById(req.params.id);
+    if (!oldVehicle) {
+      return res.status(404).json({
+        success: false,
+        message: 'Vehicle not found'
+      });
+    }
+
     const vehicle = await Vehicle.findByIdAndUpdate(
       req.params.id,
       { $set: updateData },
       { new: true, runValidators: true }
     );
 
-    if (!vehicle) {
-      return res.status(404).json({
-        success: false,
-        message: 'Vehicle not found'
-      });
-    }
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'UPDATE',
+      resourceType: 'Vehicle',
+      resourceId: vehicle._id,
+      description: `Updated vehicle ${vehicle.plateNumber}`,
+      previousState: oldVehicle.toObject(),
+      newState: vehicle.toObject(),
+    });
 
     res.json({
       success: true,
@@ -230,6 +252,16 @@ exports.deleteVehicle = async (req, res) => {
     }
 
     await Vehicle.findByIdAndDelete(req.params.id);
+
+    // Track activity
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'DELETE',
+      resourceType: 'Vehicle',
+      resourceId: vehicle._id,
+      description: `Deleted vehicle ${vehicle.plateNumber}`,
+      previousState: vehicle.toObject(),
+    });
 
     res.json({
       success: true,

@@ -1,117 +1,160 @@
-# Custom Alert Rules System
+# Aurora Light & Dark UI Redesign Plan
 
-Allow admins to define their own alert rules that the system evaluates automatically. For example: *"Alert me when a vehicle has driven 50km since its last brake change."*
-
-## Architecture Overview
-
-The system is built around a **Rule Engine** pattern:
-
-```mermaid
-flowchart LR
-    A[Admin creates rule] --> B[AlertRule saved to MongoDB]
-    B --> C[GET /api/dashboard/alerts evaluates all rules]
-    C --> D[Matching vehicles generate alerts]
-    D --> E[Alerts shown in Header bell + Notifications page]
-```
-
-### Design Decisions
-
-**Condition Types** — Based on analyzing the Vehicle schema, the admin can monitor these data sources:
-
-| Category | Field | Operators | Example |
-|---|---|---|---|
-| **Mileage Since Service** | `mileage_since_oil_change`, `mileage_since_tire_rotation`, `mileage_since_brake_check` | `>`, `>=` | *"Alert if mileage since brake check > 50 km"* |
-| **Days Since Service** | `days_since_oil_change`, `days_since_tire_rotation`, `days_since_brake_check`, `days_since_general_inspection` | `>`, `>=` | *"Alert if days since oil change > 90"* |
-| **Expiry Countdown** | `registration_expiry_days`, `insurance_expiry_days` | `<`, `<=` | *"Alert if registration expires within 30 days"* |
-| **Vehicle Property** | `current_mileage`, `vehicle_age` | `>`, `>=`, `<`, `<=`, `=` | *"Alert if mileage > 200000"* |
-| **Component Condition** | `battery_condition`, `brake_fluid_condition`, `coolant_condition`, `engine_belt_condition`, `distribution_chain_condition` | `=` | *"Alert if battery condition = poor"* |
-
-> [!IMPORTANT]
-> The existing hardcoded alerts in [dashboard.controller.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/dashboard.controller.js) will remain as **system defaults**. Custom rules are evaluated **in addition** to them.
-
----
+The user wants to continue applying the Aurora Light and Dark UI redesign. The previous implementation focused mainly on the Light mode foundation. We will now enhance both modes, ensuring a consistent and premium "Aurora" experience across the application, especially in Dark Mode.
 
 ## Proposed Changes
 
-### Backend
+### 1. Global CSS & Design System — [index.css](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/index.css)
+Enhance [index.css](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/index.css) to provide rich dark mode variants for the Aurora theme.
 
----
+#### [MODIFY] [index.css](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/index.css)
+- **Backgrounds**: `body.dark` should use a deep, rich slate (`#0B1121` or `bg-slate-950`).
+- **Cards**: Add `.dark .card` with deep backgrounds (`bg-slate-900`) and subtle glow borders (`border-slate-800`).
+- **Aurora Blobs**: Add `.dark .aurora-blob-X` overrides to adjust opacity and mix-blend-mode for dark environments (e.g. `mix-blend-mode: screen`, slightly higher opacity for visibility against dark backgrounds).
+- **Sidebar Links**: Ensure `.dark .sidebar-link-active` has a suitable dark gradient/glow background.
+- **Buttons / Inputs**: Refine dark mode input focus rings and secondary button colors.
 
-#### [NEW] [AlertRule.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/models/AlertRule.js)
+### 2. Layout Wrapper — [Layout.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Layout.tsx)
+Ensure the main layout correctly transitions between light and dark modes.
 
-New Mongoose model:
+#### [MODIFY] [Layout.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Layout.tsx)
+- Add `dark:bg-slate-950` to the main container.
+- Ensure the aurora blobs remain visible and active.
 
-```js
-{
-  name: String,           // "Brake Check Overdue"
-  description: String,    // "Alert when vehicle exceeds 50km since last brake check"
-  conditionField: String, // "mileage_since_brake_check"
-  operator: String,       // ">"
-  value: Number|String,   // 50
-  severity: String,       // "warning" | "urgent" | "info"
-  isActive: Boolean,      // true
-  createdBy: ObjectId,    // ref: User
-}
-```
-
-#### [MODIFY] [index.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/models/index.js)
-
-Export the new `AlertRule` model.
-
-#### [NEW] [alertRule.controller.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/alertRule.controller.js)
-
-CRUD endpoints + a **rule evaluation engine** function that:
-1. Fetches all active `AlertRule` documents.
-2. For each rule, queries the Vehicle collection to find matches.
-3. Returns generated alert objects.
-
-#### [NEW] [alertRule.routes.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/routes/alertRule.routes.js)
-
-- `GET    /api/alert-rules` — List all rules
-- `POST   /api/alert-rules` — Create rule (admin only)
-- `PUT    /api/alert-rules/:id` — Update rule (admin only)
-- `DELETE /api/alert-rules/:id` — Delete rule (admin only)
-
-#### [MODIFY] [dashboard.controller.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/dashboard.controller.js)
-
-Modify [getAlerts](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/controllers/dashboard.controller.js#366-477) to also call the rule evaluation engine and merge custom rule alerts with the existing hardcoded alerts.
-
-#### [MODIFY] [server.js](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/backend/server.js)
-
-Mount the new alert-rules routes.
-
----
-
-### Frontend
-
----
-
-#### [MODIFY] [api.ts](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/services/api.ts)
-
-Add `alertRuleApi` with CRUD methods.
-
-#### [NEW] [AlertRules.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/AlertRules.tsx)
-
-A premium-designed management page with:
-- A grid/list of all existing custom alert rules with toggle switches.
-- A "Create New Rule" modal with a **condition builder** (dropdowns for field, operator, value).
-- Edit and delete options.
-
-#### [MODIFY] [App.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/App.tsx)
-
-Add route `/alert-rules`.
+### 3. Sidebar — [Sidebar.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Sidebar.tsx)
+Apply dark mode Aurora styling to the Sidebar.
 
 #### [MODIFY] [Sidebar.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Sidebar.tsx)
+- **Container**: Use `dark:bg-slate-900 dark:border-slate-800`.
+- **Active Links**: Adjust active link styles so they look great in dark mode (e.g., `dark:bg-primary-900/20 dark:text-primary-400`).
+- **Hover States**: Ensure hover states use `dark:hover:bg-slate-800`.
+- **Dividers**: Use `dark:border-slate-800`.
 
-Add a sidebar link for "Alert Rules" under the admin section.
+### 4. Header — [Header.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Header.tsx)
+Apply dark mode glassmorphism and refined styles to the Header.
 
----
+#### [MODIFY] [Header.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Header.tsx)
+- **Container**: Use `dark:bg-slate-950/80` for a sleek dark glass effect.
+- **Search Bar**: Deep dark input `dark:bg-slate-900` with focus states.
+- **Dropdowns**: Notifications and User dropdowns need `dark:bg-slate-900` and `dark:border-slate-800`.
+- **Text & Icons**: Ensure icons and texts are `dark:text-slate-300` or `dark:text-slate-100`.
+
+## Phase 2: Refinements & Remaining Pages
+
+### 5. Dark Mode Card Hover Highlight
+Enhance the `.dark .card-aurora:hover` state in [index.css](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/index.css) to add a subtle glowing border effect using an inset box-shadow or similar technique, per user request for more visible hover effects in dark mode.
+
+### 6. Vehicles Page Table Layout Shift Fix
+The HTML `<table>` auto-adjusts column widths when data loads, causing a layout shift.
+We will apply `table-fixed` and specific width percentages/classes to `th` elements in [Vehicles.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/Vehicles.tsx) to lock the layout.
+
+### 7. Remaining Pages
+Apply the `.card-aurora`, `page-fade-in`, and `stagger-X` classes to:
+- Notifications ([Notifications.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/Notifications.tsx))
+- Vehicle forms/details ([VehicleForm.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/VehicleForm.tsx), [VehicleDetail.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/VehicleDetail.tsx))
+- Maintenance pages ([Maintenance.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/Maintenance.tsx), [MaintenanceForm.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/MaintenanceForm.tsx), [MaintenanceDetail.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/MaintenanceDetail.tsx))
+- Reports ([Reports.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/Reports.tsx))
+- Alert Rules ([AlertRules.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/AlertRules.tsx))
+- Users ([Users.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/Users.tsx), [UserForm.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/UserForm.tsx))
+
+## Phase 3: Aurora Back Button Redesign
+
+### 8. Reusable [BackButton.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/BackButton.tsx) Component
+Create a reusable, highly stylized React component based on the Stitch generation for the navigation back button.
+
+#### [NEW] [BackButton.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/BackButton.tsx)
+- Implementation of a glassmorphic button with an aurora border glow on hover.
+- Must support light/dark modes organically.
+- Props: `to: string` (for react-router Link) or `onClick: () => void`, plus `label?: string` (default: 'Back').
+
+### 9. Replace Existing Back Buttons
+Find instances of the old raw `<button><ArrowLeft/>...</button>` logic and replace them with the new `<BackButton />`.
+
+#### [MODIFY] [VehicleDetail.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/VehicleDetail.tsx)
+- Replace back button.
+#### [MODIFY] [VehicleForm.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/VehicleForm.tsx)
+- Replace back button.
+#### [MODIFY] [MaintenanceDetail.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/MaintenanceDetail.tsx)
+- Replace back button.
+#### [MODIFY] [MaintenanceForm.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/MaintenanceForm.tsx)
+- Replace back button.
+#### [MODIFY] [UserForm.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/UserForm.tsx)
+- Replace back button.
+
+## Phase 4: Aurora Sidebar Toggle Button
+
+### 10. Stylize Sidebar Collapse Button
+The button used to shrink/expand the sidebar will be updated to match the Aurora theme, using the concepts generated from Stitch.
+
+#### [MODIFY] [Sidebar.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Sidebar.tsx)
+- Upgrade the `ChevronLeft`/`ChevronRight` toggle button.
+- Make it a circular glassmorphic button with an iridescent Aurora border glow on hover.
+- It will sit perfectly on the right edge of the sidebar and have a satisfying press animation.
+
+## Phase 5: Activity Logs feature with Undo Capability
+
+The user has requested an ambitious feature to track every action in the application to a dedicated Activity Logs page. This includes creates, updates, deletes, and exports. Crucially, the system must allow administrators to "Undo" modifications and deletions. The page must adopt the Aurora theme.
+
+### 11. Backend Models and Storage
+Create a new MongoDB Mongoose schema to store activity.
+
+#### [NEW] `backend/src/models/ActivityLog.ts`
+- **Fields**: `userId` (ref User), [action](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/pages/Reports.tsx#162-166) (e.g. CREATE, UPDATE, DELETE, EXPORT), `resourceType` (e.g. Vehicle, Maintenance, AlertRule), `resourceId` (String), `description` (Human readable), `previousState` (Object, storing the exact document state before a change/deletion for restoration), `newState` (Object).
+
+### 12. Backend Activity Logic and Undo Handler
+Create the API to serve logs and process 'Undo' actions.
+
+#### [NEW] `backend/src/controllers/logController.ts`
+- `getLogs`: Fetch logs sorted by latest, with pagination.
+- `undoAction`: Look at a specific log entry and reverse it. If it was a DELETE, re-insert the `previousState` document. If it was an UPDATE, replace the current document with the `previousState`.
+
+#### [NEW] `backend/src/routes/logRoutes.ts`
+- Expose `GET /` and `POST /:id/undo` protected by Admin auth.
+
+#### [MODIFY] `backend/src/server.ts`
+- Wire up the new `/api/logs` route.
+
+### 13. Logging Integration across Controllers
+Inject the logging utility into every major mutating controller method.
+
+#### [MODIFY] `backend/src/controllers/*.ts`
+- Update `vehicleController`, `maintenanceController`, `alertRuleController`, `userController`, and `reportController`.
+- Before a document is updated or deleted, fetch its current state and pass it as `previousState` to the `ActivityLog` creation utility.
+- Log exports explicitly in `reportController`.
+
+### 14. Frontend API and State Management
+Bind the new APIs into the frontend application.
+
+#### [MODIFY] [api.ts](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/services/api.ts)
+- Add `logApi.getAll()` and `logApi.undo()`.
+
+#### [NEW] `frontend/src/store/slices/logSlice.ts`
+- Handle fetching, pagination, and undo states. Add to `store/index.ts`.
+
+### 15. Frontend Page & UI Construction
+Construct the Aurora-themed timeline/list page.
+
+#### [NEW] `frontend/src/pages/ActivityLogs.tsx`
+- A beautiful chronological timeline or table of events.
+- Distinct icons/colors for Creates (Green/Emerald), Updates (Blue/Cyan), Deletes (Red/Rose), Exports (Purple/Violet).
+- Provide a clear "Undo" button on Delete/Update actions that calls the backend.
+- Apply `card-aurora` and glassmorphic designs.
+
+#### [MODIFY] [App.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/App.tsx)
+- Embed route `<Route path="logs" element={<ActivityLogs />} />` under the Admin area.
+
+#### [MODIFY] [Sidebar.tsx](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/components/Sidebar.tsx)
+- Add navigation link to `/logs` with an appropriate icon (e.g., `History` or [Activity](file:///c:/Users/Anis/Documents/Web%20Pages/Fleet%20project/fleet-management-app/frontend/src/services/api.ts#288-290)).
 
 ## Verification Plan
 
-### Manual Verification
-1. Navigate to the new Alert Rules page.
-2. Create a rule: *"Alert when mileage since brake check > 50"*.
-3. Verify the alert appears in the Dashboard alerts and the Header notification bell.
-4. Toggle the rule off and verify the alert disappears.
-5. Delete the rule and confirm cleanup.
+### Automated
+- Run `npm run build` to verify no TS errors.
+- Ensure backend API calls work normally by browsing.
+
+### Manual
+- Navigate through all modified pages.
+- Verify dark mode hover borders.
+- Check Vehicles page for any remaining lag/layout shift upon load.
+- Perform a create, update, delete, and export action. Verify they appear in `/logs`.
+- Click 'Undo' on a deletion and verify the resource returns.

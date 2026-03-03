@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
 const { Vehicle, Maintenance, User } = require('../models');
+const ActivityLog = require('../models/ActivityLog');
 
 // Ensure reports directory exists
 const reportsDir = path.join(__dirname, '..', 'reports');
@@ -594,6 +595,15 @@ exports.generateVehicleReport = async (req, res) => {
 
     await browser.close();
 
+    // Log the export action
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'EXPORT',
+      resourceType: 'Report',
+      resourceId: 'VehicleReport',
+      description: `Exported Vehicle Report for ${vehicle.plateNumber}`
+    });
+
     // Send file
     res.download(filepath, `Vehicle-Report-${vehicle.plateNumber}.pdf`, (err) => {
       if (err) {
@@ -655,6 +665,15 @@ exports.generateMaintenanceReport = async (req, res) => {
     });
 
     await browser.close();
+
+    // Log the export action
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'EXPORT',
+      resourceType: 'Report',
+      resourceId: 'MaintenanceReport',
+      description: `Exported Maintenance Report for ${maintenance.vehicle?.plateNumber || 'Unknown'}`
+    });
 
     // Send file
     res.download(filepath, `Maintenance-Report-${maintenance.vehicle?.plateNumber || 'Unknown'}.pdf`, (err) => {
@@ -967,6 +986,15 @@ exports.generateFleetSummary = async (req, res) => {
 
     await browser.close();
 
+    // Log the export action
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'EXPORT',
+      resourceType: 'Report',
+      resourceId: 'FleetSummary',
+      description: 'Exported Fleet Summary Report'
+    });
+
     // Send file
     res.download(filepath, `Fleet-Summary-Report.pdf`, (err) => {
       if (err) {
@@ -1114,6 +1142,15 @@ exports.generateVehiclesActivityReport = async (req, res) => {
     await page.pdf({ path: filepath, format: 'A4', printBackground: true, margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' } });
     await browser.close();
 
+    // Log the export action
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'EXPORT',
+      resourceType: 'Report',
+      resourceId: 'VehiclesActivity',
+      description: 'Exported Vehicles Activity Report'
+    });
+
     res.download(filepath, `Vehicles-Activity-Report.pdf`, (err) => {
       if (err) console.error('Download error:', err);
       setTimeout(() => fs.unlink(filepath, (e) => { if (e) console.error(e); }), 60000);
@@ -1243,6 +1280,15 @@ exports.generateMaintenanceActivityReport = async (req, res) => {
     const filepath = path.join(reportsDir, filename);
     await page.pdf({ path: filepath, format: 'A4', printBackground: true, margin: { top: '20px', right: '20px', bottom: '20px', left: '20px' } });
     await browser.close();
+
+    // Log the export action
+    await ActivityLog.create({
+      user: req.user._id,
+      action: 'EXPORT',
+      resourceType: 'Report',
+      resourceId: 'MaintenanceActivity',
+      description: 'Exported Maintenance Activity Report'
+    });
 
     res.download(filepath, `Maintenance-Activity-Report.pdf`, (err) => {
       if (err) console.error('Download error:', err);

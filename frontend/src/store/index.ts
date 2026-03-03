@@ -5,6 +5,7 @@ import maintenanceReducer from './slices/maintenanceSlice';
 import dashboardReducer from './slices/dashboardSlice';
 import uiReducer from './slices/uiSlice';
 import userReducer from './slices/userSlice';
+import logReducer from './slices/logSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,12 +15,12 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     ui: uiReducer,
     users: userReducer,
+    logs: logReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['auth/setUser', 'auth/logout'],
-      },
+      serializableCheck: false,
+      immutableCheck: false,
     }),
 });
 

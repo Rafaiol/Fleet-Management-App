@@ -318,4 +318,18 @@ export const alertRuleApi = {
   delete: (id: string) => api.delete(`/alert-rules/${id}`),
 };
 
+// Activity Log API
+export const logApi = {
+  getAll: (params?: {
+    page?: number;
+    limit?: number;
+    action?: string;
+    resourceType?: string;
+    userId?: string;
+    search?: string;
+  }) => api.get('/logs', { params }),
+
+  undo: (id: string) => api.post(`/logs/${id}/undo`),
+};
+
 export default api;

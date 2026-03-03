@@ -24,6 +24,7 @@ import Reports from '@/pages/Reports';
 import Settings from '@/pages/Settings';
 import Notifications from '@/pages/Notifications';
 import AlertRules from '@/pages/AlertRules';
+import ActivityLogs from '@/pages/ActivityLogs';
 import NotFound from '@/pages/NotFound';
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
           <Route path="/users" element={<Users />} />
           <Route path="/users/new" element={<UserForm />} />
           <Route path="/users/:id/edit" element={<UserForm />} />
+          <Route path="/logs" element={<ActivityLogs />} />
         </Route>
       </Route>
 

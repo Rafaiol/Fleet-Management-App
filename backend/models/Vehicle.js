@@ -7,8 +7,7 @@ const vehicleSchema = new mongoose.Schema({
     required: [true, 'Plate number is required'],
     unique: true,
     trim: true,
-    uppercase: true,
-    index: true
+    uppercase: true
   },
   make: {
     type: String,
@@ -256,9 +255,6 @@ vehicleSchema.virtual('nextScheduledMaintenance').get(function () {
 });
 
 // Indexes for performance
-vehicleSchema.index({ plateNumber: 1 });
-vehicleSchema.index({ status: 1 });
-vehicleSchema.index({ make: 1 });
 vehicleSchema.index({ 'maintenanceSchedule.lastOilChange': 1 });
 vehicleSchema.index({ registrationExpiry: 1 });
 vehicleSchema.index({ insuranceExpiry: 1 });

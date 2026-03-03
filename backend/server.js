@@ -16,6 +16,7 @@ const maintenanceRoutes = require('./routes/maintenance.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const reportRoutes = require('./routes/report.routes');
 const alertRuleRoutes = require('./routes/alertRule.routes');
+const logRoutes = require('./routes/logRoutes');
 
 // Import error handler
 const errorHandler = require('./middleware/error.middleware');
@@ -39,6 +40,7 @@ app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/alert-rules', alertRuleRoutes);
+app.use('/api/logs', logRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -60,7 +62,8 @@ app.get('/', (req, res) => {
       vehicles: '/api/vehicles',
       maintenance: '/api/maintenance',
       dashboard: '/api/dashboard',
-      reports: '/api/reports'
+      reports: '/api/reports',
+      logs: '/api/logs'
     }
   });
 });
