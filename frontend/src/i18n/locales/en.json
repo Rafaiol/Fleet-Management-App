@@ -191,7 +191,7 @@
       "field": "Field",
       "operator": "Operator",
       "value": "Value",
-      "selectField": "Select field...",
+      "selectField": "Select a field...",
       "selectOperator": "Select...",
       "selectValue": "Select...",
       "threshold": "Threshold",
@@ -201,6 +201,47 @@
       "confirm": "Delete?",
       "yes": "Yes",
       "no": "No"
+    },
+    "fields": {
+      "mileage_since_oil_change": "Mileage since oil change",
+      "mileage_since_tire_rotation": "Mileage since tire rotation",
+      "mileage_since_brake_check": "Mileage since brake check",
+      "mileage_since_battery_replacement": "Mileage since battery replacement",
+      "mileage_since_brake_fluid_change": "Mileage since brake fluid change",
+      "mileage_since_engine_belt_replacement": "Mileage since engine belt replacement",
+      "mileage_since_distribution_chain_replacement": "Mileage since distribution chain replacement",
+      "mileage_since_coolant_change": "Mileage since coolant change",
+      "days_since_oil_change": "Days since oil change",
+      "days_since_tire_rotation": "Days since tire rotation",
+      "days_since_brake_check": "Days since brake check",
+      "days_since_general_inspection": "Days since general inspection",
+      "days_since_battery_replacement": "Days since battery replacement",
+      "days_since_brake_fluid_change": "Days since brake fluid change",
+      "days_since_engine_belt_replacement": "Days since engine belt replacement",
+      "days_since_distribution_chain_replacement": "Days since distribution chain replacement",
+      "days_since_coolant_change": "Days since coolant change",
+      "registration_expiry_days": "Registration expires within (days)",
+      "insurance_expiry_days": "Insurance expires within (days)",
+      "current_mileage": "Current mileage (km)",
+      "vehicle_age": "Vehicle age (years)",
+      "battery_condition": "Battery condition",
+      "brake_fluid_condition": "Brake fluid condition",
+      "coolant_condition": "Coolant condition",
+      "engine_belt_condition": "Engine belt condition",
+      "distribution_chain_condition": "Distribution chain condition"
+    },
+    "groups": {
+      "Mileage Since Service": "Mileage Since Service",
+      "Days Since Service": "Days Since Service",
+      "Expiry Countdown": "Expiry Countdown",
+      "Vehicle Property": "Vehicle Property",
+      "Component Condition": "Component Condition"
+    },
+    "values": {
+      "good": "Good",
+      "fair": "Fair",
+      "poor": "Poor",
+      "unknown": "Unknown"
     }
   },
   "dashboard": {
@@ -431,7 +472,13 @@
       "battery_replacement": "Battery Replacement",
       "general_inspection": "General Inspection",
       "engine_repair": "Engine Repair",
-      "other": "Other"
+      "other": "Other",
+      "chain_replacement": "Chain Replacement",
+      "belt_replacement": "Belt Replacement",
+      "brake_fluid_change": "Brake Fluid Change",
+      "coolant_change": "Coolant Change",
+      "transmission_repair": "Transmission Repair",
+      "electrical_repair": "Electrical Repair"
     },
     "status": {
       "scheduled": "Scheduled",

@@ -205,7 +205,7 @@ const AlertRules = () => {
   const fieldLabel = (field: string) => {
     for (const g of CONDITION_FIELDS) {
       for (const i of g.items) {
-        if (i.value === field) return i.label;
+        if (i.value === field) return t(`alertRules.fields.${i.value}`, { defaultValue: i.label });
       }
     }
     return field;
@@ -432,7 +432,7 @@ const AlertRules = () => {
                         onClick={() => openEdit(rule)}
                         className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400 transition-colors"
                       >
-                        <Pencil className="w-3.5 h-3.5" /> Edit
+                        <Pencil className="w-3.5 h-3.5" /> {t('alertRules.actions.edit')}
                       </button>
                     )}
                     {(canEditAlerts && canDeleteAlerts) && <span className="text-gray-300 dark:text-gray-600">|</span>}
@@ -513,7 +513,7 @@ const AlertRules = () => {
               {/* Condition Builder */}
               <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 space-y-4">
                 <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Condition
+                  {t('alertRules.form.condition')}
                 </p>
 
                 {/* Field */}
@@ -528,9 +528,9 @@ const AlertRules = () => {
                   >
                     <option value="">{t('alertRules.form.selectField')}</option>
                     {CONDITION_FIELDS.map(group => (
-                      <optgroup key={group.group} label={group.group}>
+                      <optgroup key={group.group} label={t(`alertRules.groups.${group.group}`, { defaultValue: group.group })}>
                         {group.items.map(item => (
-                          <option key={item.value} value={item.value}>{item.label}</option>
+                          <option key={item.value} value={item.value}>{t(`alertRules.fields.${item.value}`, { defaultValue: item.label })}</option>
                         ))}
                       </optgroup>
                     ))}
@@ -568,7 +568,7 @@ const AlertRules = () => {
                       >
                         <option value="">{t('alertRules.form.selectValue')}</option>
                         {COMPONENT_VALUES.map(v => (
-                          <option key={v} value={v}>{v.charAt(0).toUpperCase() + v.slice(1)}</option>
+                          <option key={v} value={v}>{t(`alertRules.values.${v}`, { defaultValue: v.charAt(0).toUpperCase() + v.slice(1) })}</option>
                         ))}
                       </select>
                     ) : (
@@ -588,7 +588,7 @@ const AlertRules = () => {
               {/* Severity */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Severity
+                  {t('alertRules.form.severity')}
                 </label>
                 <div className="flex gap-3">
                   {(['info', 'warning', 'urgent'] as const).map(s => {
@@ -619,7 +619,7 @@ const AlertRules = () => {
                 onClick={closeModal}
                 className="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="submit"
@@ -627,7 +627,7 @@ const AlertRules = () => {
                 className="px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors shadow-sm disabled:opacity-60 flex items-center gap-2"
               >
                 {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-                {editingRule ? 'Save Changes' : 'Create Rule'}
+                {editingRule ? t('alertRules.saveChanges') : t('alertRules.createRule')}
               </button>
             </div>
           </form>

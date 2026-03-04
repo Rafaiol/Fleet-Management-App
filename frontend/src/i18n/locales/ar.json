@@ -187,13 +187,13 @@
     "form": {
       "ruleName": "اسم القاعدة",
       "description": "الوصف",
-      "condition": "الشرط",
+      "condition": "حالة",
       "field": "الحقل",
       "operator": "المعامل",
       "value": "القيمة",
-      "selectField": "...اختر الحقل",
-      "selectOperator": "...اختر",
-      "selectValue": "...اختر",
+      "selectField": "اختر حقلاً...",
+      "selectOperator": "اختر...",
+      "selectValue": "اختر...",
       "threshold": "الحد الأقصى",
       "severity": "الخطورة"
     },
@@ -201,6 +201,47 @@
       "confirm": "حذف؟",
       "yes": "نعم",
       "no": "لا"
+    },
+    "fields": {
+      "mileage_since_oil_change": "المسافة منذ تغيير الزيت",
+      "mileage_since_tire_rotation": "المسافة منذ تدوير الإطارات",
+      "mileage_since_brake_check": "المسافة منذ فحص الفرامل",
+      "mileage_since_battery_replacement": "المسافة منذ تغيير البطارية",
+      "mileage_since_brake_fluid_change": "المسافة منذ تغيير سائل الفرامل",
+      "mileage_since_engine_belt_replacement": "المسافة منذ استبدال الحزام",
+      "mileage_since_distribution_chain_replacement": "المسافة منذ استبدال سلسلة التوزيع",
+      "mileage_since_coolant_change": "المسافة منذ تغيير سائل التبريد",
+      "days_since_oil_change": "أيام منذ تغيير الزيت",
+      "days_since_tire_rotation": "أيام منذ تدوير الإطارات",
+      "days_since_brake_check": "أيام منذ فحص الفرامل",
+      "days_since_general_inspection": "أيام منذ التفتيش العام",
+      "days_since_battery_replacement": "أيام منذ تغيير البطارية",
+      "days_since_brake_fluid_change": "أيام منذ تغيير سائل الفرامل",
+      "days_since_engine_belt_replacement": "أيام منذ استبدال الحزام",
+      "days_since_distribution_chain_replacement": "أيام منذ استبدال سلسلة التوزيع",
+      "days_since_coolant_change": "أيام منذ تغيير سائل التبريد",
+      "registration_expiry_days": "انتهاء التسجيل خلال (أيام)",
+      "insurance_expiry_days": "انتهاء التأمين خلال (أيام)",
+      "current_mileage": "المسافة الحالية (كم)",
+      "vehicle_age": "عمر المركبة (سنوات)",
+      "battery_condition": "حالة البطارية",
+      "brake_fluid_condition": "حالة سائل الفرامل",
+      "coolant_condition": "حالة سائل التبريد",
+      "engine_belt_condition": "حالة حزام المحرك",
+      "distribution_chain_condition": "حالة سلسلة التوزيع"
+    },
+    "groups": {
+      "Mileage Since Service": "المسافة منذ الخدمة",
+      "Days Since Service": "الأيام منذ الخدمة",
+      "Expiry Countdown": "العد التنازلي لانتهاء الصلاحية",
+      "Vehicle Property": "خصائص المركبة",
+      "Component Condition": "حالة المكون"
+    },
+    "values": {
+      "good": "جيد",
+      "fair": "مقبول",
+      "poor": "ضعيف",
+      "unknown": "غير معروف"
     }
   },
   "dashboard": {
@@ -431,7 +472,13 @@
       "battery_replacement": "استبدال البطارية",
       "general_inspection": "فحص عام",
       "engine_repair": "إصلاح المحرك",
-      "other": "أخرى"
+      "other": "أخرى",
+      "chain_replacement": "استبدال السلسلة",
+      "belt_replacement": "استبدال الحزام",
+      "brake_fluid_change": "تغيير سائل الفرامل",
+      "coolant_change": "تغيير سائل التبريد",
+      "transmission_repair": "إصلاح ناقل الحركة",
+      "electrical_repair": "إصلاح كهربائي"
     },
     "status": {
       "scheduled": "مجدول",

@@ -20,11 +20,13 @@ import {
 } from '@/store/slices/vehicleSlice';
 import { reportApi } from '@/services/api';
 import { useAuth } from '@/hooks';
+import { useTranslation } from 'react-i18next';
 
 const VehicleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
   const { currentVehicle, maintenanceHistory, isLoadingDetails } = useSelector(
     (state: RootState) => state.vehicles
   );
@@ -79,12 +81,12 @@ const VehicleDetail = () => {
   if (!currentVehicle) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500">Vehicle not found</p>
+        <p className="text-gray-500">{t('vehicles.table.unknownVehicle')}</p>
         <button
           onClick={() => navigate('/vehicles')}
           className="mt-4 text-primary-600 hover:text-primary-700"
         >
-          Back to Vehicles
+          {t('common.previous')}
         </button>
       </div>
     );
@@ -111,7 +113,7 @@ const VehicleDetail = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
           >
             <Download className="w-4 h-4" />
-            Export PDF
+            {t('reports.downloadPdf')}
           </button>
           {canEditVehicles && (
             <Link
@@ -119,7 +121,7 @@ const VehicleDetail = () => {
               className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
             >
               <Edit className="w-4 h-4" />
-              Edit
+              {t('common.edit')}
             </Link>
           )}
         </div>
@@ -132,14 +134,14 @@ const VehicleDetail = () => {
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <Car className="w-5 h-5 text-blue-600" />
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">Status</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{t('vehicles.table.status')}</span>
           </div>
           <span
             className={`inline-flex px-3 py-1 text-sm font-medium rounded-full capitalize ${getStatusColor(
               currentVehicle.status
             )}`}
           >
-            {currentVehicle.status}
+            {t(`vehicleForm.status.${currentVehicle.status}`, { defaultValue: currentVehicle.status })}
           </span>
         </div>
 
@@ -148,7 +150,7 @@ const VehicleDetail = () => {
             <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
               <Gauge className="w-5 h-5 text-green-600" />
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">Mileage</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{t('vehicles.table.mileage')}</span>
           </div>
           <p className="text-xl font-semibold text-gray-900 dark:text-white">
             {currentVehicle.currentMileage.toLocaleString()} {currentVehicle.mileageUnit}
@@ -160,10 +162,10 @@ const VehicleDetail = () => {
             <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
               <Fuel className="w-5 h-5 text-yellow-600" />
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">Fuel Type</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{t('vehicles.table.fuelType')}</span>
           </div>
           <p className="text-xl font-semibold text-gray-900 dark:text-white capitalize">
-            {currentVehicle.fuelType}
+            {t(`vehicleForm.fuelType.${currentVehicle.fuelType}`, { defaultValue: currentVehicle.fuelType })}
           </p>
         </div>
 
@@ -172,10 +174,10 @@ const VehicleDetail = () => {
             <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
               <Settings className="w-5 h-5 text-purple-600" />
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">Transmission</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400">{t('vehicleForm.fields.transmission')}</span>
           </div>
           <p className="text-xl font-semibold text-gray-900 dark:text-white capitalize">
-            {currentVehicle.transmission}
+            {t(`vehicleForm.transmission.${currentVehicle.transmission}`, { defaultValue: currentVehicle.transmission })}
           </p>
         </div>
       </div>
@@ -185,47 +187,47 @@ const VehicleDetail = () => {
         {/* Vehicle Details */}
         <div className="card-aurora p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Vehicle Details
+            {t('vehicleForm.sections.general')}
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">VIN</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('vehicleForm.fields.vin')}</p>
               <p className="font-medium text-gray-900 dark:text-white">
-                {currentVehicle.vin || 'N/A'}
+                {currentVehicle.vin || t('common.none')}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Color</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('vehicleForm.fields.color')}</p>
               <p className="font-medium text-gray-900 dark:text-white">
-                {currentVehicle.color || 'N/A'}
+                {currentVehicle.color || t('common.none')}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Body Type</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('vehicleForm.fields.bodyType')}</p>
               <p className="font-medium text-gray-900 dark:text-white capitalize">
-                {currentVehicle.bodyType}
+                {t(`vehicleForm.bodyType.${currentVehicle.bodyType}`, { defaultValue: currentVehicle.bodyType })}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Engine Size</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('vehicleForm.sections.specifications')}</p>
               <p className="font-medium text-gray-900 dark:text-white">
-                {currentVehicle.engineSize ? `${currentVehicle.engineSize}L` : 'N/A'}
+                {currentVehicle.engineSize ? `${currentVehicle.engineSize}L` : t('common.none')}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Registration Expiry</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('vehicleForm.fields.registrationExpiry')}</p>
               <p className="font-medium text-gray-900 dark:text-white">
                 {currentVehicle.registrationExpiry
                   ? new Date(currentVehicle.registrationExpiry).toLocaleDateString()
-                  : 'N/A'}
+                  : t('common.none')}
               </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Insurance Expiry</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('vehicleForm.fields.insuranceExpiry')}</p>
               <p className="font-medium text-gray-900 dark:text-white">
                 {currentVehicle.insuranceExpiry
                   ? new Date(currentVehicle.insuranceExpiry).toLocaleDateString()
-                  : 'N/A'}
+                  : t('common.none')}
               </p>
             </div>
           </div>
@@ -235,13 +237,13 @@ const VehicleDetail = () => {
         <div className="card-aurora p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Recent Maintenance
+              {t('dashboard.upcomingMaintenance.title')}
             </h3>
             <Link
               to="/maintenance"
               className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"
             >
-              View All
+              {t('dashboard.upcomingMaintenance.viewAll')}
             </Link>
           </div>
           <div className="space-y-3">
@@ -256,7 +258,7 @@ const VehicleDetail = () => {
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-gray-900 dark:text-white capitalize">
-                      {record.type?.replace(/_/g, ' ')}
+                      {t(`maintenanceForm.types.${record.type}`, { defaultValue: record.type?.replace(/_/g, ' ') })}
                     </p>
                     <p className="text-sm text-gray-500">
                       {new Date(record.scheduledDate).toLocaleDateString()}
@@ -270,12 +272,12 @@ const VehicleDetail = () => {
                         : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
                       }`}
                   >
-                    {record.status}
+                    {t(`maintenanceForm.status.${record.status}`, { defaultValue: record.status })}
                   </span>
                 </div>
               ))
             ) : (
-              <p className="text-center text-gray-500 py-8">No maintenance records</p>
+              <p className="text-center text-gray-500 py-8">{t('dashboard.upcomingMaintenance.noMaintenance')}</p>
             )}
           </div>
         </div>

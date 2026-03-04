@@ -159,6 +159,12 @@ const MaintenanceForm = () => {
                 <option value="battery_replacement">{t('maintenanceForm.types.battery_replacement')}</option>
                 <option value="general_inspection">{t('maintenanceForm.types.general_inspection')}</option>
                 <option value="engine_repair">{t('maintenanceForm.types.engine_repair')}</option>
+                <option value="chain_replacement">{t('maintenanceForm.types.chain_replacement')}</option>
+                <option value="belt_replacement">{t('maintenanceForm.types.belt_replacement')}</option>
+                <option value="brake_fluid_change">{t('maintenanceForm.types.brake_fluid_change')}</option>
+                <option value="coolant_change">{t('maintenanceForm.types.coolant_change')}</option>
+                <option value="transmission_repair">{t('maintenanceForm.types.transmission_repair')}</option>
+                <option value="electrical_repair">{t('maintenanceForm.types.electrical_repair')}</option>
                 <option value="other">{t('maintenanceForm.types.other')}</option>
               </select>
               {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>}

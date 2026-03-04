@@ -201,6 +201,47 @@
       "confirm": "Supprimer ?",
       "yes": "Oui",
       "no": "Non"
+    },
+    "fields": {
+      "mileage_since_oil_change": "Kilométrage depuis vidange",
+      "mileage_since_tire_rotation": "Kilométrage depuis rotation",
+      "mileage_since_brake_check": "Kilométrage depuis contrôle freins",
+      "mileage_since_battery_replacement": "Kilométrage depuis batterie",
+      "mileage_since_brake_fluid_change": "Kilométrage depuis liquide de frein",
+      "mileage_since_engine_belt_replacement": "Kilométrage depuis changem. courroie",
+      "mileage_since_distribution_chain_replacement": "Kilométrage depuis changem. chaîne",
+      "mileage_since_coolant_change": "Kilométrage depuis changem. liquide",
+      "days_since_oil_change": "Jours depuis vidange",
+      "days_since_tire_rotation": "Jours depuis rotation",
+      "days_since_brake_check": "Jours depuis contrôle freins",
+      "days_since_general_inspection": "Jours depuis inspection gén.",
+      "days_since_battery_replacement": "Jours depuis changement bat.",
+      "days_since_brake_fluid_change": "Jours depuis liquide de frein",
+      "days_since_engine_belt_replacement": "Jours depuis changem. courroie",
+      "days_since_distribution_chain_replacement": "Jours depuis changem. chaîne",
+      "days_since_coolant_change": "Jours depuis changem. liquide",
+      "registration_expiry_days": "Immatriculation expire dans (j)",
+      "insurance_expiry_days": "Assurance expire dans (j)",
+      "current_mileage": "Kilométrage actuel (km)",
+      "vehicle_age": "Âge du véhicule (ans)",
+      "battery_condition": "État de la batterie",
+      "brake_fluid_condition": "État du liquide de frein",
+      "coolant_condition": "État du liquide",
+      "engine_belt_condition": "État de la courroie",
+      "distribution_chain_condition": "État de la chaîne"
+    },
+    "groups": {
+      "Mileage Since Service": "Kilométrage depuis le service",
+      "Days Since Service": "Jours depuis le service",
+      "Expiry Countdown": "Compte à rebours d'expiration",
+      "Vehicle Property": "Propriété du véhicule",
+      "Component Condition": "État du composant"
+    },
+    "values": {
+      "good": "Bon",
+      "fair": "Passable",
+      "poor": "Médiocre",
+      "unknown": "Inconnu"
     }
   },
   "dashboard": {
@@ -431,7 +472,13 @@
       "battery_replacement": "Remplacement de la batterie",
       "general_inspection": "Inspection générale",
       "engine_repair": "Réparation du moteur",
-      "other": "Autre"
+      "other": "Autre",
+      "chain_replacement": "Remplacement de la chaîne",
+      "belt_replacement": "Remplacement de courroie",
+      "brake_fluid_change": "Changement de liquide de frein",
+      "coolant_change": "Changement de liquide",
+      "transmission_repair": "Réparation de transmission",
+      "electrical_repair": "Réparation électrique"
     },
     "status": {
       "scheduled": "Planifié",
