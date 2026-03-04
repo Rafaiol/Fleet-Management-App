@@ -16,10 +16,19 @@ function computeFieldValue(vehicle, field) {
     case 'mileage_since_oil_change':
       return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastOilChangeMileage || 0);
     case 'mileage_since_tire_rotation':
-      // Approximate: mileage intervals are tracked by km
       return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastTireRotationMileage || 0);
     case 'mileage_since_brake_check':
       return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastBrakeCheckMileage || 0);
+    case 'mileage_since_battery_replacement':
+      return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastBatteryReplacementMileage || 0);
+    case 'mileage_since_brake_fluid_change':
+      return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastBrakeFluidChangeMileage || 0);
+    case 'mileage_since_engine_belt_replacement':
+      return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastEngineBeltReplacementMileage || 0);
+    case 'mileage_since_distribution_chain_replacement':
+      return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastDistributionChainReplacementMileage || 0);
+    case 'mileage_since_coolant_change':
+      return vehicle.currentMileage - (vehicle.maintenanceSchedule?.lastCoolantChangeMileage || 0);
 
     // ── Days since service ──
     case 'days_since_oil_change':
@@ -37,6 +46,26 @@ function computeFieldValue(vehicle, field) {
     case 'days_since_general_inspection':
       return vehicle.maintenanceSchedule?.lastGeneralInspection
         ? daysBetween(now, new Date(vehicle.maintenanceSchedule.lastGeneralInspection))
+        : Infinity;
+    case 'days_since_battery_replacement':
+      return vehicle.maintenanceSchedule?.lastBatteryReplacement
+        ? daysBetween(now, new Date(vehicle.maintenanceSchedule.lastBatteryReplacement))
+        : Infinity;
+    case 'days_since_brake_fluid_change':
+      return vehicle.maintenanceSchedule?.lastBrakeFluidChange
+        ? daysBetween(now, new Date(vehicle.maintenanceSchedule.lastBrakeFluidChange))
+        : Infinity;
+    case 'days_since_engine_belt_replacement':
+      return vehicle.maintenanceSchedule?.lastEngineBeltReplacement
+        ? daysBetween(now, new Date(vehicle.maintenanceSchedule.lastEngineBeltReplacement))
+        : Infinity;
+    case 'days_since_distribution_chain_replacement':
+      return vehicle.maintenanceSchedule?.lastDistributionChainReplacement
+        ? daysBetween(now, new Date(vehicle.maintenanceSchedule.lastDistributionChainReplacement))
+        : Infinity;
+    case 'days_since_coolant_change':
+      return vehicle.maintenanceSchedule?.lastCoolantChange
+        ? daysBetween(now, new Date(vehicle.maintenanceSchedule.lastCoolantChange))
         : Infinity;
 
     // ── Expiry countdown ──

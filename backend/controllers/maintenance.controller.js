@@ -267,18 +267,28 @@ exports.updateMaintenance = async (req, res) => {
             break;
           case 'battery_replacement':
             vehicle.components.battery.lastReplaced = now;
+            vehicle.maintenanceSchedule.lastBatteryReplacement = now;
+            vehicle.maintenanceSchedule.lastBatteryReplacementMileage = req.body.mileageAtService || vehicle.currentMileage;
             break;
           case 'chain_replacement':
             vehicle.components.distributionChain.lastReplaced = now;
+            vehicle.maintenanceSchedule.lastDistributionChainReplacement = now;
+            vehicle.maintenanceSchedule.lastDistributionChainReplacementMileage = req.body.mileageAtService || vehicle.currentMileage;
             break;
           case 'belt_replacement':
             vehicle.components.engineBelt.lastReplaced = now;
+            vehicle.maintenanceSchedule.lastEngineBeltReplacement = now;
+            vehicle.maintenanceSchedule.lastEngineBeltReplacementMileage = req.body.mileageAtService || vehicle.currentMileage;
             break;
           case 'brake_fluid_change':
             vehicle.components.brakeFluid.lastChanged = now;
+            vehicle.maintenanceSchedule.lastBrakeFluidChange = now;
+            vehicle.maintenanceSchedule.lastBrakeFluidChangeMileage = req.body.mileageAtService || vehicle.currentMileage;
             break;
           case 'coolant_change':
             vehicle.components.coolant.lastChanged = now;
+            vehicle.maintenanceSchedule.lastCoolantChange = now;
+            vehicle.maintenanceSchedule.lastCoolantChangeMileage = req.body.mileageAtService || vehicle.currentMileage;
             break;
         }
 
@@ -547,6 +557,31 @@ exports.completeMaintenance = async (req, res) => {
           break;
         case 'general_inspection':
           vehicle.maintenanceSchedule.lastGeneralInspection = now;
+          break;
+        case 'battery_replacement':
+          vehicle.components.battery.lastReplaced = now;
+          vehicle.maintenanceSchedule.lastBatteryReplacement = now;
+          vehicle.maintenanceSchedule.lastBatteryReplacementMileage = mileageAtService || vehicle.currentMileage;
+          break;
+        case 'chain_replacement':
+          vehicle.components.distributionChain.lastReplaced = now;
+          vehicle.maintenanceSchedule.lastDistributionChainReplacement = now;
+          vehicle.maintenanceSchedule.lastDistributionChainReplacementMileage = mileageAtService || vehicle.currentMileage;
+          break;
+        case 'belt_replacement':
+          vehicle.components.engineBelt.lastReplaced = now;
+          vehicle.maintenanceSchedule.lastEngineBeltReplacement = now;
+          vehicle.maintenanceSchedule.lastEngineBeltReplacementMileage = mileageAtService || vehicle.currentMileage;
+          break;
+        case 'brake_fluid_change':
+          vehicle.components.brakeFluid.lastChanged = now;
+          vehicle.maintenanceSchedule.lastBrakeFluidChange = now;
+          vehicle.maintenanceSchedule.lastBrakeFluidChangeMileage = mileageAtService || vehicle.currentMileage;
+          break;
+        case 'coolant_change':
+          vehicle.components.coolant.lastChanged = now;
+          vehicle.maintenanceSchedule.lastCoolantChange = now;
+          vehicle.maintenanceSchedule.lastCoolantChangeMileage = mileageAtService || vehicle.currentMileage;
           break;
       }
 

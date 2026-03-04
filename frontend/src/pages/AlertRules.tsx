@@ -29,6 +29,11 @@ const CONDITION_FIELDS = [
       { value: 'mileage_since_oil_change', label: 'Mileage since oil change' },
       { value: 'mileage_since_tire_rotation', label: 'Mileage since tire rotation' },
       { value: 'mileage_since_brake_check', label: 'Mileage since brake check' },
+      { value: 'mileage_since_battery_replacement', label: 'Mileage since battery replacement' },
+      { value: 'mileage_since_brake_fluid_change', label: 'Mileage since brake fluid change' },
+      { value: 'mileage_since_engine_belt_replacement', label: 'Mileage since engine belt replacement' },
+      { value: 'mileage_since_distribution_chain_replacement', label: 'Mileage since distribution chain replacement' },
+      { value: 'mileage_since_coolant_change', label: 'Mileage since coolant change' },
     ]
   },
   {
@@ -37,6 +42,11 @@ const CONDITION_FIELDS = [
       { value: 'days_since_tire_rotation', label: 'Days since tire rotation' },
       { value: 'days_since_brake_check', label: 'Days since brake check' },
       { value: 'days_since_general_inspection', label: 'Days since general inspection' },
+      { value: 'days_since_battery_replacement', label: 'Days since battery replacement' },
+      { value: 'days_since_brake_fluid_change', label: 'Days since brake fluid change' },
+      { value: 'days_since_engine_belt_replacement', label: 'Days since engine belt replacement' },
+      { value: 'days_since_distribution_chain_replacement', label: 'Days since distribution chain replacement' },
+      { value: 'days_since_coolant_change', label: 'Days since coolant change' },
     ]
   },
   {

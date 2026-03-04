@@ -144,6 +144,41 @@ const vehicleSchema = new mongoose.Schema({
     },
     lastGeneralInspection: {
       type: Date
+    },
+    lastBatteryReplacement: {
+      type: Date
+    },
+    lastBatteryReplacementMileage: {
+      type: Number,
+      default: 0
+    },
+    lastBrakeFluidChange: {
+      type: Date
+    },
+    lastBrakeFluidChangeMileage: {
+      type: Number,
+      default: 0
+    },
+    lastEngineBeltReplacement: {
+      type: Date
+    },
+    lastEngineBeltReplacementMileage: {
+      type: Number,
+      default: 0
+    },
+    lastDistributionChainReplacement: {
+      type: Date
+    },
+    lastDistributionChainReplacementMileage: {
+      type: Number,
+      default: 0
+    },
+    lastCoolantChange: {
+      type: Date
+    },
+    lastCoolantChangeMileage: {
+      type: Number,
+      default: 0
     }
   },
 
