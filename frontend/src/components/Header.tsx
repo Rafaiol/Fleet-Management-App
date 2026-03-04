@@ -23,7 +23,7 @@ const Header = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { user } = useSelector((state: RootState) => state.auth);
-  const { sidebarOpen, isMobile, notifications } = useSelector((state: RootState) => state.ui);
+  const { sidebarOpen, isMobile, notifications, language } = useSelector((state: RootState) => state.ui);
   const { isDark, toggleTheme } = useTheme();
   const { t } = useTranslation();
 
@@ -49,11 +49,11 @@ const Header = () => {
   return (
     <header className="fixed top-0 right-0 left-0 z-20 h-16 bg-white/90 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm transition-all duration-300">
       <div
-        className={`h-full flex items-center justify-between px-4 lg:px-8 transition-all duration-300 ${isMobile ? '' : sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
+        className={`h-full flex items-center justify-between px-4 lg:px-8 transition-all duration-300 ${isMobile ? '' : sidebarOpen ? 'lg:ms-64' : 'lg:ms-20'
           }`}
       >
-        {/* Left Side */}
-        <div className="flex items-center gap-4">
+        {/* Left Side (Search) */}
+        <div className={`flex items-center gap-4 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
           {/* Mobile Menu Button */}
           <button
             onClick={() => dispatch(toggleSidebar())}
@@ -65,20 +65,20 @@ const Header = () => {
           {/* Search */}
           <div className="hidden md:flex items-center">
             <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Search className={`absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400`} />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('common.search')}
-                className="pl-10 pr-4 py-2 w-64 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100"
+                className={`${language === 'ar' ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4'} py-2 w-64 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100`}
               />
             </form>
           </div>
         </div>
 
-        {/* Right Side */}
-        <div className="flex items-center gap-1.5">
+        {/* Right Side (Tools & User) */}
+        <div className={`flex items-center gap-1.5 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
@@ -96,13 +96,13 @@ const Header = () => {
             >
               <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white" />
+                <span className={`absolute top-1.5 ${language === 'ar' ? 'left-1.5' : 'right-1.5'} w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white`} />
               )}
             </button>
 
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50 animate-fade-in">
+              <div className={`${language === 'ar' ? 'left-0' : 'right-0'} absolute mt-2 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50 animate-fade-in`}>
                 <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
                   <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{t('header.notifications.title')}</h3>
                   {unreadCount > 0 && (
@@ -121,7 +121,7 @@ const Header = () => {
                             dispatch(markNotificationRead(notification.id));
                           }
                         }}
-                        className={`px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors ${!notification.read ? 'bg-primary-50/60 dark:bg-primary-900/10 border-l-2 border-primary-400 pl-3' : ''
+                        className={`px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors ${!notification.read ? 'bg-primary-50/60 dark:bg-primary-900/10 border-s-2 border-primary-400 ps-3' : ''
                           }`}
                       >
                         <p className={`text-sm ${!notification.read ? 'text-slate-900 dark:text-white font-medium' : 'text-slate-700 dark:text-gray-200'}`}>
@@ -158,7 +158,7 @@ const Header = () => {
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2 px-2 py-1.5 text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
+              className={`flex items-center gap-2 px-2 py-1.5 text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-gray-700 rounded-xl transition-colors ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}
             >
               {/* Aurora gradient avatar */}
               <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gradient-to-br from-primary-500 to-violet-600 shadow-sm shadow-primary-200 ring-2 ring-primary-100">
@@ -172,7 +172,7 @@ const Header = () => {
 
             {/* User Dropdown */}
             {showUserMenu && (
-              <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50 animate-fade-in">
+              <div className={`${language === 'ar' ? 'left-0' : 'right-0'} absolute mt-2 w-52 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50 animate-fade-in`}>
                 <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">{user?.fullName}</p>
                   <p className="text-xs text-slate-500 dark:text-gray-400 mt-0.5">{user?.email}</p>
@@ -182,7 +182,7 @@ const Header = () => {
                 </div>
                 <Link
                   to="/settings"
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  className={`flex items-center gap-2 px-4 py-2.5 text-sm text-slate-700 dark:text-gray-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${language === 'ar' ? 'flex-row-reverse justify-start' : 'flex-row'}`}
                   onClick={() => setShowUserMenu(false)}
                 >
                   <User className="w-4 h-4 text-slate-400" />
@@ -190,7 +190,7 @@ const Header = () => {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
+                  className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors ${language === 'ar' ? 'flex-row-reverse justify-start' : 'flex-row'}`}
                 >
                   <LogOut className="w-4 h-4" />
                   {t('header.user.logout')}

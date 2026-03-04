@@ -36,10 +36,7 @@ const Layout = () => {
 
       {/* Main Content */}
       <div
-        className={`relative z-10 transition-all duration-300 ${isMobile ? '' : sidebarOpen
-          ? language === 'ar' ? 'lg:mr-64' : 'lg:ml-64'
-          : language === 'ar' ? 'lg:mr-20' : 'lg:ml-20'
-          }`}
+        className={`relative z-10 transition-all duration-300 ${isMobile ? '' : sidebarOpen ? 'lg:ms-64' : 'lg:ms-20'}`}
       >
         {/* Header */}
         <Header />

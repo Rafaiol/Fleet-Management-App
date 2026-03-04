@@ -52,7 +52,7 @@ const Sidebar = () => {
   return (
     <>
       <aside
-        className={`fixed top-0 left-0 z-30 h-full bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 shadow-lg transition-all duration-300 flex flex-col ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        className={`fixed top-0 start-0 z-30 h-full bg-white dark:bg-slate-900 border-e border-slate-100 dark:border-slate-800 shadow-lg transition-all duration-300 flex flex-col ${sidebarOpen ? 'translate-x-0' : (language === 'ar' ? 'translate-x-full' : '-translate-x-full') + ' lg:translate-x-0'
           } ${isMobile ? 'w-64' : isCollapsed ? 'w-20' : 'w-64'}`}
       >
         {/* Logo */}
@@ -89,9 +89,9 @@ const Sidebar = () => {
               onClick={handleClose}
               className={({ isActive }) =>
                 `flex items-center h-11 text-sm font-medium rounded-xl transition-all duration-200 whitespace-nowrap overflow-hidden ${isActive
-                  ? 'bg-primary-50 text-primary-700 border-l-[3px] border-primary-500 pl-[calc(0.75rem-3px)] dark:bg-primary-900/20 dark:text-primary-400'
-                  : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 pl-3'
-                } ${isCollapsed ? 'justify-center px-0' : 'pr-3 gap-3'}`
+                  ? 'bg-primary-50 text-primary-700 border-s-[3px] border-primary-500 ps-[calc(0.75rem-3px)] dark:bg-primary-900/20 dark:text-primary-400'
+                  : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 ps-3'
+                } ${isCollapsed ? 'justify-center px-0' : 'pe-3 gap-3'}`
               }
               title={isCollapsed ? item.label : undefined}
             >
@@ -174,7 +174,7 @@ const Sidebar = () => {
         {!isMobile && (
           <button
             onClick={() => dispatch(toggleSidebar())}
-            className="group absolute -right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 z-50 focus:outline-none shadow-sm hover:shadow-md"
+            className="group absolute -end-3.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 transform active:scale-95 z-50 focus:outline-none shadow-sm hover:shadow-md"
           >
             {/* Glassmorphic Background */}
             <div className="absolute inset-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md rounded-full"></div>

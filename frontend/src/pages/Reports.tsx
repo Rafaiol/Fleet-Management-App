@@ -150,24 +150,7 @@ const Reports = () => {
     }
   };
 
-  const handleDownloadFleetExcel = async () => {
-    setLoading('fleet-excel');
-    try {
-      const response = await reportApi.downloadFleetSummaryExcel({ lang: language });
-      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Fleet-Summary-${new Date().toISOString().split('T')[0]}.xlsx`;
-      link.click();
-      window.URL.revokeObjectURL(url);
-      toast.success(t('reports.success.fleet'));
-    } catch (error) {
-      toast.error(t('reports.error.fleet'));
-    } finally {
-      setLoading(null);
-    }
-  };
+
 
   const handleDownloadVehiclesExcel = async () => {
     setLoading('vehicles-excel');
@@ -225,8 +208,8 @@ const Reports = () => {
       icon: BarChart3,
       color: 'bg-blue-500',
       action: handleDownloadFleetSummary,
-      excelAction: handleDownloadFleetExcel,
-      excelId: 'fleet-excel',
+      excelAction: null,
+      excelId: null,
     },
     {
       id: 'vehicles',

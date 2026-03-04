@@ -18,7 +18,10 @@ import {
   Trash2,
   XCircle,
   Car,
-  Wrench
+  Wrench,
+  Info,
+  CheckCircle2,
+  AlertTriangle
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
