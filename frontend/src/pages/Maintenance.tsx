@@ -19,6 +19,7 @@ import {
 } from '@/store/slices/maintenanceSlice';
 import { useDebounce, useAuth } from '@/hooks';
 import ConfirmModal from '@/components/ConfirmModal';
+import { useTranslation } from 'react-i18next';
 
 const Maintenance = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,6 +27,7 @@ const Maintenance = () => {
     (state: RootState) => state.maintenance
   );
   const { canAddMaintenance, canEditMaintenance, canDeleteMaintenance } = useAuth();
+  const { t } = useTranslation();
 
   const [searchParams] = useSearchParams();
   const initialStatus = searchParams.get('status') || '';
@@ -95,10 +97,10 @@ const Maintenance = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Maintenance Records
+            {t('maintenance.title')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Manage vehicle maintenance and repairs
+            {t('maintenance.description')}
           </p>
         </div>
         {canAddMaintenance && (
@@ -107,7 +109,7 @@ const Maintenance = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
           >
             <Plus className="w-5 h-5" />
-            New Record
+            {t('maintenance.newRecord')}
           </Link>
         )}
       </div>
@@ -121,7 +123,7 @@ const Maintenance = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search maintenance records..."
+              placeholder={t('maintenance.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -130,18 +132,18 @@ const Maintenance = () => {
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
             className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
           >
-            <option value="">All Status</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="in_progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="">{t('maintenance.filters.allStatus')}</option>
+            <option value="scheduled">{t('maintenance.filters.scheduled')}</option>
+            <option value="in_progress">{t('maintenance.filters.inProgress')}</option>
+            <option value="completed">{t('maintenance.filters.completed')}</option>
+            <option value="cancelled">{t('maintenance.filters.cancelled')}</option>
           </select>
           <select
             value={filters.type}
             onChange={(e) => setFilters({ ...filters, type: e.target.value })}
             className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
           >
-            <option value="">All Types</option>
+            <option value="">{t('maintenance.filters.allTypes')}</option>
             {types.map((type) => (
               <option key={type} value={type}>
                 {type.replace(/_/g, ' ')}
@@ -158,22 +160,22 @@ const Maintenance = () => {
             <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
                 <th className="w-[20%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Vehicle
+                  {t('maintenance.table.vehicle')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Type
+                  {t('maintenance.table.type')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Status
+                  {t('maintenance.table.status')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Date
+                  {t('maintenance.table.date')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Cost
+                  {t('maintenance.table.cost')}
                 </th>
                 <th className="w-[20%] text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Actions
+                  {t('maintenance.table.actions')}
                 </th>
               </tr>
             </thead>
@@ -188,7 +190,7 @@ const Maintenance = () => {
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-gray-500">
                     <Wrench className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>No maintenance records found</p>
+                    <p>{t('maintenance.table.noRecords')}</p>
                   </td>
                 </tr>
               ) : (
@@ -230,7 +232,7 @@ const Maintenance = () => {
                         <Link
                           to={`/maintenance/${record.id}`}
                           className="p-2 text-gray-500 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
-                          title="View Details"
+                          title={t('maintenance.actions.viewDetails')}
                         >
                           <FileText className="w-4 h-4" />
                         </Link>
@@ -238,7 +240,7 @@ const Maintenance = () => {
                           <Link
                             to={`/maintenance/${record.id}/edit`}
                             className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-                            title="Edit"
+                            title={t('maintenance.actions.edit')}
                           >
                             <Edit className="w-4 h-4" />
                           </Link>
@@ -247,7 +249,7 @@ const Maintenance = () => {
                           <button
                             onClick={() => handleDelete(record.id)}
                             className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                            title="Delete"
+                            title={t('maintenance.actions.delete')}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -265,9 +267,11 @@ const Maintenance = () => {
         {pagination.pages > 1 && (
           <div className="flex items-center justify-between px-4 py-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500">
-              Showing {(page - 1) * pagination.limit + 1} to{' '}
-              {Math.min(page * pagination.limit, pagination.total)} of{' '}
-              {pagination.total} results
+              {t('common.resultsCount', {
+                start: (page - 1) * pagination.limit + 1,
+                end: Math.min(page * pagination.limit, pagination.total),
+                total: pagination.total
+              })}
             </p>
             <div className="flex items-center gap-2">
               <button
@@ -275,17 +279,17 @@ const Maintenance = () => {
                 disabled={page === 1}
                 className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
               >
-                Previous
+                {t('common.previous')}
               </button>
               <span className="text-sm text-gray-700 dark:text-gray-300">
-                Page {page} of {pagination.pages}
+                {t('common.pageOf', { current: page, total: pagination.pages })}
               </span>
               <button
                 onClick={() => setPage(page + 1)}
                 disabled={page === pagination.pages}
                 className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
               >
-                Next
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -296,10 +300,10 @@ const Maintenance = () => {
         isOpen={!!recordToDelete}
         onClose={() => setRecordToDelete(null)}
         onConfirm={confirmDelete}
-        title="Delete Record"
-        message="Are you sure you want to delete this maintenance record? This action cannot be undone."
-        confirmText="Delete Record"
-        cancelText="Cancel"
+        title={t('maintenance.delete.title')}
+        message={t('maintenance.delete.message')}
+        confirmText={t('maintenance.delete.confirm')}
+        cancelText={t('maintenance.delete.cancel')}
         isDestructive={true}
         isLoading={isDeleting}
       />

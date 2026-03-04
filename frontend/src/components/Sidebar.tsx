@@ -17,27 +17,30 @@ import {
 import { RootState, AppDispatch } from '@/store';
 import { toggleSidebar, setSidebarOpen } from '@/store/slices/uiSlice';
 import { useAuth } from '@/hooks/useAuth';
-
-const menuItems = [
-  { path: '/', icon: LayoutDashboard, label: 'Dashboard', color: 'text-primary-600' },
-  { path: '/vehicles', icon: Car, label: 'Vehicles', color: 'text-violet-600' },
-  { path: '/maintenance', icon: Wrench, label: 'Maintenance', color: 'text-teal-600' },
-  { path: '/reports', icon: FileText, label: 'Reports', color: 'text-rose-500' },
-];
+import { useTranslation } from 'react-i18next';
 
 const Sidebar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { sidebarOpen, isMobile } = useSelector((state: RootState) => state.ui);
+  const { sidebarOpen, isMobile, language } = useSelector((state: RootState) => state.ui);
   const { isAdmin, canAddAlerts, canEditAlerts, canDeleteAlerts } = useAuth();
+  const { t } = useTranslation();
+
+  const menuItems = [
+    { path: '/', icon: LayoutDashboard, label: t('common.dashboard'), color: 'text-primary-600' },
+    { path: '/vehicles', icon: Car, label: t('common.vehicles'), color: 'text-violet-600' },
+    { path: '/maintenance', icon: Wrench, label: t('common.maintenance'), color: 'text-teal-600' },
+    { path: '/reports', icon: FileText, label: t('common.reports'), color: 'text-rose-500' },
+  ];
+
   const hasAnyAlertPrivilege = isAdmin || canAddAlerts || canEditAlerts || canDeleteAlerts;
 
   const isCollapsed = !isMobile && !sidebarOpen;
 
   const showAdminMenu = isAdmin || hasAnyAlertPrivilege;
   const adminMenuItems = [
-    ...(isAdmin ? [{ path: '/users', icon: Users, label: 'Users', color: 'text-amber-500' }] : []),
-    ...(hasAnyAlertPrivilege ? [{ path: '/alert-rules', icon: ShieldAlert, label: 'Alert Rules', color: 'text-rose-500' }] : []),
-    ...(isAdmin ? [{ path: '/logs', icon: History, label: 'Activity Logs', color: 'text-cyan-500' }] : []),
+    ...(isAdmin ? [{ path: '/users', icon: Users, label: t('common.users'), color: 'text-amber-500' }] : []),
+    ...(hasAnyAlertPrivilege ? [{ path: '/alert-rules', icon: ShieldAlert, label: t('common.alertRules'), color: 'text-rose-500' }] : []),
+    ...(isAdmin ? [{ path: '/logs', icon: History, label: t('common.activityLogs'), color: 'text-cyan-500' }] : []),
   ];
 
   const handleClose = () => {
@@ -63,7 +66,7 @@ const Sidebar = () => {
               className={`ml-3 text-lg font-bold whitespace-nowrap transition-all duration-300 aurora-gradient-text ${isCollapsed ? 'opacity-0 w-0 ml-0' : 'opacity-100'
                 }`}
             >
-              Fleet MS
+              {t('common.systemName')}
             </span>
           </div>
           {isMobile && (
@@ -110,7 +113,7 @@ const Sidebar = () => {
               <div className="pt-3 mt-3 border-t border-slate-100 dark:border-slate-800">
                 {!isCollapsed && (
                   <p className="px-3 text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2">
-                    Admin
+                    {t('sidebar.admin')}
                   </p>
                 )}
                 {adminMenuItems.map((item) => (
@@ -153,7 +156,7 @@ const Sidebar = () => {
                 : 'text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 pl-3'
               } ${isCollapsed ? 'justify-center px-0' : 'pr-3 gap-3'}`
             }
-            title={isCollapsed ? 'Settings' : undefined}
+            title={isCollapsed ? t('common.settings') : undefined}
           >
             <div className={`${isCollapsed ? 'w-full flex justify-center' : 'shrink-0'}`}>
               <Settings className="w-5 h-5 shrink-0 text-slate-500" />
@@ -162,7 +165,7 @@ const Sidebar = () => {
               className={`transition-all duration-300 ${isCollapsed ? 'opacity-0 w-0 overflow-hidden' : 'opacity-100'
                 }`}
             >
-              Settings
+              {t('common.settings')}
             </span>
           </NavLink>
         </div>

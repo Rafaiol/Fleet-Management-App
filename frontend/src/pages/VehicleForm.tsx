@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Car, Save, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import BackButton from '@/components/BackButton';
 import { AppDispatch, RootState } from '@/store';
@@ -14,6 +15,7 @@ const VehicleForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
 
   const isEditMode = Boolean(id);
   const { currentVehicle, isLoading, isLoadingDetails } = useSelector((state: RootState) => state.vehicles);
@@ -37,7 +39,6 @@ const VehicleForm = () => {
 
   useEffect(() => {
     if (isEditMode && currentVehicle) {
-      // Format dates for html input type="date"
       const formattedVehicle = {
         ...currentVehicle,
         registrationDate: currentVehicle.registrationDate ? currentVehicle.registrationDate.substring(0, 10) : undefined,
@@ -56,10 +57,7 @@ const VehicleForm = () => {
       } else {
         await dispatch(createVehicle(data)).unwrap();
       }
-
-      // Refresh notifications globally so if an expiry changes, the bell indicator updates
       dispatch(fetchAlertsAsNotifications());
-
       navigate('/vehicles');
     } catch (error) {
       // Error handled by redux toast
@@ -81,10 +79,10 @@ const VehicleForm = () => {
         <BackButton to="/vehicles" />
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {isEditMode ? 'Edit Vehicle' : 'Add New Vehicle'}
+            {isEditMode ? t('vehicleForm.editTitle') : t('vehicleForm.addTitle')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            {isEditMode ? 'Update vehicle information' : 'Enter details for the new vehicle'}
+            {isEditMode ? t('vehicleForm.editSubtitle') : t('vehicleForm.addSubtitle')}
           </p>
         </div>
       </div>
@@ -94,16 +92,16 @@ const VehicleForm = () => {
         <div className="card-aurora p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
             <Car className="w-5 h-5 text-primary-600" />
-            General Information
+            {t('vehicleForm.sections.general')}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Make *
+                {t('vehicleForm.fields.make')} *
               </label>
               <input
-                {...register('make', { required: 'Make is required' })}
+                {...register('make', { required: t('vehicleForm.validation.makeRequired') })}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
                 placeholder="e.g. Toyota"
               />
@@ -112,10 +110,10 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Model *
+                {t('vehicleForm.fields.model')} *
               </label>
               <input
-                {...register('model', { required: 'Model is required' })}
+                {...register('model', { required: t('vehicleForm.validation.modelRequired') })}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
                 placeholder="e.g. Camry"
               />
@@ -124,14 +122,14 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Year *
+                {t('vehicleForm.fields.year')} *
               </label>
               <input
                 type="number"
                 {...register('year', {
-                  required: 'Year is required',
-                  min: { value: 1900, message: 'Invalid year' },
-                  max: { value: new Date().getFullYear() + 1, message: 'Invalid year' }
+                  required: t('vehicleForm.validation.yearRequired'),
+                  min: { value: 1900, message: t('vehicleForm.validation.invalidYear') },
+                  max: { value: new Date().getFullYear() + 1, message: t('vehicleForm.validation.invalidYear') }
                 })}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
                 placeholder="e.g. 2023"
@@ -141,10 +139,10 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Plate Number *
+                {t('vehicleForm.fields.plateNumber')} *
               </label>
               <input
-                {...register('plateNumber', { required: 'Plate number is required' })}
+                {...register('plateNumber', { required: t('vehicleForm.validation.plateRequired') })}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white uppercase focus:ring-2 focus:ring-primary-500"
                 placeholder="e.g. ABC-123"
               />
@@ -153,7 +151,7 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                VIN (Vehicle Identification Number)
+                {t('vehicleForm.fields.vin')}
               </label>
               <input
                 {...register('vin')}
@@ -164,76 +162,76 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Status
+                {t('vehicleForm.fields.status')}
               </label>
               <select
                 {...register('status')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
               >
-                <option value="active">Active</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="offline">Offline</option>
-                <option value="retired">Retired</option>
+                <option value="active">{t('vehicleForm.status.active')}</option>
+                <option value="maintenance">{t('vehicleForm.status.maintenance')}</option>
+                <option value="offline">{t('vehicleForm.status.offline')}</option>
+                <option value="retired">{t('vehicleForm.status.retired')}</option>
               </select>
             </div>
           </div>
         </div>
 
         <div className="card-aurora p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Specifications</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">{t('vehicleForm.sections.specifications')}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Body Type
+                {t('vehicleForm.fields.bodyType')}
               </label>
               <select
                 {...register('bodyType')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white capitalize focus:ring-2 focus:ring-primary-500"
               >
-                <option value="sedan">Sedan</option>
-                <option value="suv">SUV</option>
-                <option value="truck">Truck</option>
-                <option value="van">Van</option>
-                <option value="bus">Bus</option>
-                <option value="motorcycle">Motorcycle</option>
-                <option value="other">Other</option>
+                <option value="sedan">{t('vehicleForm.bodyType.sedan')}</option>
+                <option value="suv">{t('vehicleForm.bodyType.suv')}</option>
+                <option value="truck">{t('vehicleForm.bodyType.truck')}</option>
+                <option value="van">{t('vehicleForm.bodyType.van')}</option>
+                <option value="bus">{t('vehicleForm.bodyType.bus')}</option>
+                <option value="motorcycle">{t('vehicleForm.bodyType.motorcycle')}</option>
+                <option value="other">{t('vehicleForm.bodyType.other')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Fuel Type
+                {t('vehicleForm.fields.fuelType')}
               </label>
               <select
                 {...register('fuelType')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white capitalize focus:ring-2 focus:ring-primary-500"
               >
-                <option value="gasoline">Gasoline</option>
-                <option value="diesel">Diesel</option>
-                <option value="electric">Electric</option>
-                <option value="hybrid">Hybrid</option>
-                <option value="lpg">LPG</option>
+                <option value="gasoline">{t('vehicleForm.fuelType.gasoline')}</option>
+                <option value="diesel">{t('vehicleForm.fuelType.diesel')}</option>
+                <option value="electric">{t('vehicleForm.fuelType.electric')}</option>
+                <option value="hybrid">{t('vehicleForm.fuelType.hybrid')}</option>
+                <option value="lpg">{t('vehicleForm.fuelType.lpg')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Transmission
+                {t('vehicleForm.fields.transmission')}
               </label>
               <select
                 {...register('transmission')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white capitalize focus:ring-2 focus:ring-primary-500"
               >
-                <option value="automatic">Automatic</option>
-                <option value="manual">Manual</option>
-                <option value="cvt">CVT</option>
+                <option value="automatic">{t('vehicleForm.transmission.automatic')}</option>
+                <option value="manual">{t('vehicleForm.transmission.manual')}</option>
+                <option value="cvt">{t('vehicleForm.transmission.cvt')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Current Mileage
+                {t('vehicleForm.fields.currentMileage')}
               </label>
               <input
                 type="number"
@@ -244,20 +242,20 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Mileage Unit
+                {t('vehicleForm.fields.mileageUnit')}
               </label>
               <select
                 {...register('mileageUnit')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white uppercase focus:ring-2 focus:ring-primary-500"
               >
-                <option value="km">KM</option>
-                <option value="miles">MILES</option>
+                <option value="km">{t('vehicleForm.mileageUnit.km')}</option>
+                <option value="miles">{t('vehicleForm.mileageUnit.miles')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Color
+                {t('vehicleForm.fields.color')}
               </label>
               <input
                 {...register('color')}
@@ -269,12 +267,12 @@ const VehicleForm = () => {
         </div>
 
         <div className="card-aurora p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Registration & Insurance</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">{t('vehicleForm.sections.registration')}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Registration Date
+                {t('vehicleForm.fields.registrationDate')}
               </label>
               <input
                 type="date"
@@ -285,7 +283,7 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Registration Expiry
+                {t('vehicleForm.fields.registrationExpiry')}
               </label>
               <input
                 type="date"
@@ -296,7 +294,7 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Insurance Number
+                {t('vehicleForm.fields.insuranceNumber')}
               </label>
               <input
                 {...register('insuranceNumber')}
@@ -307,7 +305,7 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Insurance Expiry
+                {t('vehicleForm.fields.insuranceExpiry')}
               </label>
               <input
                 type="date"
@@ -319,12 +317,12 @@ const VehicleForm = () => {
         </div>
 
         <div className="card-aurora p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Financial Information</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">{t('vehicleForm.sections.financial')}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Purchase Date
+                {t('vehicleForm.fields.purchaseDate')}
               </label>
               <input
                 type="date"
@@ -335,7 +333,7 @@ const VehicleForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Purchase Price ($)
+                {t('vehicleForm.fields.purchasePrice')}
               </label>
               <input
                 type="number"
@@ -354,7 +352,7 @@ const VehicleForm = () => {
             onClick={() => navigate('/vehicles')}
             className="px-6 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            Cancel
+            {t('vehicleForm.actions.cancel')}
           </button>
           <button
             type="submit"
@@ -366,7 +364,7 @@ const VehicleForm = () => {
             ) : (
               <Save className="w-4 h-4" />
             )}
-            {isEditMode ? 'Save Changes' : 'Create Vehicle'}
+            {isEditMode ? t('vehicleForm.actions.saveChanges') : t('vehicleForm.actions.create')}
           </button>
         </div>
       </form>

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { alertRuleApi } from '@/services/api';
 import { useAuth } from '@/hooks';
+import { useTranslation } from 'react-i18next';
 
 // ───────── Constants ─────────
 
@@ -175,6 +176,7 @@ const emptyForm: FormData = {
 const AlertRules = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { canAddAlerts, canEditAlerts, canDeleteAlerts } = useAuth();
+  const { t } = useTranslation();
   const [rules, setRules] = useState<AlertRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -326,10 +328,10 @@ const AlertRules = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <ShieldAlert className="w-6 h-6 text-primary-600" />
-            Alert Rules
+            {t('alertRules.title')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Define custom conditions that trigger alerts across your fleet
+            {t('alertRules.description')}
           </p>
         </div>
         {canAddAlerts && (
@@ -338,7 +340,7 @@ const AlertRules = () => {
             className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium text-sm transition-colors shadow-sm"
           >
             <Plus className="w-4 h-4" />
-            New Rule
+            {t('alertRules.newRule')}
           </button>
         )}
       </div>
@@ -348,7 +350,7 @@ const AlertRules = () => {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
-          placeholder="Search rules…"
+          placeholder={t('alertRules.searchPlaceholder')}
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 focus:border-primary-300 outline-none transition"
@@ -366,17 +368,17 @@ const AlertRules = () => {
             <ShieldAlert className="w-8 h-8 text-gray-400" />
           </div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-            {search ? 'No rules match your search' : 'No alert rules yet'}
+            {search ? t('alertRules.noRulesMatch') : t('alertRules.noRules')}
           </h3>
           <p className="text-gray-500 dark:text-gray-400 mt-1 max-w-sm mx-auto">
-            {search ? 'Try a different search term.' : 'Create your first custom alert rule to monitor your fleet automatically.'}
+            {search ? t('alertRules.tryDifferentSearch') : t('alertRules.createFirstRule')}
           </p>
           {!search && canAddAlerts && (
             <button
               onClick={openCreate}
               className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-medium text-sm transition-colors"
             >
-              <Plus className="w-4 h-4" /> Create Rule
+              <Plus className="w-4 h-4" /> {t('alertRules.createRule')}
             </button>
           )}
         </div>
@@ -394,13 +396,13 @@ const AlertRules = () => {
                 <div className="flex items-center justify-between mb-3">
                   <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ring-1 ${sev.color} ${sev.bg} ${sev.ring}`}>
                     {sev.icon}
-                    {rule.severity.charAt(0).toUpperCase() + rule.severity.slice(1)}
+                    {t(`alertRules.severity.${rule.severity}`)}
                   </span>
                   {canEditAlerts && (
                     <button
                       onClick={() => handleToggle(rule)}
                       className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                      title={rule.isActive ? 'Disable rule' : 'Enable rule'}
+                      title={rule.isActive ? t('alertRules.actions.disable') : t('alertRules.actions.enable')}
                     >
                       {rule.isActive ? <ToggleRight className="w-7 h-7 text-primary-600 dark:text-primary-400" /> : <ToggleLeft className="w-7 h-7" />}
                     </button>
@@ -437,16 +439,16 @@ const AlertRules = () => {
                     {canDeleteAlerts && (
                       deleteConfirm === rule._id ? (
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-red-600 dark:text-red-400">Delete?</span>
-                          <button onClick={() => handleDelete(rule._id)} className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400">Yes</button>
-                          <button onClick={() => setDeleteConfirm(null)} className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400">No</button>
+                          <span className="text-xs text-red-600 dark:text-red-400">{t('alertRules.delete.confirm')}</span>
+                          <button onClick={() => handleDelete(rule._id)} className="text-xs font-semibold text-red-600 hover:text-red-700 dark:text-red-400">{t('alertRules.delete.yes')}</button>
+                          <button onClick={() => setDeleteConfirm(null)} className="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400">{t('alertRules.delete.no')}</button>
                         </div>
                       ) : (
                         <button
                           onClick={() => setDeleteConfirm(rule._id)}
                           className="flex items-center gap-1.5 text-xs font-medium text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
                         >
-                          <Trash2 className="w-3.5 h-3.5" /> Delete
+                          <Trash2 className="w-3.5 h-3.5" /> {t('alertRules.actions.delete')}
                         </button>
                       )
                     )}
@@ -472,7 +474,7 @@ const AlertRules = () => {
           >
             <div className="flex-none flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                {editingRule ? 'Edit Rule' : 'Create New Rule'}
+                {editingRule ? t('alertRules.editRule') : t('alertRules.createRule')}
               </h2>
               <button type="button" onClick={closeModal} className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
                 <X className="w-5 h-5" />
@@ -483,7 +485,7 @@ const AlertRules = () => {
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Rule Name <span className="text-red-500">*</span>
+                  {t('alertRules.form.ruleName')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -497,7 +499,7 @@ const AlertRules = () => {
               {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                  Description
+                  {t('alertRules.form.description')}
                 </label>
                 <textarea
                   rows={2}
@@ -517,14 +519,14 @@ const AlertRules = () => {
                 {/* Field */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                    Field <span className="text-red-500">*</span>
+                    {t('alertRules.form.field')} <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={form.conditionField}
                     onChange={e => handleFieldChange(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 outline-none transition"
                   >
-                    <option value="">Select field…</option>
+                    <option value="">{t('alertRules.form.selectField')}</option>
                     {CONDITION_FIELDS.map(group => (
                       <optgroup key={group.group} label={group.group}>
                         {group.items.map(item => (
@@ -539,7 +541,7 @@ const AlertRules = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                      Operator <span className="text-red-500">*</span>
+                      {t('alertRules.form.operator')} <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={form.operator}
@@ -547,7 +549,7 @@ const AlertRules = () => {
                       disabled={!form.conditionField}
                       className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 outline-none transition disabled:opacity-50"
                     >
-                      <option value="">Select…</option>
+                      <option value="">{t('alertRules.form.selectOperator')}</option>
                       {currentOps.map(op => (
                         <option key={op.value} value={op.value}>{op.label}</option>
                       ))}
@@ -556,7 +558,7 @@ const AlertRules = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                      Value <span className="text-red-500">*</span>
+                      {t('alertRules.form.value')} <span className="text-red-500">*</span>
                     </label>
                     {isComponentField ? (
                       <select
@@ -564,7 +566,7 @@ const AlertRules = () => {
                         onChange={e => setForm(f => ({ ...f, value: e.target.value }))}
                         className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 outline-none transition"
                       >
-                        <option value="">Select…</option>
+                        <option value="">{t('alertRules.form.selectValue')}</option>
                         {COMPONENT_VALUES.map(v => (
                           <option key={v} value={v}>{v.charAt(0).toUpperCase() + v.slice(1)}</option>
                         ))}
@@ -574,7 +576,7 @@ const AlertRules = () => {
                         type="number"
                         value={form.value}
                         onChange={e => setForm(f => ({ ...f, value: e.target.value }))}
-                        placeholder="Threshold"
+                        placeholder={t('alertRules.form.threshold')}
                         disabled={!form.conditionField}
                         className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-primary-300 outline-none transition disabled:opacity-50"
                       />
@@ -603,7 +605,7 @@ const AlertRules = () => {
                           }`}
                       >
                         {cfg.icon}
-                        {s.charAt(0).toUpperCase() + s.slice(1)}
+                        {t(`alertRules.severity.${s}`)}
                       </button>
                     );
                   })}

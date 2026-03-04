@@ -21,6 +21,7 @@ import {
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAuth } from '@/hooks/useAuth';
 import ConfirmModal from '@/components/ConfirmModal';
+import { useTranslation } from 'react-i18next';
 
 const Users = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,6 +29,7 @@ const Users = () => {
     (state: RootState) => state.users
   );
   const { user: currentUser } = useAuth();
+  const { t } = useTranslation();
 
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
@@ -92,10 +94,10 @@ const Users = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Users
+            {t('users.title')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Manage system users and permissions
+            {t('users.description')}
           </p>
         </div>
         <Link
@@ -103,7 +105,7 @@ const Users = () => {
           className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
         >
           <Plus className="w-5 h-5" />
-          Add User
+          {t('users.addUser')}
         </Link>
       </div>
 
@@ -116,7 +118,7 @@ const Users = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search users..."
+              placeholder={t('users.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -125,10 +127,10 @@ const Users = () => {
             onChange={(e) => setFilters({ ...filters, role: e.target.value })}
             className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
           >
-            <option value="">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-            <option value="technicien">Technician</option>
+            <option value="">{t('users.filters.allRoles')}</option>
+            <option value="admin">{t('users.filters.admin')}</option>
+            <option value="user">{t('users.filters.user')}</option>
+            <option value="technicien">{t('users.filters.technician')}</option>
           </select>
           <select
             value={filters.isActive}
@@ -137,9 +139,9 @@ const Users = () => {
             }
             className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white"
           >
-            <option value="">All Status</option>
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
+            <option value="">{t('users.filters.allStatus')}</option>
+            <option value="true">{t('users.filters.active')}</option>
+            <option value="false">{t('users.filters.inactive')}</option>
           </select>
         </div>
       </div>
@@ -151,19 +153,19 @@ const Users = () => {
             <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
                 <th className="w-[30%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  User
+                  {t('users.table.user')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Role
+                  {t('users.table.role')}
                 </th>
                 <th className="w-[20%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Department
+                  {t('users.table.department')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Status
+                  {t('users.table.status')}
                 </th>
                 <th className="w-[20%] text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Actions
+                  {t('users.table.actions')}
                 </th>
               </tr>
             </thead>
@@ -178,7 +180,7 @@ const Users = () => {
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-gray-500">
                     <User className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>No users found</p>
+                    <p>{t('users.table.noUsers')}</p>
                   </td>
                 </tr>
               ) : (
@@ -225,11 +227,11 @@ const Users = () => {
                       >
                         {user.isActive ? (
                           <>
-                            <CheckCircle className="w-3 h-3" /> Active
+                            <CheckCircle className="w-3 h-3" /> {t('users.status.active')}
                           </>
                         ) : (
                           <>
-                            <XCircle className="w-3 h-3" /> Inactive
+                            <XCircle className="w-3 h-3" /> {t('users.status.inactive')}
                           </>
                         )}
                       </button>
@@ -264,9 +266,11 @@ const Users = () => {
         {pagination.pages > 1 && (
           <div className="flex items-center justify-between px-4 py-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-sm text-gray-500">
-              Showing {(page - 1) * pagination.limit + 1} to{' '}
-              {Math.min(page * pagination.limit, pagination.total)} of{' '}
-              {pagination.total} results
+              {t('common.resultsCount', {
+                start: (page - 1) * pagination.limit + 1,
+                end: Math.min(page * pagination.limit, pagination.total),
+                total: pagination.total
+              })}
             </p>
             <div className="flex items-center gap-2">
               <button
@@ -274,17 +278,17 @@ const Users = () => {
                 disabled={page === 1}
                 className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
               >
-                Previous
+                {t('common.previous')}
               </button>
               <span className="text-sm text-gray-700 dark:text-gray-300">
-                Page {page} of {pagination.pages}
+                {t('common.pageOf', { current: page, total: pagination.pages })}
               </span>
               <button
                 onClick={() => setPage(page + 1)}
                 disabled={page === pagination.pages}
                 className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
               >
-                Next
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -295,10 +299,10 @@ const Users = () => {
         isOpen={!!userToDelete}
         onClose={() => setUserToDelete(null)}
         onConfirm={confirmDelete}
-        title="Delete User"
-        message="Are you sure you want to delete this user? This action cannot be undone."
-        confirmText="Delete User"
-        cancelText="Cancel"
+        title={t('users.delete.title')}
+        message={t('users.delete.message')}
+        confirmText={t('users.delete.confirm')}
+        cancelText={t('users.delete.cancel')}
         isDestructive={true}
         isLoading={isDeleting}
       />

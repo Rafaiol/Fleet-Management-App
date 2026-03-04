@@ -1,0 +1,496 @@
+{
+  "common": {
+    "dashboard": "لوحة القيادة",
+    "vehicles": "المركبات",
+    "maintenance": "الصيانة",
+    "reports": "التقارير",
+    "users": "المستخدمون",
+    "alertRules": "قواعد التنبيه",
+    "activityLogs": "سجلات النشاط",
+    "settings": "الإعدادات",
+    "logout": "تسجيل الخروج",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "next": "التالي",
+    "previous": "السابق",
+    "pageOf": "صفحة {{current}} من {{total}}",
+    "resultsCount": "عرض {{start}} إلى {{end}} من {{total}} نتيجة",
+    "loading": "...جاري التحميل",
+    "search": "...بحث",
+    "noData": "لم يتم العثور على بيانات",
+    "user": "مستخدم",
+    "systemName": "نظام إدارة الأسطول",
+    "period": "الفترة",
+    "present": "الحاضر",
+    "none": "لا يوجد"
+  },
+  "sidebar": {
+    "admin": "مشرف"
+  },
+  "header": {
+    "theme": {
+      "light": "التبديل إلى الوضع الفاتح",
+      "dark": "التبديل إلى الوضع الداكن"
+    },
+    "notifications": {
+      "title": "الإشعارات",
+      "new": "جديد",
+      "viewAll": "عرض كافة الإشعارات ←",
+      "noNotifications": "لا توجد إشعارات جديدة"
+    },
+    "user": {
+      "profile": "الملف الشخصي",
+      "settings": "الإعدادات",
+      "logout": "تسجيل الخروج"
+    }
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "description": "إدارة إعدادات حسابك وتفضيلاتك",
+    "tabs": {
+      "profile": "الملف الشخصي",
+      "security": "الأمان",
+      "appearance": "المظهر",
+      "notifications": "الإشعارات",
+      "language": "اللغة"
+    },
+    "appearance": {
+      "darkMode": "الوضع الليلي",
+      "themeDescription": "التبديل بين السمة الفاتحة والداكنة",
+      "languageSelection": "اختيار اللغة",
+      "languageDescription": "اختر لغتك المفضلة"
+    }
+  },
+  "vehicles": {
+    "title": "المركبات",
+    "description": "إدارة مركبات الأسطول الخاص بك",
+    "addVehicle": "إضافة مركبة",
+    "searchPlaceholder": "...بحث عن المركبات",
+    "filters": {
+      "allStatus": "كل الحالات",
+      "active": "نشط",
+      "maintenance": "صيانة",
+      "offline": "غير متصل",
+      "retired": "متقاعد",
+      "allMakes": "كل الماركات"
+    },
+    "table": {
+      "vehicle": "المركبة",
+      "plateNumber": "رقم اللوحة",
+      "status": "الحالة",
+      "mileage": "المسافة المقطوعة",
+      "fuelType": "نوع الوقود",
+      "actions": "الإجراءات",
+      "noVehicles": "لم يتم العثور على مركبات",
+      "unknownVehicle": "مركبة غير معروفة"
+    },
+    "delete": {
+      "title": "حذف المركبة",
+      "message": "هل أنت متأكد أنك تريد حذف هذه المركبة؟ لا يمكن التراجع عن هذا الإجراء وسيؤدي إلى إزالة كافة سجلات الصيانة والمهام المرتبطة بها.",
+      "confirm": "حذف المركبة",
+      "cancel": "إلغاء"
+    }
+  },
+  "maintenance": {
+    "title": "سجلات الصيانة",
+    "description": "إدارة صيانة وإصلاح المركبات",
+    "newRecord": "سجل جديد",
+    "searchPlaceholder": "...بحث عن سجلات الصيانة",
+    "filters": {
+      "allStatus": "كل الحالات",
+      "allTypes": "كل الأنواع",
+      "scheduled": "مجدول",
+      "inProgress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "cancelled": "ملغى"
+    },
+    "table": {
+      "vehicle": "المركبة",
+      "type": "النوع",
+      "status": "الحالة",
+      "date": "التاريخ",
+      "cost": "التكلفة",
+      "actions": "الإجراءات",
+      "noRecords": "لم يتم العثور على سجلات صيانة"
+    },
+    "actions": {
+      "viewDetails": "عرض التفاصيل",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "delete": {
+      "title": "حذف السجل",
+      "message": "هل أنت متأكد أنك تريد حذف سجل الصيانة هذا؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "حذف السجل",
+      "cancel": "إلغاء"
+    }
+  },
+  "users": {
+    "title": "المستخدمون",
+    "description": "إدارة مستخدمي النظام والأذونات",
+    "addUser": "إضافة مستخدم",
+    "searchPlaceholder": "...بحث عن مستخدمين",
+    "filters": {
+      "allRoles": "كل الأدوار",
+      "allStatus": "كل الحالات",
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "admin": "مشرف",
+      "user": "مستخدم",
+      "technician": "فني"
+    },
+    "table": {
+      "user": "المستخدم",
+      "role": "الدور",
+      "department": "القسم",
+      "status": "الحالة",
+      "actions": "الإجراءات",
+      "noUsers": "لم يتم العثور على مستخدمين"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط"
+    },
+    "delete": {
+      "title": "حذف المستخدم",
+      "message": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "حذف المستخدم",
+      "cancel": "إلغاء"
+    }
+  },
+  "alertRules": {
+    "title": "قواعد التنبيه",
+    "description": "تعريف الشروط المخصصة التي تؤدي إلى إطلاق التنبيهات عبر أسطولك",
+    "newRule": "قاعدة جديدة",
+    "searchPlaceholder": "...بحث عن القواعد",
+    "noRules": "لا توجد قواعد تنبيه بعد",
+    "noRulesMatch": "لا توجد قواعد تطابق بحثك",
+    "createFirstRule": "أنشئ أول قاعدة تنبيه مخصصة لمراقبة أسطولك تلقائيًا.",
+    "tryDifferentSearch": ".جرّب مصطلح بحث مختلف",
+    "createRule": "إنشاء قاعدة",
+    "editRule": "تعديل القاعدة",
+    "saveChanges": "حفظ التغييرات",
+    "actions": {
+      "edit": "تعديل",
+      "delete": "حذف",
+      "enable": "تفعيل القاعدة",
+      "disable": "تعطيل القاعدة"
+    },
+    "severity": {
+      "urgent": "عاجل",
+      "warning": "تحذير",
+      "info": "معلومات"
+    },
+    "form": {
+      "ruleName": "اسم القاعدة",
+      "description": "الوصف",
+      "condition": "الشرط",
+      "field": "الحقل",
+      "operator": "المعامل",
+      "value": "القيمة",
+      "selectField": "...اختر الحقل",
+      "selectOperator": "...اختر",
+      "selectValue": "...اختر",
+      "threshold": "الحد الأقصى",
+      "severity": "الخطورة"
+    },
+    "delete": {
+      "confirm": "حذف؟",
+      "yes": "نعم",
+      "no": "لا"
+    }
+  },
+  "dashboard": {
+    "title": "لوحة القيادة",
+    "description": "نظرة عامة على نظام إدارة الأسطول الخاص بك",
+    "stats": {
+      "totalVehicles": "إجمالي المركبات",
+      "activeVehicles": "المركبات النشطة",
+      "inMaintenance": "في الصيانة",
+      "monthlyCost": "التكلفة الشهرية"
+    },
+    "charts": {
+      "maintenanceTrends": "اتجاهات الصيانة",
+      "statusDistribution": "توزيع حالة المركبات",
+      "total": "الإجمالي",
+      "completed": "مكتمل"
+    },
+    "upcomingMaintenance": {
+      "title": "الصيانة القادمة",
+      "viewAll": "عرض الكل",
+      "vehicle": "المركبة",
+      "type": "النوع",
+      "date": "التاريخ",
+      "status": "الحالة",
+      "noMaintenance": "لا توجد صيانة قادمة"
+    },
+    "alerts": {
+      "title": "التنبيهات",
+      "noAlerts": "لا توجد تنبيهات"
+    }
+  },
+  "reports": {
+    "title": "التقارير",
+    "description": "إنشاء وتنزيل تقارير إدارة الأسطول",
+    "dateRange": "نطاق التاريخ",
+    "startDate": "تاريخ البدء",
+    "endDate": "تاريخ الانتهاء",
+    "downloadPdf": "تنزيل PDF",
+    "downloadExcel": "تنزيل Excel",
+    "generating": "جاري الإنشاء...",
+    "fleetSummary": {
+      "title": "تقرير ملخص الأسطول",
+      "description": "نظرة عامة شاملة على أسطولك بالكامل بما في ذلك المركبات والصيانة والتكاليف."
+    },
+    "vehicleReports": {
+      "title": "تقارير المركبات",
+      "description": "تقارير المركبات الفردية مع سجل الصيانة والتفاصيل."
+    },
+    "maintenanceReports": {
+      "title": "تقارير الصيانة",
+      "description": "سجلات صيانة مفصلة مع تكاليف القطع والعمالة."
+    },
+    "about": {
+      "title": "حول التقارير",
+      "description": "يتم إنشاء جميع التقارير كملفات PDF وتتضمن بيانات شاملة عن أسطولك. يمكن إنشاء تقارير محددة للمركبات والصيانة من صفحات التفاصيل الخاصة بكل منها."
+    },
+    "modals": {
+      "selectVehicle": "اختر المركبة",
+      "selectMaintenance": "اختر سجل الصيانة",
+      "exportAllVehicle": "تصدير كافة أنشطة المركبات (نطاق التاريخ)",
+      "exportAllMaintenance": "تصدير كافة أنشطة الصيانة (نطاق التاريخ)",
+      "searchVehicle": "أو ابحث عن مركبات محددة حسب اللوحة أو النوع أو الطراز...",
+      "searchMaintenance": "أو ابحث عن صيانة محددة حسب المركبة أو النوع أو الوصف...",
+      "noVehicles": "لم يتم العثور على مركبات تطابق",
+      "noRecords": "لم يتم العثور على سجلات تطابق",
+      "generatingPdf": "جاري إنشاء PDF..."
+    },
+    "success": {
+      "fleet": "تم تنزيل تقرير ملخص الأسطول!",
+      "vehicle": "تم تنزيل تقرير المركبة!",
+      "maintenance": "تم تنزيل تقرير الصيانة!",
+      "vehiclesActivity": "تم تنزيل تقرير نشاط المركبات!",
+      "maintenanceActivity": "تم تنزيل تقرير نشاط الصيانة!"
+    },
+    "error": {
+      "fleet": "فشل تنزيل تقرير الأسطول",
+      "vehicle": "فشل تنزيل تقرير المركبة",
+      "maintenance": "فشل تنزيل تقرير الصيانة",
+      "vehiclesActivity": "فشل تنزيل تقرير نشاط المركبات",
+      "maintenanceActivity": "فشل تنزيل تقرير نشاط الصيانة"
+    }
+  },
+  "activityLogs": {
+    "title": "سجلات النشاط",
+    "description": "تتبع تغييرات النظام عبر منصة إدارة الأسطول وعكسها.",
+    "exportPdf": "تصدير إلى PDF",
+    "clearAllLogs": "مسح جميع السجلات",
+    "searchPlaceholder": "...بحث في وصف الأنشطة",
+    "filters": {
+      "allActions": "جميع الإجراءات",
+      "allResources": "جميع الموارد",
+      "create": "إنشاء",
+      "update": "تحديث",
+      "delete": "حذف",
+      "export": "تصدير",
+      "vehicle": "مركبة",
+      "maintenance": "صيانة",
+      "alertRule": "قاعدة تنبيه",
+      "user": "مستخدم",
+      "report": "تقرير"
+    },
+    "noLogs": "لم يتم العثور على أنشطة تطابق معاييرك.",
+    "on": "في",
+    "reverted": "معكوس",
+    "undo": "تراجع",
+    "page": "صفحة",
+    "of": "من",
+    "previous": "السابق",
+    "next": "التالي",
+    "confirmUndo": {
+      "title": "تراجع الإجراء",
+      "message": "هل أنت متأكد أنك تريد تراجع هذا الإجراء؟",
+      "confirm": "نعم، تراجع الإجراء",
+      "undoing": "...جاري التراجع",
+      "cancel": "إلغاء"
+    },
+    "confirmClear": {
+      "title": "مسح جميع السجلات",
+      "message": "هل أنت متأكد تمامًا أنك تريد حذف جميع سجلات النشاط؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "نعم، مسح جميع السجلات",
+      "clearing": "...جاري المسح",
+      "cancel": "إلغاء"
+    },
+    "noLogsToExport": "لا توجد سجلات لتصديرها",
+    "exportSuccess": "تم تصدير السجلات بنجاح",
+    "exportError": "فشل تصدير السجلات"
+  },
+  "vehicleForm": {
+    "addTitle": "إضافة مركبة جديدة",
+    "editTitle": "تعديل المركبة",
+    "addSubtitle": "أدخل تفاصيل المركبة الجديدة",
+    "editSubtitle": "تحديث معلومات المركبة",
+    "sections": {
+      "general": "معلومات عامة",
+      "specifications": "المواصفات",
+      "registration": "التسجيل والتأمين",
+      "financial": "المعلومات المالية"
+    },
+    "fields": {
+      "make": "الماركة",
+      "model": "الطراز",
+      "year": "السنة",
+      "plateNumber": "رقم اللوحة",
+      "vin": "رقم تعريف المركبة (VIN)",
+      "status": "الحالة",
+      "bodyType": "نوع الهيكل",
+      "fuelType": "نوع الوقود",
+      "transmission": "ناقل الحركة",
+      "currentMileage": "المسافة الحالية",
+      "mileageUnit": "وحدة المسافة",
+      "color": "اللون",
+      "registrationDate": "تاريخ التسجيل",
+      "registrationExpiry": "انتهاء التسجيل",
+      "insuranceNumber": "رقم التأمين",
+      "insuranceExpiry": "انتهاء التأمين",
+      "purchaseDate": "تاريخ الشراء",
+      "purchasePrice": "سعر الشراء ($)"
+    },
+    "status": {
+      "active": "نشط",
+      "maintenance": "صيانة",
+      "offline": "غير متصل",
+      "retired": "متقاعد"
+    },
+    "bodyType": {
+      "sedan": "سيدان",
+      "suv": "SUV",
+      "truck": "شاحنة",
+      "van": "فان",
+      "bus": "حافلة",
+      "motorcycle": "دراجة نارية",
+      "other": "أخرى"
+    },
+    "fuelType": {
+      "gasoline": "بنزين",
+      "diesel": "ديزل",
+      "electric": "كهربائي",
+      "hybrid": "هجين",
+      "lpg": "غاز بترولي مسال"
+    },
+    "transmission": {
+      "automatic": "أوتوماتيك",
+      "manual": "يدوي",
+      "cvt": "CVT"
+    },
+    "mileageUnit": {
+      "km": "كم",
+      "miles": "ميل"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "saveChanges": "حفظ التغييرات",
+      "create": "إنشاء مركبة"
+    },
+    "validation": {
+      "makeRequired": "الماركة مطلوبة",
+      "modelRequired": "الطراز مطلوب",
+      "yearRequired": "السنة مطلوبة",
+      "invalidYear": "سنة غير صالحة",
+      "plateRequired": "رقم اللوحة مطلوب"
+    }
+  },
+  "maintenanceForm": {
+    "addTitle": "سجل صيانة جديد",
+    "editTitle": "تعديل سجل الصيانة",
+    "addSubtitle": "جدولة مهمة صيانة جديدة",
+    "editSubtitle": "تحديث معلومات الصيانة",
+    "sections": {
+      "serviceDetails": "تفاصيل الخدمة",
+      "costs": "التكاليف (اختياري)"
+    },
+    "fields": {
+      "vehicle": "المركبة",
+      "selectVehicle": "...اختر مركبة",
+      "serviceType": "نوع الخدمة",
+      "scheduledDate": "تاريخ الجدولة",
+      "status": "الحالة",
+      "priority": "الأولوية",
+      "description": "الوصف",
+      "laborCost": "تكلفة العمالة ($)",
+      "partsCost": "تكلفة القطع ($)",
+      "totalCost": "التكلفة الإجمالية ($)"
+    },
+    "types": {
+      "oil_change": "تغيير الزيت",
+      "tire_rotation": "تدوير الإطارات",
+      "brake_service": "خدمة الفرامل",
+      "battery_replacement": "استبدال البطارية",
+      "general_inspection": "فحص عام",
+      "engine_repair": "إصلاح المحرك",
+      "other": "أخرى"
+    },
+    "status": {
+      "scheduled": "مجدول",
+      "in_progress": "قيد التنفيذ",
+      "completed": "مكتمل",
+      "cancelled": "ملغي"
+    },
+    "priority": {
+      "low": "منخفض",
+      "medium": "متوسط",
+      "high": "عال",
+      "urgent": "عاجل"
+    },
+    "actions": {
+      "cancel": "إلغاء",
+      "saveChanges": "حفظ التغييرات",
+      "create": "إنشاء سجل"
+    },
+    "validation": {
+      "vehicleRequired": "المركبة مطلوبة",
+      "typeRequired": "النوع مطلوب",
+      "dateRequired": "تاريخ الجدولة مطلوب",
+      "descriptionRequired": "الوصف مطلوب"
+    },
+    "descriptionPlaceholder": "...صف مشكلة أو مهمة الصيانة"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "unreadCount": "لديك {{count}} إشعار غير مقروء",
+    "unreadCount_plural": "لديك {{count}} إشعارات غير مقروءة",
+    "markAllRead": "تحديد الكل كمقروء",
+    "clearAll": "مسح الكل",
+    "noNotifications": "لا توجد إشعارات",
+    "allCaughtUp": "أنت على اطلاع بكل شيء! تحقق لاحقاً من وجود تحديثات جديدة.",
+    "goToVehicle": "الذهاب للمركبة",
+    "goToMaintenance": "الذهاب للصيانة",
+    "markAsRead": "تحديد كمقروء",
+    "remove": "حذف",
+    "clearModal": {
+      "title": "مسح الإشعارات",
+      "message": "هل أنت متأكد من رغبتك في مسح جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.",
+      "confirm": "مسح الكل"
+    }
+  },
+  "login": {
+    "welcomeBack": "مرحباً بعودتك",
+    "signToAccess": "قم بتسجيل الدخول إلى حسابك للوصول إلى لوحة معلومات الأسطول",
+    "emailLabel": "البريد الإلكتروني",
+    "passwordLabel": "كلمة المرور",
+    "rememberMe": "تذكرني",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "authenticating": "جاري التحقق...",
+    "signIn": "تسجيل الدخول",
+    "demoAccess": "دخول تجريبي",
+    "noAccount": "ليس لديك حساب؟",
+    "contactAdmin": "اتصل بالمسؤول",
+    "privacy": "الخصوصية",
+    "terms": "الشروط",
+    "support": "الدعم",
+    "systemOnline": "النظام متصل"
+  }
+}

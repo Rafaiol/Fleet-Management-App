@@ -3,6 +3,7 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Save, Wrench, Loader2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import BackButton from '@/components/BackButton';
 import { AppDispatch, RootState } from '@/store';
@@ -16,6 +17,7 @@ const MaintenanceForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation();
 
   const isEditMode = Boolean(id);
   const { currentRecord, isLoading, isLoadingDetails } = useSelector((state: RootState) => state.maintenance);
@@ -30,7 +32,7 @@ const MaintenanceForm = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchVehicles({ limit: 100 })); // Load vehicles for the dropdown
+    dispatch(fetchVehicles({ limit: 100 }));
     if (isEditMode && id) {
       dispatch(fetchMaintenanceById(id));
     }
@@ -38,24 +40,19 @@ const MaintenanceForm = () => {
 
   useEffect(() => {
     if (isEditMode && currentRecord) {
-      // Extract just the ID if the vehicle is populated as an object
       const vehicleId = typeof currentRecord.vehicle === 'object' ? currentRecord.vehicle?.id : currentRecord.vehicle;
-
       reset({
         ...currentRecord,
         vehicle: vehicleId,
         scheduledDate: currentRecord.scheduledDate ? new Date(currentRecord.scheduledDate).toISOString().split('T')[0] : '',
       } as any);
     } else if (!isEditMode && location.state) {
-      // Handle "Go to Maintenance" routing from notifications
       const { vehicleId, alertType } = location.state as { vehicleId: string, alertType: string };
       if (vehicleId) {
         let mappedType = 'general_inspection';
         if (alertType === 'maintenance_overdue' || alertType === 'maintenance_scheduled') {
-          // We could try to map specific maintenance due, but usually it's general
           mappedType = 'general_inspection';
         }
-
         reset({
           vehicle: vehicleId,
           type: mappedType,
@@ -78,7 +75,6 @@ const MaintenanceForm = () => {
   const onSubmit = async (data: Partial<Maintenance>) => {
     try {
       if (isEditMode && id) {
-        // Only send editable fields to avoid 500 CastErrors from populated objects
         const payload = {
           vehicle: data.vehicle,
           type: data.type,
@@ -94,10 +90,7 @@ const MaintenanceForm = () => {
       } else {
         await dispatch(createMaintenance(data)).unwrap();
       }
-
-      // Refresh global notifications (e.g., clearing a scheduled maintenance alert)
       dispatch(fetchAlertsAsNotifications());
-
       navigate('/maintenance');
     } catch (error) {
       // Error handled by redux toast
@@ -118,10 +111,10 @@ const MaintenanceForm = () => {
         <BackButton to="/maintenance" />
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {isEditMode ? 'Edit Maintenance Record' : 'New Maintenance Record'}
+            {isEditMode ? t('maintenanceForm.editTitle') : t('maintenanceForm.addTitle')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            {isEditMode ? 'Update maintenance information' : 'Schedule a new maintenance task'}
+            {isEditMode ? t('maintenanceForm.editSubtitle') : t('maintenanceForm.addSubtitle')}
           </p>
         </div>
       </div>
@@ -130,19 +123,19 @@ const MaintenanceForm = () => {
         <div className="card-aurora p-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
             <Wrench className="w-5 h-5 text-primary-600" />
-            Service Details
+            {t('maintenanceForm.sections.serviceDetails')}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Vehicle *
+                {t('maintenanceForm.fields.vehicle')} *
               </label>
               <select
-                {...register('vehicle', { required: 'Vehicle is required' })}
+                {...register('vehicle', { required: t('maintenanceForm.validation.vehicleRequired') })}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
               >
-                <option value="">Select a vehicle...</option>
+                <option value="">{t('maintenanceForm.fields.selectVehicle')}</option>
                 {vehicles.map(v => (
                   <option key={v.id} value={v.id}>
                     {v.plateNumber} - {v.make} {v.model}
@@ -154,30 +147,30 @@ const MaintenanceForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Service Type *
+                {t('maintenanceForm.fields.serviceType')} *
               </label>
               <select
-                {...register('type', { required: 'Type is required' })}
+                {...register('type', { required: t('maintenanceForm.validation.typeRequired') })}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white capitalize focus:ring-2 focus:ring-primary-500"
               >
-                <option value="oil_change">Oil Change</option>
-                <option value="tire_rotation">Tire Rotation</option>
-                <option value="brake_service">Brake Service</option>
-                <option value="battery_replacement">Battery Replacement</option>
-                <option value="general_inspection">General Inspection</option>
-                <option value="engine_repair">Engine Repair</option>
-                <option value="other">Other</option>
+                <option value="oil_change">{t('maintenanceForm.types.oil_change')}</option>
+                <option value="tire_rotation">{t('maintenanceForm.types.tire_rotation')}</option>
+                <option value="brake_service">{t('maintenanceForm.types.brake_service')}</option>
+                <option value="battery_replacement">{t('maintenanceForm.types.battery_replacement')}</option>
+                <option value="general_inspection">{t('maintenanceForm.types.general_inspection')}</option>
+                <option value="engine_repair">{t('maintenanceForm.types.engine_repair')}</option>
+                <option value="other">{t('maintenanceForm.types.other')}</option>
               </select>
               {errors.type && <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Scheduled Date *
+                {t('maintenanceForm.fields.scheduledDate')} *
               </label>
               <input
                 type="date"
-                {...register('scheduledDate', { required: 'Scheduled date is required' })}
+                {...register('scheduledDate', { required: t('maintenanceForm.validation.dateRequired') })}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
               />
               {errors.scheduledDate && <p className="mt-1 text-sm text-red-600">{errors.scheduledDate.message}</p>}
@@ -185,43 +178,43 @@ const MaintenanceForm = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Status
+                {t('maintenanceForm.fields.status')}
               </label>
               <select
                 {...register('status')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
               >
-                <option value="scheduled">Scheduled</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="scheduled">{t('maintenanceForm.status.scheduled')}</option>
+                <option value="in_progress">{t('maintenanceForm.status.in_progress')}</option>
+                <option value="completed">{t('maintenanceForm.status.completed')}</option>
+                <option value="cancelled">{t('maintenanceForm.status.cancelled')}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Priority
+                {t('maintenanceForm.fields.priority')}
               </label>
               <select
                 {...register('priority')}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="urgent">Urgent</option>
+                <option value="low">{t('maintenanceForm.priority.low')}</option>
+                <option value="medium">{t('maintenanceForm.priority.medium')}</option>
+                <option value="high">{t('maintenanceForm.priority.high')}</option>
+                <option value="urgent">{t('maintenanceForm.priority.urgent')}</option>
               </select>
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Description *
+                {t('maintenanceForm.fields.description')} *
               </label>
               <textarea
-                {...register('description', { required: 'Description is required' })}
+                {...register('description', { required: t('maintenanceForm.validation.descriptionRequired') })}
                 rows={4}
                 className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
-                placeholder="Describe the maintenance issue or task..."
+                placeholder={t('maintenanceForm.descriptionPlaceholder')}
               />
               {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
             </div>
@@ -229,12 +222,12 @@ const MaintenanceForm = () => {
         </div>
 
         <div className="card-aurora p-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">Costs (Optional)</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">{t('maintenanceForm.sections.costs')}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Labor Cost ($)
+                {t('maintenanceForm.fields.laborCost')}
               </label>
               <input
                 type="number"
@@ -245,7 +238,7 @@ const MaintenanceForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Parts Cost ($)
+                {t('maintenanceForm.fields.partsCost')}
               </label>
               <input
                 type="number"
@@ -256,7 +249,7 @@ const MaintenanceForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Total Cost ($)
+                {t('maintenanceForm.fields.totalCost')}
               </label>
               <input
                 type="number"
@@ -275,7 +268,7 @@ const MaintenanceForm = () => {
             onClick={() => navigate('/maintenance')}
             className="px-6 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            Cancel
+            {t('maintenanceForm.actions.cancel')}
           </button>
           <button
             type="submit"
@@ -287,7 +280,7 @@ const MaintenanceForm = () => {
             ) : (
               <Save className="w-4 h-4" />
             )}
-            {isEditMode ? 'Save Changes' : 'Create Record'}
+            {isEditMode ? t('maintenanceForm.actions.saveChanges') : t('maintenanceForm.actions.create')}
           </button>
         </div>
       </form>

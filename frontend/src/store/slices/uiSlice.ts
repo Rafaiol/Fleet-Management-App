@@ -16,10 +16,12 @@ interface UIState {
     vehicleId?: string;
     alertType?: string;
   }[];
+  language: 'en' | 'fr' | 'ar';
   notificationsLoaded: boolean;
 }
 const initialState: UIState = {
-  theme: 'light',
+  theme: (localStorage.getItem('theme') as Theme) || 'light',
+  language: (localStorage.getItem('fleet_language') as 'en' | 'fr' | 'ar') || 'en',
   sidebarOpen: true,
   isMobile: false,
   notifications: [],
@@ -108,6 +110,12 @@ const uiSlice = createSlice({
     removeNotification: (state, action: PayloadAction<string>) => {
       state.notifications = state.notifications.filter(n => n.id !== action.payload);
     },
+    setLanguage: (state, action: PayloadAction<'en' | 'fr' | 'ar'>) => {
+      state.language = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('fleet_language', action.payload);
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAlertsAsNotifications.fulfilled, (state, action) => {
@@ -162,6 +170,7 @@ export const {
   markAllNotificationsRead,
   clearNotifications,
   removeNotification,
+  setLanguage,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

@@ -29,6 +29,7 @@ import {
   fetchAlerts,
 } from '@/store/slices/dashboardSlice';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
@@ -37,6 +38,8 @@ const Dashboard = () => {
   const { overview, trends, vehicleStatus, alerts, isLoading } = useSelector(
     (state: RootState) => state.dashboard
   );
+  const { language } = useSelector((state: RootState) => state.ui);
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchDashboardOverview());
@@ -47,29 +50,29 @@ const Dashboard = () => {
 
   const statCards = [
     {
-      title: 'Total Vehicles',
+      title: t('dashboard.stats.totalVehicles'),
       value: overview?.vehicles.total || 0,
       icon: Car,
       color: 'bg-blue-500',
       link: '/vehicles',
     },
     {
-      title: 'Active Vehicles',
+      title: t('dashboard.stats.activeVehicles'),
       value: overview?.vehicles.active || 0,
       icon: TrendingUp,
       color: 'bg-green-500',
       link: '/vehicles?status=active',
     },
     {
-      title: 'In Maintenance',
+      title: t('dashboard.stats.inMaintenance'),
       value: overview?.vehicles.maintenance || 0,
       icon: Wrench,
       color: 'bg-yellow-500',
       link: '/vehicles?status=maintenance',
     },
     {
-      title: 'Monthly Cost',
-      value: `$${(overview?.monthlyCost || 0).toLocaleString()}`,
+      title: t('dashboard.stats.monthlyCost'),
+      value: `${(overview?.monthlyCost || 0).toLocaleString(language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-US', { style: 'currency', currency: 'USD' })}`,
       icon: DollarSign,
       color: 'bg-purple-500',
       link: '/reports',
@@ -82,10 +85,10 @@ const Dashboard = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Dashboard
+            {t('dashboard.title')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Overview of your fleet management system
+            {t('dashboard.description')}
           </p>
         </div>
       </div>
@@ -120,7 +123,7 @@ const Dashboard = () => {
         {/* Maintenance Trends */}
         <div className="card-aurora p-6 page-fade-in stagger-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Maintenance Trends
+            {t('dashboard.charts.maintenanceTrends')}
           </h3>
           <div className="h-72 animate-chart-grow">
             {isLoading ? (
@@ -147,8 +150,8 @@ const Dashboard = () => {
                       borderRadius: '8px',
                     }}
                   />
-                  <Bar dataKey="count" fill="#3b82f6" name="Total" />
-                  <Bar dataKey="completed" fill="#10b981" name="Completed" />
+                  <Bar dataKey="count" fill="#3b82f6" name={t('dashboard.charts.total')} />
+                  <Bar dataKey="completed" fill="#10b981" name={t('dashboard.charts.completed')} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -158,7 +161,7 @@ const Dashboard = () => {
         {/* Vehicle Status */}
         <div className="card-aurora p-6 page-fade-in stagger-5">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Vehicle Status Distribution
+            {t('dashboard.charts.statusDistribution')}
           </h3>
           <div className="h-72 animate-chart-grow">
             {isLoading ? (
@@ -200,13 +203,13 @@ const Dashboard = () => {
         <div className="lg:col-span-2 card-aurora p-6 page-fade-in stagger-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Upcoming Maintenance
+              {t('dashboard.upcomingMaintenance.title')}
             </h3>
             <Link
               to="/maintenance?status=scheduled"
               className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 flex items-center gap-1"
             >
-              View All
+              {t('dashboard.upcomingMaintenance.viewAll')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -215,16 +218,16 @@ const Dashboard = () => {
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Vehicle
+                    {t('dashboard.upcomingMaintenance.vehicle')}
                   </th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Type
+                    {t('dashboard.upcomingMaintenance.type')}
                   </th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Date
+                    {t('dashboard.upcomingMaintenance.date')}
                   </th>
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Status
+                    {t('dashboard.upcomingMaintenance.status')}
                   </th>
                 </tr>
               </thead>
@@ -232,7 +235,7 @@ const Dashboard = () => {
                 {isLoading ? (
                   <tr>
                     <td colSpan={4} className="py-8 text-center text-gray-500">
-                      Loading...
+                      {t('common.loading')}
                     </td>
                   </tr>
                 ) : overview?.upcomingMaintenance?.length ? (
@@ -255,7 +258,7 @@ const Dashboard = () => {
                         {item.type?.replace(/_/g, ' ')}
                       </td>
                       <td className="py-3 px-4 text-gray-700 dark:text-gray-300">
-                        {new Date(item.scheduledDate).toLocaleDateString()}
+                        {new Date(item.scheduledDate).toLocaleDateString(language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-US')}
                       </td>
                       <td className="py-3 px-4">
                         <span
@@ -272,7 +275,7 @@ const Dashboard = () => {
                 ) : (
                   <tr>
                     <td colSpan={4} className="py-8 text-center text-gray-500">
-                      No upcoming maintenance
+                      {t('dashboard.upcomingMaintenance.noMaintenance')}
                     </td>
                   </tr>
                 )}
@@ -285,13 +288,13 @@ const Dashboard = () => {
         <div className="card-aurora p-6 page-fade-in stagger-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Alerts
+              {t('dashboard.alerts.title')}
             </h3>
             <AlertTriangle className="w-5 h-5 text-yellow-500" />
           </div>
           <div className="space-y-3">
             {isLoading ? (
-              <div className="py-8 text-center text-gray-500">Loading...</div>
+              <div className="py-8 text-center text-gray-500">{t('common.loading')}</div>
             ) : alerts?.length ? (
               alerts.slice(0, 5).map((alert: any, index: number) => (
                 <div
@@ -314,12 +317,12 @@ const Dashboard = () => {
                     {alert.message}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {new Date(alert.date).toLocaleDateString()}
+                    {new Date(alert.date).toLocaleDateString(language === 'ar' ? 'ar-SA' : language === 'fr' ? 'fr-FR' : 'en-US')}
                   </p>
                 </div>
               ))
             ) : (
-              <div className="py-8 text-center text-gray-500">No alerts</div>
+              <div className="py-8 text-center text-gray-500">{t('dashboard.alerts.noAlerts')}</div>
             )}
           </div>
         </div>

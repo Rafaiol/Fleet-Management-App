@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   User,
   Lock,
@@ -9,16 +9,22 @@ import {
   Mail,
   Save,
   Loader2,
+  Languages,
 } from 'lucide-react';
 
-import { RootState } from '@/store';
+import { RootState, AppDispatch } from '@/store';
 import { useTheme, useAuth } from '@/hooks';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
+import { setLanguage } from '@/store/slices/uiSlice';
 
 const Settings = () => {
   const { user } = useSelector((state: RootState) => state.auth);
+  const { language } = useSelector((state: RootState) => state.ui);
   const { theme, toggleTheme } = useTheme();
   const { updatePassword } = useAuth();
+  const { t } = useTranslation();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [activeTab, setActiveTab] = useState('profile');
   const [isLoading, setIsLoading] = useState(false);
@@ -55,10 +61,10 @@ const Settings = () => {
   };
 
   const tabs = [
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'security', label: 'Security', icon: Lock },
-    { id: 'appearance', label: 'Appearance', icon: theme === 'dark' ? Moon : Sun },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'profile', label: t('settings.tabs.profile'), icon: User },
+    { id: 'security', label: t('settings.tabs.security'), icon: Lock },
+    { id: 'appearance', label: t('settings.tabs.appearance'), icon: theme === 'dark' ? Moon : Sun },
+    { id: 'notifications', label: t('settings.tabs.notifications'), icon: Bell },
   ];
 
   return (
@@ -66,10 +72,10 @@ const Settings = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Settings
+          {t('settings.title')}
         </h1>
         <p className="text-gray-500 dark:text-gray-400 mt-1">
-          Manage your account settings and preferences
+          {t('settings.description')}
         </p>
       </div>
 
@@ -82,8 +88,8 @@ const Settings = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeTab === tab.id
-                    ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400 border-l-4 border-primary-600'
-                    : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
+                  ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/20 dark:text-primary-400 border-l-4 border-primary-600'
+                  : 'text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-700'
                   }`}
               >
                 <tab.icon className="w-5 h-5" />
@@ -276,6 +282,44 @@ const Settings = () => {
                         }`}
                     />
                   </button>
+                </div>
+
+                <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Languages className="w-5 h-5 text-gray-500" />
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {t('settings.appearance.languageSelection')}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {t('settings.appearance.languageDescription')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {[
+                      { id: 'en', label: 'English', flag: '🇬🇧' },
+                      { id: 'fr', label: 'Français', flag: '🇫🇷' },
+                      { id: 'ar', label: 'العربية', flag: '🇸🇦' },
+                    ].map((lang) => (
+                      <button
+                        key={lang.id}
+                        onClick={() => dispatch(setLanguage(lang.id as any))}
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl border-2 transition-all ${language === lang.id
+                            ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 text-gray-600 dark:text-gray-400'
+                          }`}
+                      >
+                        <span className="flex items-center gap-3">
+                          <span className="text-xl">{lang.flag}</span>
+                          <span className="font-medium">{lang.label}</span>
+                        </span>
+                        {language === lang.id && (
+                          <div className="w-2 h-2 rounded-full bg-primary-600"></div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>

@@ -1,16 +1,31 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
+import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 import Sidebar from './Sidebar';
 import Header from './Header';
 
 const Layout = () => {
-  const { sidebarOpen, isMobile } = useSelector((state: RootState) => state.ui);
+  const { sidebarOpen, isMobile, language } = useSelector((state: RootState) => state.ui);
   const location = useLocation();
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    if (i18n.language !== language) {
+      i18n.changeLanguage(language);
+    }
+    // Update document dir for RTL support
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+  }, [language, i18n]);
 
   return (
-    <div className="min-h-screen bg-[#f8faff] dark:bg-slate-950 transition-colors duration-200 relative overflow-x-hidden">
+    <div
+      className={`min-h-screen bg-[#f8faff] dark:bg-slate-950 transition-colors duration-200 relative overflow-x-hidden ${language === 'ar' ? 'font-arabic' : ''}`}
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
+    >
       {/* Animated aurora background blobs */}
       <div className="aurora-blob aurora-blob-1" />
       <div className="aurora-blob aurora-blob-2" />
@@ -21,7 +36,9 @@ const Layout = () => {
 
       {/* Main Content */}
       <div
-        className={`relative z-10 transition-all duration-300 ${isMobile ? '' : sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
+        className={`relative z-10 transition-all duration-300 ${isMobile ? '' : sidebarOpen
+          ? language === 'ar' ? 'lg:mr-64' : 'lg:ml-64'
+          : language === 'ar' ? 'lg:mr-20' : 'lg:ml-20'
           }`}
       >
         {/* Header */}

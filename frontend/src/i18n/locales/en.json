@@ -1,0 +1,496 @@
+{
+  "common": {
+    "dashboard": "Dashboard",
+    "vehicles": "Vehicles",
+    "maintenance": "Maintenance",
+    "reports": "Reports",
+    "users": "Users",
+    "alertRules": "Alert Rules",
+    "activityLogs": "Activity Logs",
+    "settings": "Settings",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "next": "Next",
+    "previous": "Previous",
+    "pageOf": "Page {{current}} of {{total}}",
+    "resultsCount": "Showing {{start}} to {{end}} of {{total}} results",
+    "loading": "Loading...",
+    "search": "Search...",
+    "noData": "No data found",
+    "user": "User",
+    "systemName": "Fleet MS",
+    "period": "Period",
+    "present": "Present",
+    "none": "None"
+  },
+  "sidebar": {
+    "admin": "Admin"
+  },
+  "header": {
+    "theme": {
+      "light": "Switch to light mode",
+      "dark": "Switch to dark mode"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "new": "new",
+      "viewAll": "View all notifications →",
+      "noNotifications": "No new notifications"
+    },
+    "user": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "logout": "Logout"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account settings and preferences",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "appearance": "Appearance",
+      "notifications": "Notifications",
+      "language": "Language"
+    },
+    "appearance": {
+      "darkMode": "Dark Mode",
+      "themeDescription": "Toggle between light and dark theme",
+      "languageSelection": "Language Selection",
+      "languageDescription": "Choose your preferred language"
+    }
+  },
+  "vehicles": {
+    "title": "Vehicles",
+    "description": "Manage your fleet vehicles",
+    "addVehicle": "Add Vehicle",
+    "searchPlaceholder": "Search vehicles...",
+    "filters": {
+      "allStatus": "All Status",
+      "active": "Active",
+      "maintenance": "Maintenance",
+      "offline": "Offline",
+      "retired": "Retired",
+      "allMakes": "All Makes"
+    },
+    "table": {
+      "vehicle": "Vehicle",
+      "plateNumber": "Plate Number",
+      "status": "Status",
+      "mileage": "Mileage",
+      "fuelType": "Fuel Type",
+      "actions": "Actions",
+      "noVehicles": "No vehicles found",
+      "unknownVehicle": "Unknown Vehicle"
+    },
+    "delete": {
+      "title": "Delete Vehicle",
+      "message": "Are you sure you want to delete this vehicle? This action cannot be undone and will remove all associated maintenance records and assignments.",
+      "confirm": "Delete Vehicle",
+      "cancel": "Cancel"
+    }
+  },
+  "maintenance": {
+    "title": "Maintenance Records",
+    "description": "Manage vehicle maintenance and repairs",
+    "newRecord": "New Record",
+    "searchPlaceholder": "Search maintenance records...",
+    "filters": {
+      "allStatus": "All Status",
+      "allTypes": "All Types",
+      "scheduled": "Scheduled",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "table": {
+      "vehicle": "Vehicle",
+      "type": "Type",
+      "status": "Status",
+      "date": "Date",
+      "cost": "Cost",
+      "actions": "Actions",
+      "noRecords": "No maintenance records found"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "delete": {
+      "title": "Delete Record",
+      "message": "Are you sure you want to delete this maintenance record? This action cannot be undone.",
+      "confirm": "Delete Record",
+      "cancel": "Cancel"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "description": "Manage system users and permissions",
+    "addUser": "Add User",
+    "searchPlaceholder": "Search users...",
+    "filters": {
+      "allRoles": "All Roles",
+      "allStatus": "All Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "admin": "Admin",
+      "user": "User",
+      "technician": "Technician"
+    },
+    "table": {
+      "user": "User",
+      "role": "Role",
+      "department": "Department",
+      "status": "Status",
+      "actions": "Actions",
+      "noUsers": "No users found"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "delete": {
+      "title": "Delete User",
+      "message": "Are you sure you want to delete this user? This action cannot be undone.",
+      "confirm": "Delete User",
+      "cancel": "Cancel"
+    }
+  },
+  "alertRules": {
+    "title": "Alert Rules",
+    "description": "Define custom conditions that trigger alerts across your fleet",
+    "newRule": "New Rule",
+    "searchPlaceholder": "Search rules...",
+    "noRules": "No alert rules yet",
+    "noRulesMatch": "No rules match your search",
+    "createFirstRule": "Create your first custom alert rule to monitor your fleet automatically.",
+    "tryDifferentSearch": "Try a different search term.",
+    "createRule": "Create Rule",
+    "editRule": "Edit Rule",
+    "saveChanges": "Save Changes",
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "enable": "Enable rule",
+      "disable": "Disable rule"
+    },
+    "severity": {
+      "urgent": "Urgent",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "form": {
+      "ruleName": "Rule Name",
+      "description": "Description",
+      "condition": "Condition",
+      "field": "Field",
+      "operator": "Operator",
+      "value": "Value",
+      "selectField": "Select field...",
+      "selectOperator": "Select...",
+      "selectValue": "Select...",
+      "threshold": "Threshold",
+      "severity": "Severity"
+    },
+    "delete": {
+      "confirm": "Delete?",
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Overview of your fleet management system",
+    "stats": {
+      "totalVehicles": "Total Vehicles",
+      "activeVehicles": "Active Vehicles",
+      "inMaintenance": "In Maintenance",
+      "monthlyCost": "Monthly Cost"
+    },
+    "charts": {
+      "maintenanceTrends": "Maintenance Trends",
+      "statusDistribution": "Vehicle Status Distribution",
+      "total": "Total",
+      "completed": "Completed"
+    },
+    "upcomingMaintenance": {
+      "title": "Upcoming Maintenance",
+      "viewAll": "View All",
+      "vehicle": "Vehicle",
+      "type": "Type",
+      "date": "Date",
+      "status": "Status",
+      "noMaintenance": "No upcoming maintenance"
+    },
+    "alerts": {
+      "title": "Alerts",
+      "noAlerts": "No alerts"
+    }
+  },
+  "reports": {
+    "title": "Reports",
+    "description": "Generate and download fleet management reports",
+    "dateRange": "Date Range",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "downloadPdf": "Download PDF",
+    "downloadExcel": "Download Excel",
+    "generating": "Generating...",
+    "fleetSummary": {
+      "title": "Fleet Summary Report",
+      "description": "Comprehensive overview of your entire fleet including vehicles, maintenance, and costs."
+    },
+    "vehicleReports": {
+      "title": "Vehicle Reports",
+      "description": "Individual vehicle reports with maintenance history and details."
+    },
+    "maintenanceReports": {
+      "title": "Maintenance Reports",
+      "description": "Detailed maintenance records with parts and labor costs."
+    },
+    "about": {
+      "title": "About Reports",
+      "description": "All reports are generated as PDF files and include comprehensive data about your fleet. Vehicle-specific and maintenance-specific reports can be generated from their respective detail pages."
+    },
+    "modals": {
+      "selectVehicle": "Select Vehicle",
+      "selectMaintenance": "Select Maintenance Record",
+      "exportAllVehicle": "Export All Vehicle Activity (Date Range)",
+      "exportAllMaintenance": "Export All Maintenance Activity (Date Range)",
+      "searchVehicle": "Or search specific vehicles by plate, make, or model...",
+      "searchMaintenance": "Or search specific maintenance by vehicle, type, or description...",
+      "noVehicles": "No vehicles found matching",
+      "noRecords": "No records found matching",
+      "generatingPdf": "Generating PDF..."
+    },
+    "success": {
+      "fleet": "Fleet summary report downloaded!",
+      "vehicle": "Vehicle report downloaded!",
+      "maintenance": "Maintenance report downloaded!",
+      "vehiclesActivity": "Vehicles activity report downloaded!",
+      "maintenanceActivity": "Maintenance activity report downloaded!"
+    },
+    "error": {
+      "fleet": "Failed to download fleet report",
+      "vehicle": "Failed to download vehicle report",
+      "maintenance": "Failed to download maintenance report",
+      "vehiclesActivity": "Failed to download vehicles activity report",
+      "maintenanceActivity": "Failed to download maintenance activity report"
+    }
+  },
+  "activityLogs": {
+    "title": "Activity Logs",
+    "description": "Track and reverse system changes across the fleet management platform.",
+    "exportPdf": "Export PDF",
+    "clearAllLogs": "Clear All Logs",
+    "searchPlaceholder": "Search activity descriptions...",
+    "filters": {
+      "allActions": "All Actions",
+      "allResources": "All Resources",
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete",
+      "export": "Export",
+      "vehicle": "Vehicle",
+      "maintenance": "Maintenance",
+      "alertRule": "Alert Rule",
+      "user": "User",
+      "report": "Report"
+    },
+    "noLogs": "No activities found matching your criteria.",
+    "on": "on",
+    "reverted": "Reverted",
+    "undo": "Undo",
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next",
+    "confirmUndo": {
+      "title": "Undo Action",
+      "message": "Are you sure you want to undo this action?",
+      "confirm": "Yes, Undo Action",
+      "undoing": "Undoing...",
+      "cancel": "Cancel"
+    },
+    "confirmClear": {
+      "title": "Clear All Logs",
+      "message": "Are you absolutely sure you want to delete ALL activity logs? This action cannot be undone and you will lose the entire history of actions on the platform.",
+      "confirm": "Yes, Clear All Logs",
+      "clearing": "Clearing...",
+      "cancel": "Cancel"
+    },
+    "noLogsToExport": "No logs to export",
+    "exportSuccess": "Logs exported successfully",
+    "exportError": "Failed to export logs"
+  },
+  "vehicleForm": {
+    "addTitle": "Add New Vehicle",
+    "editTitle": "Edit Vehicle",
+    "addSubtitle": "Enter details for the new vehicle",
+    "editSubtitle": "Update vehicle information",
+    "sections": {
+      "general": "General Information",
+      "specifications": "Specifications",
+      "registration": "Registration & Insurance",
+      "financial": "Financial Information"
+    },
+    "fields": {
+      "make": "Make",
+      "model": "Model",
+      "year": "Year",
+      "plateNumber": "Plate Number",
+      "vin": "VIN (Vehicle Identification Number)",
+      "status": "Status",
+      "bodyType": "Body Type",
+      "fuelType": "Fuel Type",
+      "transmission": "Transmission",
+      "currentMileage": "Current Mileage",
+      "mileageUnit": "Mileage Unit",
+      "color": "Color",
+      "registrationDate": "Registration Date",
+      "registrationExpiry": "Registration Expiry",
+      "insuranceNumber": "Insurance Number",
+      "insuranceExpiry": "Insurance Expiry",
+      "purchaseDate": "Purchase Date",
+      "purchasePrice": "Purchase Price ($)"
+    },
+    "status": {
+      "active": "Active",
+      "maintenance": "Maintenance",
+      "offline": "Offline",
+      "retired": "Retired"
+    },
+    "bodyType": {
+      "sedan": "Sedan",
+      "suv": "SUV",
+      "truck": "Truck",
+      "van": "Van",
+      "bus": "Bus",
+      "motorcycle": "Motorcycle",
+      "other": "Other"
+    },
+    "fuelType": {
+      "gasoline": "Gasoline",
+      "diesel": "Diesel",
+      "electric": "Electric",
+      "hybrid": "Hybrid",
+      "lpg": "LPG"
+    },
+    "transmission": {
+      "automatic": "Automatic",
+      "manual": "Manual",
+      "cvt": "CVT"
+    },
+    "mileageUnit": {
+      "km": "KM",
+      "miles": "MILES"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "create": "Create Vehicle"
+    },
+    "validation": {
+      "makeRequired": "Make is required",
+      "modelRequired": "Model is required",
+      "yearRequired": "Year is required",
+      "invalidYear": "Invalid year",
+      "plateRequired": "Plate number is required"
+    }
+  },
+  "maintenanceForm": {
+    "addTitle": "New Maintenance Record",
+    "editTitle": "Edit Maintenance Record",
+    "addSubtitle": "Schedule a new maintenance task",
+    "editSubtitle": "Update maintenance information",
+    "sections": {
+      "serviceDetails": "Service Details",
+      "costs": "Costs (Optional)"
+    },
+    "fields": {
+      "vehicle": "Vehicle",
+      "selectVehicle": "Select a vehicle...",
+      "serviceType": "Service Type",
+      "scheduledDate": "Scheduled Date",
+      "status": "Status",
+      "priority": "Priority",
+      "description": "Description",
+      "laborCost": "Labor Cost ($)",
+      "partsCost": "Parts Cost ($)",
+      "totalCost": "Total Cost ($)"
+    },
+    "types": {
+      "oil_change": "Oil Change",
+      "tire_rotation": "Tire Rotation",
+      "brake_service": "Brake Service",
+      "battery_replacement": "Battery Replacement",
+      "general_inspection": "General Inspection",
+      "engine_repair": "Engine Repair",
+      "other": "Other"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "create": "Create Record"
+    },
+    "validation": {
+      "vehicleRequired": "Vehicle is required",
+      "typeRequired": "Type is required",
+      "dateRequired": "Scheduled date is required",
+      "descriptionRequired": "Description is required"
+    },
+    "descriptionPlaceholder": "Describe the maintenance issue or task..."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadCount": "You have {{count}} unread notification",
+    "unreadCount_plural": "You have {{count}} unread notifications",
+    "markAllRead": "Mark all read",
+    "clearAll": "Clear all",
+    "noNotifications": "No notifications",
+    "allCaughtUp": "You're all caught up! Check back later for new updates.",
+    "goToVehicle": "Go to Vehicle",
+    "goToMaintenance": "Go to Maintenance",
+    "markAsRead": "Mark as read",
+    "remove": "Remove",
+    "clearModal": {
+      "title": "Clear Notifications",
+      "message": "Are you sure you want to clear all notifications? This action cannot be undone.",
+      "confirm": "Clear All"
+    }
+  },
+  "login": {
+    "welcomeBack": "Welcome Back",
+    "signToAccess": "Sign in to your account to access the fleet dashboard",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "authenticating": "Authenticating...",
+    "signIn": "Sign In",
+    "demoAccess": "Demo Access",
+    "noAccount": "Don't have an account?",
+    "contactAdmin": "Contact Administrator",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "support": "Support",
+    "systemOnline": "System Online"
+  }
+}

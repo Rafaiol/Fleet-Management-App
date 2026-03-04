@@ -17,6 +17,7 @@ import { toggleSidebar, markNotificationRead } from '@/store/slices/uiSlice';
 import { logout } from '@/store/slices/authSlice';
 import { useTheme } from '@/hooks';
 import { formatDistanceToNow } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,6 +25,7 @@ const Header = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const { sidebarOpen, isMobile, notifications } = useSelector((state: RootState) => state.ui);
   const { isDark, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   const unreadCount = notifications.filter(n => !n.read).length;
   const recentNotifications = notifications.slice(0, 5);
@@ -68,7 +70,7 @@ const Header = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search vehicles..."
+                placeholder={t('common.search')}
                 className="pl-10 pr-4 py-2 w-64 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400 focus:bg-white transition-all duration-200 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-100"
               />
             </form>
@@ -81,7 +83,7 @@ const Header = () => {
           <button
             onClick={toggleTheme}
             className="p-2 text-slate-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-            title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={isDark ? t('header.theme.light') : t('header.theme.dark')}
           >
             {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
@@ -102,10 +104,10 @@ const Header = () => {
             {showNotifications && (
               <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 py-2 z-50 animate-fade-in">
                 <div className="px-4 py-2.5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Notifications</h3>
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{t('header.notifications.title')}</h3>
                   {unreadCount > 0 && (
                     <span className="text-xs bg-rose-50 text-rose-600 py-0.5 px-2.5 rounded-full font-medium border border-rose-100">
-                      {unreadCount} new
+                      {unreadCount} {t('header.notifications.new')}
                     </span>
                   )}
                 </div>
@@ -135,7 +137,7 @@ const Header = () => {
                     ))
                   ) : (
                     <div className="px-4 py-8 text-center text-sm text-slate-400">
-                      No notifications to show.
+                      {t('common.noData')}
                     </div>
                   )}
                 </div>
@@ -145,7 +147,7 @@ const Header = () => {
                     className="text-sm text-primary-600 hover:text-primary-700 font-medium dark:text-primary-400"
                     onClick={() => setShowNotifications(false)}
                   >
-                    View all notifications →
+                    {t('header.notifications.viewAll')}
                   </Link>
                 </div>
               </div>
@@ -163,7 +165,7 @@ const Header = () => {
                 <User className="w-4 h-4 text-white" />
               </div>
               <span className="hidden md:block text-sm font-medium text-slate-700">
-                {user?.fullName || 'User'}
+                {user?.fullName || t('common.user')}
               </span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
             </button>
@@ -184,14 +186,14 @@ const Header = () => {
                   onClick={() => setShowUserMenu(false)}
                 >
                   <User className="w-4 h-4 text-slate-400" />
-                  Profile & Settings
+                  {t('common.settings')}
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/20 transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
-                  Sign out
+                  {t('header.user.logout')}
                 </button>
               </div>
             )}

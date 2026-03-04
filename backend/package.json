@@ -9,7 +9,13 @@
     "seed": "node scripts/seedData.js",
     "test": "jest"
   },
-  "keywords": ["fleet", "management", "api", "nodejs", "mongodb"],
+  "keywords": [
+    "fleet",
+    "management",
+    "api",
+    "nodejs",
+    "mongodb"
+  ],
   "author": "Fleet Management Team",
   "license": "MIT",
   "dependencies": {
@@ -21,7 +27,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
-    "puppeteer": "^21.6.1"
+    "puppeteer": "^21.6.1",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

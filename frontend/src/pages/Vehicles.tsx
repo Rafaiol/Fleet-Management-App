@@ -19,6 +19,7 @@ import {
 } from '@/store/slices/vehicleSlice';
 import { useDebounce, useAuth } from '@/hooks';
 import ConfirmModal from '@/components/ConfirmModal';
+import { useTranslation } from 'react-i18next';
 
 const Vehicles = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,6 +27,7 @@ const Vehicles = () => {
     (state: RootState) => state.vehicles
   );
   const { canAddVehicles, canEditVehicles, canDeleteVehicles } = useAuth();
+  const { t } = useTranslation();
 
   const [searchParams] = useSearchParams();
   const initialStatus = searchParams.get('status') || '';
@@ -98,10 +100,10 @@ const Vehicles = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Vehicles
+            {t('vehicles.title')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Manage your fleet vehicles
+            {t('vehicles.description')}
           </p>
         </div>
         {canAddVehicles && (
@@ -110,7 +112,7 @@ const Vehicles = () => {
             className="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors"
           >
             <Plus className="w-5 h-5" />
-            Add Vehicle
+            {t('vehicles.addVehicle')}
           </Link>
         )}
       </div>
@@ -125,7 +127,7 @@ const Vehicles = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search vehicles..."
+              placeholder={t('vehicles.searchPlaceholder')}
               className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
             />
           </div>
@@ -136,11 +138,11 @@ const Vehicles = () => {
             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
             className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
           >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="maintenance">Maintenance</option>
-            <option value="offline">Offline</option>
-            <option value="retired">Retired</option>
+            <option value="">{t('vehicles.filters.allStatus')}</option>
+            <option value="active">{t('vehicles.filters.active')}</option>
+            <option value="maintenance">{t('vehicles.filters.maintenance')}</option>
+            <option value="offline">{t('vehicles.filters.offline')}</option>
+            <option value="retired">{t('vehicles.filters.retired')}</option>
           </select>
 
           {/* Make Filter */}
@@ -149,7 +151,7 @@ const Vehicles = () => {
             onChange={(e) => setFilters({ ...filters, make: e.target.value })}
             className="px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500"
           >
-            <option value="">All Makes</option>
+            <option value="">{t('vehicles.filters.allMakes')}</option>
             {makes.map((make) => (
               <option key={make} value={make}>
                 {make}
@@ -166,22 +168,22 @@ const Vehicles = () => {
             <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
                 <th className="w-[30%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Vehicle
+                  {t('vehicles.table.vehicle')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Plate Number
+                  {t('vehicles.table.plateNumber')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Status
+                  {t('vehicles.table.status')}
                 </th>
                 <th className="w-[15%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Mileage
+                  {t('vehicles.table.mileage')}
                 </th>
                 <th className="w-[10%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Fuel Type
+                  {t('vehicles.table.fuelType')}
                 </th>
                 <th className="w-[15%] text-right py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Actions
+                  {t('vehicles.table.actions')}
                 </th>
               </tr>
             </thead>
@@ -196,7 +198,7 @@ const Vehicles = () => {
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-gray-500">
                     <Car className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p>No vehicles found</p>
+                    <p>{t('vehicles.table.noVehicles')}</p>
                   </td>
                 </tr>
               ) : (
@@ -286,17 +288,17 @@ const Vehicles = () => {
                 disabled={page === 1}
                 className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Previous
+                {t('common.previous')}
               </button>
               <span className="text-sm text-gray-700 dark:text-gray-300">
-                Page {page} of {pagination.pages}
+                {t('common.pageOf', { current: page, total: pagination.pages })}
               </span>
               <button
                 onClick={() => setPage(page + 1)}
                 disabled={page === pagination.pages}
                 className="px-3 py-1 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Next
+                {t('common.next')}
               </button>
             </div>
           </div>
@@ -307,10 +309,10 @@ const Vehicles = () => {
         isOpen={!!vehicleToDelete}
         onClose={() => setVehicleToDelete(null)}
         onConfirm={confirmDelete}
-        title="Delete Vehicle"
-        message="Are you sure you want to delete this vehicle? This action cannot be undone and will remove all associated maintenance records and assignments."
-        confirmText="Delete Vehicle"
-        cancelText="Cancel"
+        title={t('vehicles.delete.title')}
+        message={t('vehicles.delete.message')}
+        confirmText={t('vehicles.delete.confirm')}
+        cancelText={t('vehicles.delete.cancel')}
         isDestructive={true}
         isLoading={isDeleting}
       />

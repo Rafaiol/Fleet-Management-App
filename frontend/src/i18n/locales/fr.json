@@ -1,0 +1,496 @@
+{
+  "common": {
+    "dashboard": "Tableau de bord",
+    "vehicles": "Véhicules",
+    "maintenance": "Maintenance",
+    "reports": "Rapports",
+    "users": "Utilisateurs",
+    "alertRules": "Règles d'alerte",
+    "activityLogs": "Journaux d'activité",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "pageOf": "Page {{current}} sur {{total}}",
+    "resultsCount": "Affichage de {{start}} à {{end}} sur {{total}} résultats",
+    "loading": "Chargement...",
+    "search": "Rechercher...",
+    "noData": "Aucune donnée trouvée",
+    "user": "Utilisateur",
+    "systemName": "Fleet MS",
+    "period": "Période",
+    "present": "Présent",
+    "none": "Aucun"
+  },
+  "sidebar": {
+    "admin": "Admin"
+  },
+  "header": {
+    "theme": {
+      "light": "Passer au mode clair",
+      "dark": "Passer au mode sombre"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "new": "nouveau",
+      "viewAll": "Voir toutes les notifications →",
+      "noNotifications": "Pas de nouvelles notifications"
+    },
+    "user": {
+      "profile": "Profil",
+      "settings": "Paramètres",
+      "logout": "Déconnexion"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "description": "Gérez les paramètres et les préférences de votre compte",
+    "tabs": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "appearance": "Apparence",
+      "notifications": "Notifications",
+      "language": "Langue"
+    },
+    "appearance": {
+      "darkMode": "Mode sombre",
+      "themeDescription": "Basculer entre le thème clair et le thème sombre",
+      "languageSelection": "Sélection de la langue",
+      "languageDescription": "Choisissez votre langue préférée"
+    }
+  },
+  "vehicles": {
+    "title": "Véhicules",
+    "description": "Gérez vos véhicules de flotte",
+    "addVehicle": "Ajouter un véhicule",
+    "searchPlaceholder": "Rechercher des véhicules...",
+    "filters": {
+      "allStatus": "Tous les statuts",
+      "active": "Actif",
+      "maintenance": "Maintenance",
+      "offline": "Hors ligne",
+      "retired": "Retraité",
+      "allMakes": "Toutes les marques"
+    },
+    "table": {
+      "vehicle": "Véhicule",
+      "plateNumber": "Numéro de plaque",
+      "status": "Statut",
+      "mileage": "Kilométrage",
+      "fuelType": "Type de carburant",
+      "actions": "Actions",
+      "noVehicles": "Aucun véhicule trouvé",
+      "unknownVehicle": "Véhicule inconnu"
+    },
+    "delete": {
+      "title": "Supprimer le véhicule",
+      "message": "Êtes-vous sûr de vouloir supprimer ce véhicule ? Cette action ne peut pas être annulée et supprimera tous les dossiers de maintenance et les affectations associés.",
+      "confirm": "Supprimer le véhicule",
+      "cancel": "Annuler"
+    }
+  },
+  "maintenance": {
+    "title": "Dossiers de maintenance",
+    "description": "Gérer la maintenance et les réparations des véhicules",
+    "newRecord": "Nouveau dossier",
+    "searchPlaceholder": "Rechercher des dossiers de maintenance...",
+    "filters": {
+      "allStatus": "Tous les statuts",
+      "allTypes": "Tous les types",
+      "scheduled": "Planifié",
+      "inProgress": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "table": {
+      "vehicle": "Véhicule",
+      "type": "Type",
+      "status": "Statut",
+      "date": "Date",
+      "cost": "Coût",
+      "actions": "Actions",
+      "noRecords": "Aucun dossier de maintenance trouvé"
+    },
+    "actions": {
+      "viewDetails": "Voir les détails",
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    },
+    "delete": {
+      "title": "Supprimer le dossier",
+      "message": "Êtes-vous sûr de vouloir supprimer ce dossier de maintenance ? Cette action ne peut pas être annulée.",
+      "confirm": "Supprimer le dossier",
+      "cancel": "Annuler"
+    }
+  },
+  "users": {
+    "title": "Utilisateurs",
+    "description": "Gérer les utilisateurs du système et les autorisations",
+    "addUser": "Ajouter un utilisateur",
+    "searchPlaceholder": "Rechercher des utilisateurs...",
+    "filters": {
+      "allRoles": "Tous les rôles",
+      "allStatus": "Tous les statuts",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "admin": "Admin",
+      "user": "Utilisateur",
+      "technician": "Technicien"
+    },
+    "table": {
+      "user": "Utilisateur",
+      "role": "Rôle",
+      "department": "Département",
+      "status": "Statut",
+      "actions": "Actions",
+      "noUsers": "Aucun utilisateur trouvé"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "delete": {
+      "title": "Supprimer l'utilisateur",
+      "message": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action ne peut pas être annulée.",
+      "confirm": "Supprimer l'utilisateur",
+      "cancel": "Annuler"
+    }
+  },
+  "alertRules": {
+    "title": "Règles d'alerte",
+    "description": "Définissez des conditions personnalisées qui déclenchent des alertes dans votre flotte",
+    "newRule": "Nouvelle règle",
+    "searchPlaceholder": "Rechercher des règles...",
+    "noRules": "Pas encore de règles d'alerte",
+    "noRulesMatch": "Aucune règle ne correspond à votre recherche",
+    "createFirstRule": "Créez votre première règle d'alerte personnalisée pour surveiller votre flotte automatiquement.",
+    "tryDifferentSearch": "Essayez un autre terme de recherche.",
+    "createRule": "Créer une règle",
+    "editRule": "Modifier la règle",
+    "saveChanges": "Enregistrer les modifications",
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "enable": "Activer la règle",
+      "disable": "Désactiver la règle"
+    },
+    "severity": {
+      "urgent": "Urgent",
+      "warning": "Avertissement",
+      "info": "Info"
+    },
+    "form": {
+      "ruleName": "Nom de la règle",
+      "description": "Description",
+      "condition": "Condition",
+      "field": "Champ",
+      "operator": "Opérateur",
+      "value": "Valeur",
+      "selectField": "Sélectionner un champ...",
+      "selectOperator": "Sélectionner...",
+      "selectValue": "Sélectionner...",
+      "threshold": "Seuil",
+      "severity": "Gravité"
+    },
+    "delete": {
+      "confirm": "Supprimer ?",
+      "yes": "Oui",
+      "no": "Non"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "description": "Aperçu de votre système de gestion de flotte",
+    "stats": {
+      "totalVehicles": "Total des véhicules",
+      "activeVehicles": "Véhicules actifs",
+      "inMaintenance": "En maintenance",
+      "monthlyCost": "Coût mensuel"
+    },
+    "charts": {
+      "maintenanceTrends": "Tendances de maintenance",
+      "statusDistribution": "Distribution du statut des véhicules",
+      "total": "Total",
+      "completed": "Terminé"
+    },
+    "upcomingMaintenance": {
+      "title": "Maintenance à venir",
+      "viewAll": "Voir tout",
+      "vehicle": "Véhicule",
+      "type": "Type",
+      "date": "Date",
+      "status": "Statut",
+      "noMaintenance": "Pas de maintenance à venir"
+    },
+    "alerts": {
+      "title": "Alertes",
+      "noAlerts": "Pas d'alertes"
+    }
+  },
+  "reports": {
+    "title": "Rapports",
+    "description": "Générer et télécharger des rapports de gestion de flotte",
+    "dateRange": "Plage de dates",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "downloadPdf": "Télécharger le PDF",
+    "downloadExcel": "Télécharger Excel",
+    "generating": "Génération...",
+    "fleetSummary": {
+      "title": "Rapport sommaire de la flotte",
+      "description": "Aperçu complet de l'ensemble de votre flotte, y compris les véhicules, la maintenance et les coûts."
+    },
+    "vehicleReports": {
+      "title": "Rapports de véhicules",
+      "description": "Rapports de véhicules individuels avec l'historique de maintenance et les détails."
+    },
+    "maintenanceReports": {
+      "title": "Rapports de maintenance",
+      "description": "Dossiers de maintenance détaillés avec les coûts des pièces et de la main-d'œuvre."
+    },
+    "about": {
+      "title": "À propos des rapports",
+      "description": "tous les rapports sont générés sous forme de fichiers PDF et comprennent des données complètes sur votre flotte. Des rapports spécifiques aux véhicules et à la maintenance peuvent être générés à partir de leurs pages de détails respectives."
+    },
+    "modals": {
+      "selectVehicle": "Sélectionner un véhicule",
+      "selectMaintenance": "Sélectionner un dossier de maintenance",
+      "exportAllVehicle": "Exporter toute l'activité des véhicules (Plage de dates)",
+      "exportAllMaintenance": "Exporter toute l'activité de maintenance (Plage de dates)",
+      "searchVehicle": "Ou recherchez des véhicules spécifiques par plaque, marque ou modèle...",
+      "searchMaintenance": "Ou recherchez une maintenance spécifique par véhicule, type ou description...",
+      "noVehicles": "Aucun véhicule trouvé correspondant à",
+      "noRecords": "Aucun dossier trouvé correspondant à",
+      "generatingPdf": "Génération du PDF..."
+    },
+    "success": {
+      "fleet": "Rapport sommaire de la flotte téléchargé !",
+      "vehicle": "Rapport du véhicule téléchargé !",
+      "maintenance": "Rapport de maintenance téléchargé !",
+      "vehiclesActivity": "Rapport d'activité des véhicules téléchargé !",
+      "maintenanceActivity": "Rapport d'activité de maintenance téléchargé !"
+    },
+    "error": {
+      "fleet": "Échec du téléchargement du rapport de la flotte",
+      "vehicle": "Échec du téléchargement du rapport du véhicule",
+      "maintenance": "Échec du téléchargement du rapport de maintenance",
+      "vehiclesActivity": "Échec du téléchargement du rapport d'activité des véhicules",
+      "maintenanceActivity": "Échec du téléchargement du rapport d'activité de maintenance"
+    }
+  },
+  "activityLogs": {
+    "title": "Journaux d'activité",
+    "description": "Suivez et annulez les modifications du système sur la plateforme de gestion de flotte.",
+    "exportPdf": "Exporter en PDF",
+    "clearAllLogs": "Effacer tous les journaux",
+    "searchPlaceholder": "Rechercher dans les activités...",
+    "filters": {
+      "allActions": "Toutes les actions",
+      "allResources": "Toutes les ressources",
+      "create": "Créer",
+      "update": "Modifier",
+      "delete": "Supprimer",
+      "export": "Exporter",
+      "vehicle": "Véhicule",
+      "maintenance": "Maintenance",
+      "alertRule": "Règle d'alerte",
+      "user": "Utilisateur",
+      "report": "Rapport"
+    },
+    "noLogs": "Aucune activité trouvée correspondant à vos critères.",
+    "on": "sur",
+    "reverted": "Annulé",
+    "undo": "Annuler",
+    "page": "Page",
+    "of": "sur",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "confirmUndo": {
+      "title": "Annuler l'action",
+      "message": "Êtes-vous sûr de vouloir annuler cette action ?",
+      "confirm": "Oui, annuler l'action",
+      "undoing": "Annulation...",
+      "cancel": "Annuler"
+    },
+    "confirmClear": {
+      "title": "Effacer tous les journaux",
+      "message": "Êtes-vous absolument sûr de vouloir supprimer TOUS les journaux d'activité ? Cette action ne peut pas être annulée.",
+      "confirm": "Oui, effacer tous les journaux",
+      "clearing": "Effacement...",
+      "cancel": "Annuler"
+    },
+    "noLogsToExport": "Aucun journal à exporter",
+    "exportSuccess": "Journaux exportés avec succès",
+    "exportError": "Échec de l'exportation des journaux"
+  },
+  "vehicleForm": {
+    "addTitle": "Ajouter un nouveau véhicule",
+    "editTitle": "Modifier le véhicule",
+    "addSubtitle": "Entrez les détails du nouveau véhicule",
+    "editSubtitle": "Mettre à jour les informations du véhicule",
+    "sections": {
+      "general": "Informations générales",
+      "specifications": "Spécifications",
+      "registration": "Immatriculation et assurance",
+      "financial": "Informations financières"
+    },
+    "fields": {
+      "make": "Marque",
+      "model": "Modèle",
+      "year": "Année",
+      "plateNumber": "Numéro de plaque",
+      "vin": "VIN (Numéro d'identification du véhicule)",
+      "status": "Statut",
+      "bodyType": "Type de carrosserie",
+      "fuelType": "Type de carburant",
+      "transmission": "Transmission",
+      "currentMileage": "Kilométrage actuel",
+      "mileageUnit": "Unité de kilométrage",
+      "color": "Couleur",
+      "registrationDate": "Date d'immatriculation",
+      "registrationExpiry": "Expiration de l'immatriculation",
+      "insuranceNumber": "Numéro d'assurance",
+      "insuranceExpiry": "Expiration de l'assurance",
+      "purchaseDate": "Date d'achat",
+      "purchasePrice": "Prix d'achat ($)"
+    },
+    "status": {
+      "active": "Actif",
+      "maintenance": "Maintenance",
+      "offline": "Hors ligne",
+      "retired": "Retraité"
+    },
+    "bodyType": {
+      "sedan": "Berline",
+      "suv": "SUV",
+      "truck": "Camion",
+      "van": "Van",
+      "bus": "Bus",
+      "motorcycle": "Moto",
+      "other": "Autre"
+    },
+    "fuelType": {
+      "gasoline": "Essence",
+      "diesel": "Diesel",
+      "electric": "Électrique",
+      "hybrid": "Hybride",
+      "lpg": "GPL"
+    },
+    "transmission": {
+      "automatic": "Automatique",
+      "manual": "Manuelle",
+      "cvt": "CVT"
+    },
+    "mileageUnit": {
+      "km": "KM",
+      "miles": "MILES"
+    },
+    "actions": {
+      "cancel": "Annuler",
+      "saveChanges": "Enregistrer les modifications",
+      "create": "Créer le véhicule"
+    },
+    "validation": {
+      "makeRequired": "La marque est requise",
+      "modelRequired": "Le modèle est requis",
+      "yearRequired": "L'année est requise",
+      "invalidYear": "Année invalide",
+      "plateRequired": "Le numéro de plaque est requis"
+    }
+  },
+  "maintenanceForm": {
+    "addTitle": "Nouveau dossier de maintenance",
+    "editTitle": "Modifier le dossier de maintenance",
+    "addSubtitle": "Planifier une nouvelle tâche de maintenance",
+    "editSubtitle": "Mettre à jour les informations de maintenance",
+    "sections": {
+      "serviceDetails": "Détails du service",
+      "costs": "Coûts (Optionnel)"
+    },
+    "fields": {
+      "vehicle": "Véhicule",
+      "selectVehicle": "Sélectionnez un véhicule...",
+      "serviceType": "Type de service",
+      "scheduledDate": "Date planifiée",
+      "status": "Statut",
+      "priority": "Priorité",
+      "description": "Description",
+      "laborCost": "Coût de main-d'œuvre ($)",
+      "partsCost": "Coût des pièces ($)",
+      "totalCost": "Coût total ($)"
+    },
+    "types": {
+      "oil_change": "Vidange d'huile",
+      "tire_rotation": "Rotation des pneus",
+      "brake_service": "Service des freins",
+      "battery_replacement": "Remplacement de la batterie",
+      "general_inspection": "Inspection générale",
+      "engine_repair": "Réparation du moteur",
+      "other": "Autre"
+    },
+    "status": {
+      "scheduled": "Planifié",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "cancelled": "Annulé"
+    },
+    "priority": {
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "urgent": "Urgent"
+    },
+    "actions": {
+      "cancel": "Annuler",
+      "saveChanges": "Enregistrer les modifications",
+      "create": "Créer le dossier"
+    },
+    "validation": {
+      "vehicleRequired": "Le véhicule est requis",
+      "typeRequired": "Le type est requis",
+      "dateRequired": "La date planifiée est requise",
+      "descriptionRequired": "La description est requise"
+    },
+    "descriptionPlaceholder": "Décrivez le problème ou la tâche de maintenance..."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "unreadCount": "Vous avez {{count}} notification non lue",
+    "unreadCount_plural": "Vous avez {{count}} notifications non lues",
+    "markAllRead": "Tout marquer comme lu",
+    "clearAll": "Tout effacer",
+    "noNotifications": "Pas de notifications",
+    "allCaughtUp": "Vous êtes à jour ! Revenez plus tard pour de nouvelles mises à jour.",
+    "goToVehicle": "Aller au véhicule",
+    "goToMaintenance": "Aller à la maintenance",
+    "markAsRead": "Marquer comme lu",
+    "remove": "Supprimer",
+    "clearModal": {
+      "title": "Effacer les notifications",
+      "message": "Êtes-vous sûr de vouloir effacer toutes les notifications ? Cette action est irréversible.",
+      "confirm": "Tout effacer"
+    }
+  },
+  "login": {
+    "welcomeBack": "Bon retour",
+    "signToAccess": "Connectez-vous à votre compte pour accéder au tableau de bord de la flotte",
+    "emailLabel": "Adresse e-mail",
+    "passwordLabel": "Mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "authenticating": "Authentification...",
+    "signIn": "Se connecter",
+    "demoAccess": "Accès démo",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "contactAdmin": "Contacter l'administrateur",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "support": "Support",
+    "systemOnline": "Système en ligne"
+  }
+}

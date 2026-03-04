@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Car, Eye, EyeOff, Loader2, Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/hooks';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated, isLoading, error, clearError } = useAuth();
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -57,9 +59,9 @@ const Login = () => {
             <div className="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-4 group hover:shadow-md transition-shadow">
               <Car className="text-indigo-600 dark:text-indigo-400 w-8 h-8 transform group-hover:scale-110 transition-transform duration-300" />
             </div>
-            <h1 className="text-slate-900 dark:text-white text-2xl font-bold tracking-tight mb-2">Welcome Back</h1>
+            <h1 className="text-slate-900 dark:text-white text-2xl font-bold tracking-tight mb-2">{t('login.welcomeBack')}</h1>
             <p className="text-slate-500 dark:text-slate-400 text-sm text-center px-4">
-              Sign in to your account to access the fleet dashboard
+              {t('login.signToAccess')}
             </p>
           </div>
 
@@ -67,7 +69,7 @@ const Login = () => {
 
             {/* Email Input */}
             <div className="space-y-1.5">
-              <label className="text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider ml-1">Email Address</label>
+              <label className="text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider ml-1">{t('login.emailLabel')}</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <Mail className="text-slate-400 dark:text-slate-500 w-4 h-4 group-focus-within:text-indigo-500 transition-colors" />
@@ -85,7 +87,7 @@ const Login = () => {
 
             {/* Password Input */}
             <div className="space-y-1.5">
-              <label className="text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider ml-1">Password</label>
+              <label className="text-slate-700 dark:text-slate-300 text-xs font-semibold uppercase tracking-wider ml-1">{t('login.passwordLabel')}</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <Lock className="text-slate-400 dark:text-slate-500 w-4 h-4 group-focus-within:text-indigo-500 transition-colors" />
@@ -124,9 +126,9 @@ const Login = () => {
                     </svg>
                   </div>
                 </div>
-                <span className="ml-2.5 text-xs text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors font-medium">Remember me</span>
+                <span className="ml-2.5 text-xs text-slate-600 dark:text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors font-medium">{t('login.rememberMe')}</span>
               </label>
-              <a href="#" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">Forgot password?</a>
+              <a href="#" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition-colors">{t('login.forgotPassword')}</a>
             </div>
 
             {/* Error Message */}
@@ -146,10 +148,10 @@ const Login = () => {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Authenticating...
+                  {t('login.authenticating')}
                 </>
               ) : (
-                'Sign In'
+                t('login.signIn')
               )}
             </button>
           </form>
@@ -157,7 +159,7 @@ const Login = () => {
           {/* Demo Credentials */}
           <div className="mt-8 p-4 bg-slate-50/50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 rounded-xl w-full">
             <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 text-center">
-              Demo Access
+              {t('login.demoAccess')}
             </p>
             <div className="space-y-2 text-xs text-slate-500 dark:text-slate-400 flex flex-col items-center">
               <p>Admin: <span className="font-semibold text-slate-700 dark:text-slate-200 bg-white/50 dark:bg-slate-900/50 px-1.5 py-0.5 rounded">admin@fleet.com</span> / <span className="font-semibold text-slate-700 dark:text-slate-200">admin123</span></p>
@@ -167,22 +169,22 @@ const Login = () => {
 
           <div className="mt-8 text-center w-full">
             <p className="text-slate-500 dark:text-slate-400 text-sm">
-              Don't have an account? <a href="#" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Contact Administrator</a>
+              {t('login.noAccount')} <a href="#" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">{t('login.contactAdmin')}</a>
             </p>
           </div>
         </div>
 
         <div className="mt-8 flex justify-center space-x-6 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-widest font-semibold opacity-80">
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Privacy</a>
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Terms</a>
-          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Support</a>
+          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t('login.privacy')}</a>
+          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t('login.terms')}</a>
+          <a href="#" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">{t('login.support')}</a>
         </div>
       </main>
 
       <div className="fixed top-6 right-6 flex gap-3 z-30">
         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/50 dark:border-slate-700/50 shadow-sm flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"></span>
-          <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider">System Online</span>
+          <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider">{t('login.systemOnline')}</span>
         </div>
       </div>
     </div>

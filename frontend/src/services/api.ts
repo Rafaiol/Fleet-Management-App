@@ -283,20 +283,30 @@ export const dashboardApi = {
 
 // Report API
 export const reportApi = {
-  generateVehicleReport: (vehicleId: string) =>
-    api.get(`/reports/vehicle/${vehicleId}`, { responseType: 'blob' }),
+  generateVehicleReport: (vehicleId: string, lang?: string) =>
+    api.get(`/reports/vehicle/${vehicleId}`, { params: { lang }, responseType: 'blob' }),
 
-  generateMaintenanceReport: (maintenanceId: string) =>
-    api.get(`/reports/maintenance/${maintenanceId}`, { responseType: 'blob' }),
+  generateMaintenanceReport: (maintenanceId: string, lang?: string) =>
+    api.get(`/reports/maintenance/${maintenanceId}`, { params: { lang }, responseType: 'blob' }),
 
-  generateFleetSummary: (params?: { startDate?: string; endDate?: string }) =>
+  generateFleetSummary: (params?: { startDate?: string; endDate?: string; lang?: string }) =>
     api.get('/reports/fleet-summary', { params, responseType: 'blob' }),
 
-  generateVehiclesActivityReport: (params?: { startDate?: string; endDate?: string }) =>
+  generateVehiclesActivityReport: (params?: { startDate?: string; endDate?: string; lang?: string }) =>
     api.get('/reports/vehicles-activity', { params, responseType: 'blob' }),
 
-  generateMaintenanceActivityReport: (params?: { startDate?: string; endDate?: string }) =>
+  generateMaintenanceActivityReport: (params?: { startDate?: string; endDate?: string; lang?: string }) =>
     api.get('/reports/maintenance-activity', { params, responseType: 'blob' }),
+
+  // Excel exports
+  downloadFleetSummaryExcel: (params?: { lang?: string }) =>
+    api.get('/reports/excel/fleet-summary', { params, responseType: 'blob' }),
+
+  downloadVehiclesExcel: (params?: { startDate?: string; endDate?: string; lang?: string }) =>
+    api.get('/reports/excel/vehicles-activity', { params, responseType: 'blob' }),
+
+  downloadMaintenanceExcel: (params?: { startDate?: string; endDate?: string; lang?: string }) =>
+    api.get('/reports/excel/maintenance-activity', { params, responseType: 'blob' }),
 };
 
 // Alert Rule API

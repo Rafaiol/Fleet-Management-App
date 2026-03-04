@@ -17,10 +17,12 @@ import {
   Loader2,
 } from 'lucide-react';
 import ConfirmModal from '@/components/ConfirmModal';
+import { useTranslation } from 'react-i18next';
 
 const ActivityLogs = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { logs, isLoading, isUndoing, isDeletingAll, pagination } = useSelector((state: RootState) => state.logs);
+  const { t } = useTranslation();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -113,7 +115,7 @@ const ActivityLogs = () => {
 
   const handleExport = async () => {
     if (logs.length === 0) {
-      toast.info('No logs to export');
+      toast.info(t('activityLogs.noLogsToExport'));
       return;
     }
 
@@ -132,10 +134,10 @@ const ActivityLogs = () => {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast.success('Logs exported successfully');
+      toast.success(t('activityLogs.exportSuccess'));
     } catch (error) {
       console.error('Export error:', error);
-      toast.error('Failed to export logs');
+      toast.error(t('activityLogs.exportError'));
     } finally {
       setIsExporting(false);
     }
@@ -148,10 +150,10 @@ const ActivityLogs = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <History className="w-6 h-6 text-primary-600" />
-            Activity Logs
+            {t('activityLogs.title')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Track and reverse system changes across the fleet management platform.
+            {t('activityLogs.description')}
           </p>
         </div>
 
@@ -162,7 +164,7 @@ const ActivityLogs = () => {
             className={`btn btn-secondary flex items-center gap-2 ${isExporting ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            Export PDF
+            {t('activityLogs.exportPdf')}
           </button>
 
           <button
@@ -171,7 +173,7 @@ const ActivityLogs = () => {
             className={`btn bg-rose-600 hover:bg-rose-700 text-white flex items-center gap-2 ${isDeletingAll || logs.length === 0 ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {isDeletingAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-            Clear All Logs
+            {t('activityLogs.clearAllLogs')}
           </button>
         </div>
       </div>
@@ -183,7 +185,7 @@ const ActivityLogs = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search activity descriptions..."
+              placeholder={t('activityLogs.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 dark:text-white placeholder-gray-400 outline-none transition-all"
@@ -198,11 +200,11 @@ const ActivityLogs = () => {
                 onChange={(e) => setActionFilter(e.target.value)}
                 className="pl-9 pr-8 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none appearance-none dark:text-white"
               >
-                <option value="">All Actions</option>
-                <option value="CREATE">Create</option>
-                <option value="UPDATE">Update</option>
-                <option value="DELETE">Delete</option>
-                <option value="EXPORT">Export</option>
+                <option value="">{t('activityLogs.filters.allActions')}</option>
+                <option value="CREATE">{t('activityLogs.filters.create')}</option>
+                <option value="UPDATE">{t('activityLogs.filters.update')}</option>
+                <option value="DELETE">{t('activityLogs.filters.delete')}</option>
+                <option value="EXPORT">{t('activityLogs.filters.export')}</option>
               </select>
             </div>
 
@@ -213,12 +215,12 @@ const ActivityLogs = () => {
                 onChange={(e) => setResourceFilter(e.target.value)}
                 className="pl-9 pr-8 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none appearance-none dark:text-white"
               >
-                <option value="">All Resources</option>
-                <option value="Vehicle">Vehicle</option>
-                <option value="Maintenance">Maintenance</option>
-                <option value="AlertRule">Alert Rule</option>
-                <option value="User">User</option>
-                <option value="Report">Report</option>
+                <option value="">{t('activityLogs.filters.allResources')}</option>
+                <option value="Vehicle">{t('activityLogs.filters.vehicle')}</option>
+                <option value="Maintenance">{t('activityLogs.filters.maintenance')}</option>
+                <option value="AlertRule">{t('activityLogs.filters.alertRule')}</option>
+                <option value="User">{t('activityLogs.filters.user')}</option>
+                <option value="Report">{t('activityLogs.filters.report')}</option>
               </select>
             </div>
           </div>
@@ -236,7 +238,7 @@ const ActivityLogs = () => {
         {logs.length === 0 && !isLoading ? (
           <div className="opacity-60 flex flex-col justify-center items-center h-full py-12">
             <History className="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4" />
-            <p className="text-gray-500 dark:text-gray-400 text-lg">No activities found matching your criteria.</p>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">{t('activityLogs.noLogs')}</p>
           </div>
         ) : (
           <div className="relative border-l-2 border-slate-200 dark:border-slate-800 ml-3 md:ml-6 space-y-8">
@@ -270,7 +272,7 @@ const ActivityLogs = () => {
                             <span className="text-sm opacity-80 border border-current px-2 py-0.5 rounded-full uppercase tracking-wider">
                               {log.action}
                             </span>
-                            <span className="text-sm opacity-80 ml-2">on <strong>{log.resourceType}</strong></span>
+                            <span className="text-sm opacity-80 ml-2">{t('activityLogs.on')} <strong>{log.resourceType}</strong></span>
                             {log.resourceId && log.resourceType !== 'Report' && (
                               <span className="text-xs font-mono opacity-60">ID: {log.resourceId}</span>
                             )}
@@ -288,7 +290,7 @@ const ActivityLogs = () => {
                         {isReverted && (
                           <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
                             <RotateCcw className="w-3.5 h-3.5" />
-                            Reverted
+                            {t('activityLogs.reverted')}
                           </span>
                         )}
 
@@ -300,7 +302,7 @@ const ActivityLogs = () => {
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border border-current hover:bg-black/5 dark:hover:bg-white/10 ${isUndoing ? 'opacity-50 cursor-not-allowed' : ''}`}
                           >
                             <RotateCcw className="w-4 h-4" />
-                            Undo
+                            {t('activityLogs.undo')}
                           </button>
                         )}
                       </div>
@@ -320,17 +322,17 @@ const ActivityLogs = () => {
               onClick={() => handlePageChange(pagination.page - 1)}
               className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg disabled:opacity-50"
             >
-              Previous
+              {t('common.previous')}
             </button>
             <span className="px-4 py-2 flex items-center dark:text-white">
-              Page {pagination.page} of {pagination.pages}
+              {t('common.pageOf', { current: pagination.page, total: pagination.pages })}
             </span>
             <button
               disabled={pagination.page === pagination.pages}
               onClick={() => handlePageChange(pagination.page + 1)}
               className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg disabled:opacity-50"
             >
-              Next
+              {t('common.next')}
             </button>
           </div>
         )}
@@ -340,20 +342,20 @@ const ActivityLogs = () => {
         isOpen={isUndoModalOpen}
         onClose={() => setIsUndoModalOpen(false)}
         onConfirm={confirmUndo}
-        title="Undo Action"
-        message={`Are you sure you want to undo this action?\n\n"${selectedLogForUndo?.description}"`}
-        confirmText={isUndoing ? "Undoing..." : "Yes, Undo Action"}
-        cancelText="Cancel"
+        title={t('activityLogs.confirmUndo.title')}
+        message={`${t('activityLogs.confirmUndo.message')}\n\n"${selectedLogForUndo?.description}"`}
+        confirmText={isUndoing ? t('activityLogs.confirmUndo.undoing') : t('activityLogs.confirmUndo.confirm')}
+        cancelText={t('activityLogs.confirmUndo.cancel')}
       />
 
       <ConfirmModal
         isOpen={isDeleteAllModalOpen}
         onClose={() => setIsDeleteAllModalOpen(false)}
         onConfirm={confirmDeleteAll}
-        title="Clear All Logs"
-        message="Are you absolutely sure you want to delete ALL activity logs? This action cannot be undone and you will lose the entire history of actions on the platform."
-        confirmText={isDeletingAll ? "Clearing..." : "Yes, Clear All Logs"}
-        cancelText="Cancel"
+        title={t('activityLogs.confirmClear.title')}
+        message={t('activityLogs.confirmClear.message')}
+        confirmText={isDeletingAll ? t('activityLogs.confirmClear.clearing') : t('activityLogs.confirmClear.confirm')}
+        cancelText={t('activityLogs.confirmClear.cancel')}
       />
     </div>
   );

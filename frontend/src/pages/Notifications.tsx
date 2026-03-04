@@ -9,19 +9,18 @@ import {
   removeNotification,
 } from '@/store/slices/uiSlice';
 import { formatDistanceToNow } from 'date-fns';
+import { enUS, fr, arSA } from 'date-fns/locale';
 import { useState } from 'react';
 import ConfirmModal from '@/components/ConfirmModal';
 import {
   Bell,
   Check,
   Trash2,
-  AlertTriangle,
-  Info,
-  CheckCircle2,
   XCircle,
   Car,
   Wrench
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const getIconForType = (type: string) => {
   switch (type) {
@@ -54,6 +53,16 @@ const Notifications = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { notifications } = useSelector((state: RootState) => state.ui);
+  const { language } = useSelector((state: RootState) => state.ui);
+  const { t } = useTranslation();
+
+  const getDateLocale = () => {
+    switch (language) {
+      case 'fr': return fr;
+      case 'ar': return arSA;
+      default: return enUS;
+    }
+  };
 
   // Scroll to top when opening the page
   useEffect(() => {
@@ -93,10 +102,10 @@ const Notifications = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Bell className="w-6 h-6 text-primary-600" />
-            Notifications
+            {t('notifications.title')}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mt-1">
-            You have {unreadCount} unread notification{unreadCount !== 1 && 's'}
+            {t('notifications.unreadCount', { count: unreadCount })}
           </p>
         </div>
 
@@ -107,7 +116,7 @@ const Notifications = () => {
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
           >
             <Check className="w-4 h-4" />
-            Mark all read
+            {t('notifications.markAllRead')}
           </button>
           <button
             onClick={handleClearAll}
@@ -115,7 +124,7 @@ const Notifications = () => {
             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
           >
             <Trash2 className="w-4 h-4" />
-            Clear all
+            {t('notifications.clearAll')}
           </button>
         </div>
       </div>
@@ -127,9 +136,9 @@ const Notifications = () => {
             <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
               <Bell className="w-8 h-8 text-gray-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">No notifications</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white">{t('notifications.noNotifications')}</h3>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
-              You're all caught up! Check back later for new updates.
+              {t('notifications.allCaughtUp')}
             </p>
           </div>
         ) : (
@@ -153,7 +162,10 @@ const Notifications = () => {
                         {notification.title}
                       </h4>
                       <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                        {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(notification.createdAt), {
+                          addSuffix: true,
+                          locale: getDateLocale()
+                        })}
                       </span>
                     </div>
 
@@ -172,11 +184,11 @@ const Notifications = () => {
                         >
                           {(notification.alertType === 'registration_expiring' || notification.alertType === 'insurance_expiring' || notification.alertType === 'registration_expired' || notification.alertType === 'insurance_expired') ? (
                             <>
-                              <Car className="w-3.5 h-3.5" /> Go to Vehicle
+                              <Car className="w-3.5 h-3.5" /> {t('notifications.goToVehicle')}
                             </>
                           ) : (
                             <>
-                              <Wrench className="w-3.5 h-3.5" /> Go to Maintenance
+                              <Wrench className="w-3.5 h-3.5" /> {t('notifications.goToMaintenance')}
                             </>
                           )}
                         </button>
@@ -187,14 +199,14 @@ const Notifications = () => {
                           onClick={() => dispatch(markNotificationRead(notification.id))}
                           className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
                         >
-                          Mark as read
+                          {t('notifications.markAsRead')}
                         </button>
                       )}
                       <button
                         onClick={() => dispatch(removeNotification(notification.id))}
                         className="px-3 py-1.5 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors ml-auto sm:ml-0"
                       >
-                        Remove
+                        {t('notifications.remove')}
                       </button>
                     </div>
                   </div>
@@ -209,10 +221,10 @@ const Notifications = () => {
         isOpen={isClearModalOpen}
         onClose={() => setIsClearModalOpen(false)}
         onConfirm={confirmClearAll}
-        title="Clear Notifications"
-        message="Are you sure you want to clear all notifications? This action cannot be undone."
-        confirmText="Clear All"
-        cancelText="Cancel"
+        title={t('notifications.clearModal.title')}
+        message={t('notifications.clearModal.message')}
+        confirmText={t('notifications.clearModal.confirm')}
+        cancelText={t('common.cancel')}
         isDestructive={true}
       />
     </div>
