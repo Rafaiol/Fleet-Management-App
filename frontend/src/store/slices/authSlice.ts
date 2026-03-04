@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { authApi } from '@/services/api';
+import { authApi, setMemoryToken } from '@/services/api';
 import { User, AuthState } from '@/types';
 import { toast } from 'react-toastify';
 
@@ -24,7 +24,7 @@ const initialState: AuthState = {
 // Async thunks
 export const login = createAsyncThunk(
   'auth/login',
-  async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+  async ({ email, password, rememberMe }: { email: string; password: string; rememberMe: boolean }, { rejectWithValue }) => {
     try {
       const response = await authApi.login(email, password);
       const { token, user } = response.data.data;
@@ -33,8 +33,13 @@ export const login = createAsyncThunk(
         throw new Error('Your account is inactive. Please contact an administrator.');
       }
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      if (rememberMe) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+      } else {
+        setMemoryToken(token);
+      }
+
       toast.success('Login successful!');
       return { token, user };
     } catch (error: any) {
@@ -110,6 +115,7 @@ const authSlice = createSlice({
       state.error = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      setMemoryToken(null);
       toast.info('Logged out successfully');
     },
     clearError: (state) => {
@@ -117,7 +123,9 @@ const authSlice = createSlice({
     },
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
-      localStorage.setItem('user', JSON.stringify(action.payload));
+      if (localStorage.getItem('token')) {
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      }
     },
   },
   extraReducers: (builder) => {

@@ -12,6 +12,7 @@ const Login = () => {
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -27,7 +28,7 @@ const Login = () => {
     if (!formData.email || !formData.password) return;
 
     try {
-      await login(formData.email, formData.password).unwrap();
+      await login(formData.email, formData.password, rememberMe).unwrap();
       navigate('/');
     } catch (err) {
       // Error is handled by the auth slice
@@ -111,7 +112,12 @@ const Login = () => {
             <div className="flex items-center justify-between py-2">
               <label className="flex items-center cursor-pointer group">
                 <div className="relative flex items-center justify-center">
-                  <input type="checkbox" className="peer sr-only" />
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="peer sr-only"
+                  />
                   <div className="w-4 h-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 peer-checked:bg-indigo-600 peer-checked:border-indigo-600 flex items-center justify-center transition-all shadow-sm">
                     <svg className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12"></polyline>

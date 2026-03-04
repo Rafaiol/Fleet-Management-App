@@ -10,8 +10,8 @@ export const useAuth = () => {
   );
 
   const handleLogin = useCallback(
-    (email: string, password: string) => {
-      return dispatch(login({ email, password }));
+    (email: string, password: string, rememberMe: boolean = false) => {
+      return dispatch(login({ email, password, rememberMe }));
     },
     [dispatch]
   );

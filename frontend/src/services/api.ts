@@ -10,10 +10,16 @@ const api: AxiosInstance = axios.create({
   timeout: 60000, // Increased to 60s for PDF report generation
 });
 
+// In-memory token storage for non-persisted sessions
+let memoryToken: string | null = null;
+export const setMemoryToken = (token: string | null) => {
+  memoryToken = token;
+};
+
 // Request interceptor - add auth token
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || memoryToken;
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -34,6 +40,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      setMemoryToken(null);
       window.location.href = '/login';
       toast.error('Session expired. Please log in again.');
     } else if (error.response?.status === 403) {
