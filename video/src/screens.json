@@ -1,0 +1,33 @@
+{
+  "videoConfig": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "screens": [
+    {
+      "id": "1",
+      "title": "نظام إدارة الأسطول - لوحة القيادة",
+      "description": "نظرة عامة على حالة الأسطول، التكاليف الشهرية، واتجاهات الصيانة.",
+      "imagePath": "assets/screens/dashboard.png",
+      "duration": 5,
+      "transitionType": "fade"
+    },
+    {
+      "id": "2",
+      "title": "إدارة المركبات",
+      "description": "عرض وتصفية قائمة المركبات، مع تتبع الحالة والمسافات المقطوعة.",
+      "imagePath": "assets/screens/vehicles.png",
+      "duration": 5,
+      "transitionType": "slide"
+    },
+    {
+      "id": "3",
+      "title": "سجلات الصيانة",
+      "description": "تتبع عمليات الإصلاح والصيانة الدورية لضمان كفاءة الأسطول.",
+      "imagePath": "assets/screens/maintenance.png",
+      "duration": 5,
+      "transitionType": "fade"
+    }
+  ]
+}
