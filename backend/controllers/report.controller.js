@@ -1,4 +1,9 @@
-const puppeteer = require('puppeteer');
+let puppeteer;
+try {
+  puppeteer = require('puppeteer');
+} catch (error) {
+  console.log('Puppeteer not installed, PDF generation will be disabled');
+}
 const path = require('path');
 const fs = require('fs');
 const { Vehicle, Maintenance, User } = require('../models');
@@ -610,6 +615,14 @@ exports.generateVehicleReport = async (req, res) => {
     // Generate HTML
     const html = generateVehicleReportHTML(vehicle, maintenanceHistory, req.query.lang || 'en');
 
+    // Check if puppeteer is installed
+    if (!puppeteer) {
+      return res.status(501).json({
+        success: false,
+        message: 'PDF generation is currently disabled on this server. Please upgrade the server to enable it.'
+      });
+    }
+
     // Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
       headless: 'new',
@@ -680,6 +693,14 @@ exports.generateMaintenanceReport = async (req, res) => {
 
     // Generate HTML
     const html = generateMaintenanceReportHTML(maintenance, req.query.lang || 'en');
+
+    // Check if puppeteer is installed
+    if (!puppeteer) {
+      return res.status(501).json({
+        success: false,
+        message: 'PDF generation is currently disabled on this server. Please upgrade the server to enable it.'
+      });
+    }
 
     // Generate PDF with Puppeteer
     const browser = await puppeteer.launch({
