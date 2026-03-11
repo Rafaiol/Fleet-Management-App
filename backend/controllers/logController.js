@@ -1,6 +1,11 @@
 const ActivityLog = require('../models/ActivityLog');
 const mongoose = require('mongoose');
-const puppeteer = require('puppeteer');
+let puppeteer;
+try {
+  puppeteer = require('puppeteer');
+} catch (e) {
+  console.log('Puppeteer not installed, PDF generation will be disabled');
+}
 const path = require('path');
 const fs = require('fs');
 
@@ -374,6 +379,10 @@ const exportLogs = async (req, res) => {
 
     if (logs.length === 0) {
       return res.status(404).json({ message: 'No logs found to export' });
+    }
+
+    if (!puppeteer) {
+      return res.status(501).json({ message: 'PDF generation is currently disabled on this server. Please upgrade the server to enable it.' });
     }
 
     const html = generateLogsReportHTML(logs);
