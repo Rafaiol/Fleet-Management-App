@@ -30,7 +30,6 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
-    "puppeteer": "^21.6.1"
+    "nodemon": "^3.0.2"
   }
 }
