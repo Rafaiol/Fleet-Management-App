@@ -85,10 +85,12 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/fleet_management';
 
+console.log('--- BACKEND VERSION 2.0 ---');
+
 // Start server first so Railway health checks succeed
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 Listening on 0.0.0.0:${PORT}`);
+  console.log(`📡 Listening on all interfaces (0.0.0.0:${PORT})`);
   
   // Connect to MongoDB after the server is up
   mongoose.connect(MONGODB_URI)
@@ -97,9 +99,11 @@ app.listen(PORT, '0.0.0.0', () => {
     })
     .catch((error) => {
       console.error('❌ MongoDB connection error:', error.message);
-      // In production, we might want to stay alive even if DB is down temporarily
-      // or exit if DB is critical. Let's log for now.
     });
+});
+
+server.on('error', (err) => {
+  console.error('❌ Server startup error:', err);
 });
 
 // Handle unhandled promise rejections
