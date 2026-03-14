@@ -35,7 +35,11 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+    const isVercel = origin.endsWith('.vercel.app');
+    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+    const isAllowed = allowedOrigins.indexOf(origin) !== -1 || isVercel || isLocal || process.env.NODE_ENV === 'development';
+
+    if (isAllowed) {
       callback(null, true);
     } else {
       console.warn(`Blocked by CORS: ${origin}`);
@@ -48,8 +52,14 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
-// Handle preflight requests for all routes
-app.options('*', cors());
+// Explicitly handle OPTIONS for all routes
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
