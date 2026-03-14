@@ -11,6 +11,12 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/fleet_
 console.log(`--- SYSTEM BOOT (PID: ${process.pid}) ---`);
 console.log(`--- ATTEMPTING PORT: ${PORT} ---`);
 
+// GLOBAL LOGGER - DO NOT MOVE
+app.use((req, res, next) => {
+  console.log(`Incoming Request: ${req.method} ${req.url}`);
+  next();
+});
+
 // 1. Force CORS headers
 app.use((req, res, next) => {
   const origin = req.header('Origin') || '*';
