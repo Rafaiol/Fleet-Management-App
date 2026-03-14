@@ -1,19 +1,17 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
-const dotenv = require('dotenv');
-
-// Load environment variables
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/fleet_management';
 
-console.log(`--- BACKEND VERSION 4.0 (PID: ${process.pid}) ---`);
+console.log(`--- SYSTEM BOOT (PID: ${process.pid}) ---`);
+console.log(`--- ATTEMPTING PORT: ${PORT} ---`);
 
-// 1. Force CORS headers on EVERYTHING before any other middleware
+// 1. Force CORS headers
 app.use((req, res, next) => {
   const origin = req.header('Origin') || '*';
   res.header('Access-Control-Allow-Origin', origin);
@@ -47,6 +45,11 @@ app.use(morgan('dev'));
 // Static files for reports
 app.use('/reports', express.static('reports'));
 
+// ROOT TEST ROUTE - BEFORE ANYTHING ELSE
+app.get('/', (req, res) => {
+  res.status(200).send("FLEET API IS LIVE");
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
@@ -61,21 +64,7 @@ app.use('/api/logs', logRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
-    message: 'Fleet Management API is running',
-    environment: process.env.NODE_ENV,
     mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
-    timestamp: new Date().toISOString(),
-    pid: process.pid
-  });
-});
-
-// Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    name: 'Fleet Management API',
-    version: '4.0.0',
-    status: 'Running',
-    mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Connecting/Disconnected',
     pid: process.pid
   });
 });
@@ -88,18 +77,13 @@ app.use((req, res) => {
 // Error handler
 app.use(errorHandler);
 
-// Start server first so Railway health checks succeed
+// Start server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`--- SERVER READY ON PORT ${PORT} (PID: ${process.pid}) ---`);
+  console.log(`--- SERVER READY ON PORT ${PORT} ---`);
   
-  // Connect to MongoDB after the server is up
   mongoose.connect(MONGODB_URI)
-    .then(() => {
-      console.log('✅ Connected to MongoDB');
-    })
-    .catch((error) => {
-      console.error('❌ MongoDB connection error:', error.message);
-    });
+    .then(() => console.log('✅ Connected to MongoDB'))
+    .catch((err) => console.error('❌ MongoDB Error:', err.message));
 });
 
 // Handle unhandled promise rejections
