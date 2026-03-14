@@ -1,5 +1,4 @@
 const express = require('express');
-
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -7,6 +6,26 @@ const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/fleet_management';
+
+console.log(`--- BACKEND VERSION 4.0 (PID: ${process.pid}) ---`);
+
+// 1. Force CORS headers on EVERYTHING before any other middleware
+app.use((req, res, next) => {
+  const origin = req.header('Origin') || '*';
+  res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');
@@ -20,20 +39,6 @@ const logRoutes = require('./routes/logRoutes');
 
 // Import error handler
 const errorHandler = require('./middleware/error.middleware');
-
-const app = express();
-
-// Middleware
-app.use(cors({
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  optionsSuccessStatus: 200
-}));
-
-// Explicitly handle OPTIONS for all routes
-app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -59,7 +64,8 @@ app.get('/api/health', (req, res) => {
     message: 'Fleet Management API is running',
     environment: process.env.NODE_ENV,
     mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    pid: process.pid
   });
 });
 
@@ -67,9 +73,10 @@ app.get('/api/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({
     name: 'Fleet Management API',
-    version: '1.0.0',
+    version: '4.0.0',
     status: 'Running',
-    mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Connecting/Disconnected'
+    mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Connecting/Disconnected',
+    pid: process.pid
   });
 });
 
@@ -81,14 +88,8 @@ app.use((req, res) => {
 // Error handler
 app.use(errorHandler);
 
-// MongoDB Connection and Server Startup
-const PORT = process.env.PORT || 5000;
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/fleet_management';
-
-console.log('--- BACKEND VERSION 2.0 ---');
-
 // Start server first so Railway health checks succeed
-const server = app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 Listening on all interfaces (0.0.0.0:${PORT})`);
   
@@ -102,12 +103,7 @@ const server = app.listen(PORT, '0.0.0.0', () => {
     });
 });
 
-server.on('error', (err) => {
-  console.error('❌ Server startup error:', err);
-});
-
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err.message);
-  // Do not exit process in production unless absolutely necessary
 });
