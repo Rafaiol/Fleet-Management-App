@@ -90,8 +90,7 @@ app.use(errorHandler);
 
 // Start server first so Railway health checks succeed
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📡 Listening on all interfaces (0.0.0.0:${PORT})`);
+  console.log(`--- SERVER READY ON PORT ${PORT} (PID: ${process.pid}) ---`);
   
   // Connect to MongoDB after the server is up
   mongoose.connect(MONGODB_URI)
