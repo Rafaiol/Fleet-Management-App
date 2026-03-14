@@ -24,28 +24,8 @@ const errorHandler = require('./middleware/error.middleware');
 const app = express();
 
 // Middleware
-const allowedOrigins = [
-  'https://fleet-management-app-alpha.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000'
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-    
-    const isVercel = origin.endsWith('.vercel.app');
-    const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
-    const isAllowed = allowedOrigins.indexOf(origin) !== -1 || isVercel || isLocal || process.env.NODE_ENV === 'development';
-
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      console.warn(`Blocked by CORS: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
@@ -53,13 +33,7 @@ app.use(cors({
 }));
 
 // Explicitly handle OPTIONS for all routes
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200);
-});
+app.options('*', cors());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -94,15 +68,8 @@ app.get('/', (req, res) => {
   res.json({
     name: 'Fleet Management API',
     version: '1.0.0',
-    endpoints: {
-      auth: '/api/auth',
-      users: '/api/users',
-      vehicles: '/api/vehicles',
-      maintenance: '/api/maintenance',
-      dashboard: '/api/dashboard',
-      reports: '/api/reports',
-      logs: '/api/logs'
-    }
+    status: 'Running',
+    mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Connecting/Disconnected'
   });
 });
 
@@ -114,25 +81,29 @@ app.use((req, res) => {
 // Error handler
 app.use(errorHandler);
 
-// MongoDB Connection
+// MongoDB Connection and Server Startup
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/fleet_management';
 
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📚 API Documentation: http://localhost:${PORT}/`);
+// Start server first so Railway health checks succeed
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📡 Listening on 0.0.0.0:${PORT}`);
+  
+  // Connect to MongoDB after the server is up
+  mongoose.connect(MONGODB_URI)
+    .then(() => {
+      console.log('✅ Connected to MongoDB');
+    })
+    .catch((error) => {
+      console.error('❌ MongoDB connection error:', error.message);
+      // In production, we might want to stay alive even if DB is down temporarily
+      // or exit if DB is critical. Let's log for now.
     });
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB connection error:', error.message);
-    process.exit(1);
-  });
+});
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err.message);
-  process.exit(1);
+  // Do not exit process in production unless absolutely necessary
 });
