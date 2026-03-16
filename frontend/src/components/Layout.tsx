@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@/store';
+import { setSidebarOpen } from '@/store/slices/uiSlice';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 
@@ -8,6 +9,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 const Layout = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { sidebarOpen, isMobile, language } = useSelector((state: RootState) => state.ui);
   const location = useLocation();
   const { i18n } = useTranslation();
@@ -55,7 +57,7 @@ const Layout = () => {
       {isMobile && sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-20 lg:hidden"
-          onClick={() => { }}
+          onClick={() => dispatch(setSidebarOpen(false))}
         />
       )}
     </div>

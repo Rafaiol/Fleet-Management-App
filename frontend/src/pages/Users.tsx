@@ -149,7 +149,7 @@ const Users = () => {
       {/* Users Table */}
       <div className="card-aurora overflow-hidden page-fade-in stagger-2">
         <div className="overflow-x-auto min-h-[400px]">
-          <table className="w-full table-fixed">
+          <table className="w-full table-fixed min-w-[1000px]">
             <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
                 <th className="w-[30%] text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
