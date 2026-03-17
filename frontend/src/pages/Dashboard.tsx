@@ -214,7 +214,7 @@ const Dashboard = () => {
             </Link>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[800px]">
+            <table className="w-full min-w-[800px] lg:min-w-full">
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
                   <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">
